@@ -108,6 +108,8 @@ struct SlalomProgressTests {
 
     @Test func resultText() {
         #expect(SlalomResult.formatTime(83.47) == "01:23.4")
+        #expect(SlalomResult.formatTime(75.3) == "01:15.3")
+        #expect(SlalomResult.formatTime(59.99) == "00:59.9")
         let clean = SlalomResult(seconds: 41.2, gatesPassed: 20, gatesTotal: 20, penaltySeconds: 0)
         #expect(clean.summary == "Tiempo 00:41.2 · ¡todas las puertas!")
         let messy = SlalomResult(seconds: 41.2, gatesPassed: 18, gatesTotal: 20, penaltySeconds: 10)

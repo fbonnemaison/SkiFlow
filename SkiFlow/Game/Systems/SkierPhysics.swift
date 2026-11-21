@@ -50,6 +50,8 @@ struct SkierPhysics: Sendable {
     var maxSpeed: Double = 540
     /// Rapidez mínima para despegar de una rampa.
     var minJumpSpeed: Double = 60
+    /// Alarga los saltos (en freestyle, para que quepan los trucos).
+    var airTimeMultiplier: Double = 1
     /// El turbo multiplica la gravedad y sube el tope de velocidad.
     var turboGravityMultiplier: Double = 1.5
     var turboMaxSpeed: Double = 780
@@ -98,7 +100,7 @@ struct SkierPhysics: Sendable {
     @discardableResult
     func launch(_ state: inout SkierState) -> Bool {
         guard !state.isAirborne, state.speed >= minJumpSpeed else { return false }
-        let duration = min(1.3, 0.4 + 0.9 * state.speed / terminalSpeed)
+        let duration = min(1.3, 0.4 + 0.9 * state.speed / terminalSpeed) * airTimeMultiplier
         state.airDuration = duration
         state.airTime = duration
         return true
@@ -109,7 +111,7 @@ struct SkierPhysics: Sendable {
     @discardableResult
     func hop(_ state: inout SkierState) -> Bool {
         guard !state.isAirborne, !state.isFallen else { return false }
-        let duration = 0.35 + 0.25 * min(1, state.speed / terminalSpeed)
+        let duration = (0.35 + 0.25 * min(1, state.speed / terminalSpeed)) * airTimeMultiplier
         state.airDuration = duration
         state.airTime = duration
         return true

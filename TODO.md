@@ -90,7 +90,7 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [x] Aparición **poco frecuente** decidida con la semilla de la bajada: 8 % de las partidas, entre los 800 y los 3.000 m
 - [x] Comportamiento distinto del Kunk: acecha a un lado, embiste en línea recta hacia donde va a estar el Cuico y se esfuma si falla
 - [x] Aviso previo de 1,3 s en pantalla; **saltar por encima lo esquiva**
-- [x] No aparece en slalom (decidido en la Fase 5); en freestyle se decide en la Fase 6
+- [x] Solo aparece en Descenso libre (decidido en las Fases 5 y 6)
 - [x] Contador de encuentros en la partida (las estadísticas guardadas llegan en la Fase 10)
 
 - [x] Ajustes para probar al lanzar la app: `-kunkSpawnMeters`, `-chupacabrasChance`, `-chupacabrasMeters`
@@ -108,13 +108,14 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [x] El Kunk y el Chupacabras no aparecen en slalom, para que las contrarrelojes sean justas
 - [x] Tests: trazado reproducible, puertas despejadas, densidad por perfil, pasar/fallar/meta, avalancha y un "piloto" simulado que termina el slalom por delante de la avalancha
 
-## Fase 6 — Modo Freestyle
-- [ ] Rampas y saltos con tiempo en el aire según la velocidad
-- [ ] Trucos en el aire (combinaciones de teclas o botones): giros, mortales, *grabs*
-- [ ] Sistema de puntos con multiplicador de combo
-- [ ] Aterrizaje: limpio, forzado o caída (que anula los puntos)
-- [ ] Avalancha como límite de tiempo o de recorrido
-- [ ] Tests: puntuación y combos
+## Fase 6 — Modo Freestyle ✅
+- [x] Montaña con muchas rampas (perfil `freestyle`) y saltos un 50 % más largos para que quepan los trucos
+- [x] Trucos en el aire (en freestyle, las teclas de giro y salto hacen trucos): giro 360 (←/→, 100), mortal adelante (↓, 150), mortal atrás (↑, 150) y **selfie** (Espacio, 50) con flash
+- [x] Sistema de puntos: varios trucos en un salto multiplican (×1, ×1,5, ×2…) y cada aterrizaje limpio sube la racha (hasta ×4)
+- [x] Aterrizaje limpio, forzado (justo al terminar el truco o con los esquís atravesados: medio premio y se corta la racha) o caída (a mitad de truco o chocando en el aire: se pierden los puntos del salto)
+- [x] Meta a los 1.000 m con la avalancha detrás; pantalla de fin con puntos, mejor salto y trucos; R repite la montaña y 4 estrena otra
+- [x] El Kunk y el Chupacabras tampoco aparecen en freestyle
+- [x] Tests: trucos, combos, racha, tipos de aterrizaje, perfil de rampas, saltos más largos y escena (giro en el aire y caída a mitad de mortal)
 
 ## Fase 7 — Interfaz y flujo de juego
 - [ ] Pantalla de título y menú principal (SwiftUI)

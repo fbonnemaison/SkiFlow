@@ -148,11 +148,14 @@ enum ObstacleArt {
         ".RRRRRR.",
     ])
 
+    /// Rampa de nieve con postes naranjas a los lados para verla de lejos.
     static let ramp = PixelArt(rows: [
-        "......WWWWWWWWWW......",
-        "....WWSSSSSSSSSSWW....",
-        "..WWSSSSSSSSSSSSSSWW..",
-        "iiiiiiiiiiiiiiiiiiiiii",
+        "Y....................Y",
+        "O.....WWWWWWWWWW.....O",
+        "O...WWSSSSSSSSSSWW...O",
+        "O.WWSSSSSSSSSSSSSSWW.O",
+        "OiiiiiiiiiiiiiiiiiiiiO",
+        ".RRRRRRRRRRRRRRRRRRRR.",
     ])
 
     static let llama = PixelArt(rows: [

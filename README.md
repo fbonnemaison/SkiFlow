@@ -2,7 +2,7 @@
 
 Juego de esquí 2D para macOS inspirado en el clásico *SkiFree* (1991), ambientado en la **cordillera de los Andes**. Eres **el Cuico**, un típico chileno que sube a la nieve más a posar que a esquiar. Baja la montaña esquivando queñuas, rocas, llamas y otros esquiadores, compite contra el reloj en slalom, haz acrobacias en freestyle… y huye del **Kunk**. Y si tienes muy mala suerte, también del **Chupacabras**.
 
-> Estado: en desarrollo (Descenso libre y slalom, Fase 5). Consulta el plan en [TODO.md](TODO.md).
+> Estado: en desarrollo (los cuatro modos jugables, Fase 6). Consulta el plan en [TODO.md](TODO.md).
 
 ## Controles
 
@@ -15,7 +15,7 @@ Juego de esquí 2D para macOS inspirado en el clásico *SkiFree* (1991), ambient
 | F (mantener) | | X (□) o gatillo derecho | Turbo |
 | Esc / P | | Menú (Options) | Pausa |
 | R | | Vista (Share) | Reiniciar (montaña nueva en Descenso libre; mismo trazado en slalom) |
-| 1 / 2 / 3 | | | Descenso libre / Slalom / Slalom entre árboles (provisional hasta tener menú) |
+| 1 / 2 / 3 / 4 | | | Descenso libre / Slalom / Slalom entre árboles / Freestyle (provisional hasta tener menú) |
 
 Al tocar las teclas de giro se desactiva el apuntado con ratón; vuelve a activarse en cuanto mueves el ratón. La partida se pausa sola si cambias de app.
 
@@ -31,7 +31,19 @@ Al tocar las teclas de giro se desactiva el apuntado con ratón; vuelve a activa
 - **Descenso libre**: baja lo más lejos posible. A partir de los 2.000 m te persigue el Kunk.
 - **Slalom**: 20 puertas en una pista abierta. Pasa entre las dos banderas de cada puerta; cada puerta fallada suma 5 s. R repite el mismo trazado para mejorar tu tiempo.
 - **Slalom entre árboles**: lo mismo, pero en un bosque cerrado de araucarias y queñuas.
-- En los slalom no hay criaturas, pero sí una **avalancha** que baja detrás de ti: si te paras o te caes demasiado, te sepulta.
+- **Freestyle**: 1.000 m llenos de rampas para sumar puntos con trucos (ver abajo).
+- En los slalom y en freestyle no hay criaturas, pero sí una **avalancha** que baja detrás de ti: si te paras o te caes demasiado, te sepulta.
+
+### Trucos (Freestyle, en el aire)
+
+| Tecla / botón | Truco | Puntos |
+|---|---|---|
+| ← / → | Giro 360 | 100 |
+| ↓ | Mortal adelante | 150 |
+| ↑ | Mortal atrás | 150 |
+| Espacio (A en el mando) | Selfie | 50 |
+
+Varios trucos en el mismo salto multiplican los puntos, y cada aterrizaje limpio sube la racha (hasta ×4). Si terminas el truco justo al tocar el suelo o aterrizas atravesado, solo te llevas la mitad y se corta la racha. Si tocas el suelo a mitad de un truco, te caes y pierdes los puntos del salto.
 
 ## Las criaturas
 

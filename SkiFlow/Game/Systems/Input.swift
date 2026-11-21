@@ -15,6 +15,7 @@ enum InputAction: Hashable, Sendable, CaseIterable {
     case modeFreeDescent
     case modeSlalom
     case modeTreeSlalom
+    case modeFreestyle
 
     /// Traduce un código de tecla físico de macOS (independiente de la distribución
     /// del teclado, así WASD funciona por posición).
@@ -31,6 +32,7 @@ enum InputAction: Hashable, Sendable, CaseIterable {
         case 18: self = .modeFreeDescent // 1
         case 19: self = .modeSlalom // 2
         case 20: self = .modeTreeSlalom // 3
+        case 21: self = .modeFreestyle // 4
         default: return nil
         }
     }
@@ -41,6 +43,7 @@ enum InputAction: Hashable, Sendable, CaseIterable {
         case .modeFreeDescent: .freeDescent
         case .modeSlalom: .slalom
         case .modeTreeSlalom: .treeSlalom
+        case .modeFreestyle: .freestyle
         default: nil
         }
     }
@@ -148,7 +151,7 @@ struct SkierController: Sendable {
             direction = .down
         case .brake:
             direction = direction.braking()
-        case .jump, .turbo, .pause, .restart, .modeFreeDescent, .modeSlalom, .modeTreeSlalom:
+        case .jump, .turbo, .pause, .restart, .modeFreeDescent, .modeSlalom, .modeTreeSlalom, .modeFreestyle:
             break
         }
     }

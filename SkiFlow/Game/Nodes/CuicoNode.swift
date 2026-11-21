@@ -42,13 +42,15 @@ final class CuicoNode: SKNode {
         fatalError("init(coder:) no está soportado")
     }
 
-    /// Refleja el estado del Cuico: dirección, salto, caída y tambaleo.
-    func apply(_ state: SkierState) {
+    /// Refleja el estado del Cuico: dirección, salto, caída, tambaleo y trucos.
+    func apply(_ state: SkierState, trick: Trick? = nil, trickProgress: Double = 0) {
         let angle = CGFloat(state.direction.angle)
         let height = CGFloat(state.airHeight)
+        let scale = 1 + height / 160
 
         figure.position = CGPoint(x: 0, y: height)
-        figure.setScale(1 + height / 160)
+        figure.xScale = scale
+        figure.yScale = scale
         shadow.setScale(max(0.5, 1 - height / 120))
 
         if state.isFallen {
@@ -56,12 +58,48 @@ final class CuicoNode: SKNode {
             figure.zRotation = .pi / 2
             skis.zRotation = .pi / 3
             body.zRotation = 0
-        } else {
-            let wobble = state.stumbleTime > 0 ? sin(CGFloat(state.stumbleTime) * 40) * 0.35 : 0
-            figure.zRotation = wobble
-            skis.zRotation = angle
-            body.zRotation = angle * 0.25
+            return
         }
+
+        let wobble = state.stumbleTime > 0 ? sin(CGFloat(state.stumbleTime) * 40) * 0.35 : 0
+        figure.zRotation = wobble
+        skis.zRotation = angle
+        body.zRotation = angle * 0.25
+
+        let turn = CGFloat(trickProgress) * 2 * .pi
+        switch trick {
+        case .spinLeft:
+            figure.zRotation = turn
+        case .spinRight:
+            figure.zRotation = -turn
+        case .frontFlip:
+            // Vista desde arriba: el cuerpo "se da la vuelta" y vuelve.
+            figure.yScale = scale * cos(turn)
+        case .backFlip:
+            figure.yScale = scale * cos(turn)
+            figure.zRotation = sin(turn) * 0.3
+        case .selfie:
+            // Brazos arriba para la foto: los esquís se abren en V.
+            skis.zRotation = angle + sin(CGFloat(trickProgress) * .pi) * 0.5
+        case nil:
+            break
+        }
+    }
+
+    /// Efecto puntual al empezar un truco (el flash del selfie).
+    func startTrickEffect(_ trick: Trick) {
+        guard trick == .selfie else { return }
+        let phone = SKSpriteNode(color: SKColor(white: 0.1, alpha: 1), size: CGSize(width: 5, height: 8))
+        phone.position = CGPoint(x: 10, y: 30)
+        let flash = SKShapeNode(circleOfRadius: 14)
+        flash.fillColor = .white
+        flash.strokeColor = SKColor(red: 1, green: 0.95, blue: 0.6, alpha: 1)
+        flash.alpha = 0
+        flash.position = phone.position
+        figure.addChild(phone)
+        figure.addChild(flash)
+        flash.run(.sequence([.fadeAlpha(to: 0.9, duration: 0.05), .fadeOut(withDuration: 0.25), .removeFromParent()]))
+        phone.run(.sequence([.wait(forDuration: Trick.selfie.duration), .removeFromParent()]))
     }
 
     private func buildSkis() {

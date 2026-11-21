@@ -158,9 +158,10 @@ struct SlalomResult: Equatable, Sendable {
 
     /// `mm:ss.d`
     static func formatTime(_ seconds: Double) -> String {
-        let clamped = max(0, seconds)
-        let minutes = Int(clamped) / 60
-        let rest = clamped - Double(minutes * 60)
-        return String(format: "%02d:%04.1f", minutes, (rest * 10).rounded(.down) / 10)
+        // En décimas enteras para evitar errores de coma flotante (75,3 → 75,2999…).
+        let tenths = Int((max(0, seconds) * 10 + 1e-6).rounded(.down))
+        let minutes = tenths / 600
+        let rest = Double(tenths % 600) / 10
+        return String(format: "%02d:%04.1f", minutes, rest)
     }
 }

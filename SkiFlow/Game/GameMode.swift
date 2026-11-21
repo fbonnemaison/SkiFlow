@@ -1,6 +1,6 @@
 import Foundation
 
-/// Modos de juego. Freestyle llega en la Fase 6.
+/// Modos de juego.
 enum GameMode: String, CaseIterable, Sendable {
     /// Bajar lo más lejos posible hasta que te atrapa el Kunk (o el Chupacabras).
     case freeDescent
@@ -8,35 +8,48 @@ enum GameMode: String, CaseIterable, Sendable {
     case slalom
     /// Contrarreloj entre puertas en un bosque denso.
     case treeSlalom
+    /// Saltos y trucos para sumar puntos antes de la meta.
+    case freestyle
 
     var displayName: String {
         switch self {
         case .freeDescent: "Descenso libre"
         case .slalom: "Slalom"
         case .treeSlalom: "Slalom entre árboles"
+        case .freestyle: "Freestyle"
         }
     }
 
-    var isSlalom: Bool { self != .freeDescent }
+    var isSlalom: Bool { self == .slalom || self == .treeSlalom }
+
+    /// Modos con meta: R repite la misma montaña para mejorar la marca.
+    var hasFinish: Bool { self != .freeDescent }
+
+    /// Metros hasta la meta en los modos que no la marcan con puertas.
+    var finishMeters: Double? { self == .freestyle ? 1000 : nil }
+
+    /// Los saltos duran más en freestyle para que quepan los trucos.
+    var airTimeMultiplier: Double { self == .freestyle ? 1.5 : 1 }
 
     /// El Kunk y el Chupacabras solo aparecen en Descenso libre, para que las
     /// contrarrelojes sean justas.
     var hasCreatures: Bool { self == .freeDescent }
 
     /// La avalancha mete presión en los modos con meta.
-    var hasAvalanche: Bool { isSlalom }
+    var hasAvalanche: Bool { hasFinish }
 
     var generatorProfile: MountainGenerator.Profile {
         switch self {
         case .freeDescent: .freeDescent
         case .slalom: .slalom
         case .treeSlalom: .treeSlalom
+        case .freestyle: .freestyle
         }
     }
 
     var courseConfig: SlalomCourse.Config? {
         switch self {
-        case .freeDescent: nil
+        case .freeDescent, .freestyle: nil
         case .slalom: .slalom
         case .treeSlalom: .treeSlalom
         }

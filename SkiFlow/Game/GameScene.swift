@@ -22,7 +22,7 @@ final class GameScene: SKScene {
     private(set) var environment = Environment()
     private(set) var elapsed: Double = 0
     private(set) var isGamePaused = false
-    private let physics = SkierPhysics()
+    private var physics = SkierPhysics()
     private var controller = SkierController()
     private var timestep = FixedTimestep()
     private var lastUpdateTime: TimeInterval?
@@ -49,8 +49,14 @@ final class GameScene: SKScene {
     private(set) var slalom: SlalomProgress?
     private(set) var slalomResult: SlalomResult?
 
+    // MARK: Freestyle
+
+    private(set) var freestyle: FreestyleScore?
+    private(set) var freestyleResult: FreestyleResult?
+    private var finishNode: FinishLineNode?
+
     /// La bajada terminó (atrapado o en meta).
-    var isRunOver: Bool { gameOver != nil || slalomResult != nil }
+    var isRunOver: Bool { gameOver != nil || slalomResult != nil || freestyleResult != nil }
 
     // MARK: Mando
 
@@ -191,7 +197,7 @@ final class GameScene: SKScene {
         let subtitle = SKLabelNode(fontNamed: "Menlo")
         subtitle.text = "Esc o P para seguir"
         let hint = SKLabelNode(fontNamed: "Menlo")
-        hint.text = "R reiniciar · 1 Descenso libre · 2 Slalom · 3 Slalom entre árboles"
+        hint.text = "R reiniciar · 1 Descenso libre · 2 Slalom · 3 Entre árboles · 4 Freestyle"
         makeOverlay(pauseOverlay, title: title, subtitle: subtitle, hint: hint)
     }
 
@@ -217,6 +223,11 @@ final class GameScene: SKScene {
             setPaused(!isGamePaused)
         case _ where isGamePaused:
             break
+        case _ where freestyle != nil && skier.isAirborne && Trick(action: action) != nil:
+            // En el aire, en freestyle, las teclas de giro y salto hacen trucos.
+            if let trick = Trick(action: action), freestyle?.start(trick) == true {
+                cuico.startTrickEffect(trick)
+            }
         case .jump:
             physics.hop(&skier)
         case .turbo:
@@ -290,7 +301,7 @@ final class GameScene: SKScene {
         if let newMode {
             mode = newMode
             currentSeed = fixedSeed ?? UInt64.random(in: .min ... .max)
-        } else if !mode.isSlalom {
+        } else if !mode.hasFinish {
             currentSeed = fixedSeed ?? UInt64.random(in: .min ... .max)
         }
         startRun()
@@ -307,6 +318,12 @@ final class GameScene: SKScene {
         crashes = 0
         environment = Environment()
         trail.clear()
+        physics.airTimeMultiplier = mode.airTimeMultiplier
+        freestyle = mode == .freestyle ? FreestyleScore() : nil
+        freestyleResult = nil
+        finishNode?.removeFromParent()
+        finishNode = mode.finishMeters.map { FinishLineNode(y: -$0 * GameConfig.pointsPerMeter) }
+        if let finishNode { world.addChild(finishNode) }
 
         // Trazado de slalom y montaña con las puertas despejadas.
         let course = mode.courseConfig.map { SlalomCourse(seed: currentSeed, config: $0) }
@@ -404,13 +421,17 @@ final class GameScene: SKScene {
         }
 
         updateSlalom(from: previousPosition)
+        updateFreestyle(dt: dt)
         guard !isRunOver else { return }
         updateChasers(dt: dt)
     }
 
     private func simulateSkier(dt: Double) {
         skier.stumbleTime = max(0, skier.stumbleTime - dt)
-        if let target = input.aimDirection(skier: skier.position, camera: cameraCenter) {
+        wasAirborne = skier.isAirborne
+        if freestyle != nil, skier.isAirborne {
+            // En el aire, en freestyle, las teclas hacen trucos en vez de girar.
+        } else if let target = input.aimDirection(skier: skier.position, camera: cameraCenter) {
             controller.steer(toward: target, dt: dt, direction: &skier.direction)
         } else {
             controller.update(held: input.held, dt: dt, direction: &skier.direction)
@@ -431,6 +452,63 @@ final class GameScene: SKScene {
         if !skier.isAirborne {
             trail.record(position: skier.position, direction: skier.direction)
         }
+    }
+
+    private var wasAirborne = false
+
+    private func updateFreestyle(dt: Double) {
+        guard var score = freestyle else { return }
+        defer { freestyle = score }
+
+        if let done = score.update(dt: dt) {
+            showMessage("\(done.displayName)! · salto: \(score.pendingPoints) pts")
+        }
+
+        // Aterrizaje: el salto terminó en este paso.
+        if wasAirborne, !skier.isAirborne, !skier.isFallen {
+            wasAirborne = false
+            switch score.land(sideways: skier.direction.isSideways) {
+            case let .clean(points):
+                showMessage("¡Aterrizaje limpio! +\(points) pts · racha ×\(Self.format(score.chain))")
+            case let .forced(points):
+                skier.stumbleTime = 0.4
+                skier.speed *= 0.7
+                showMessage("Aterrizaje forzado +\(points) pts")
+            case let .crash(lost):
+                fallDown()
+                showMessage(lost > 0 ? "¡A mitad del truco! Pierdes \(lost) pts" : "¡A mitad del truco!")
+            case nil:
+                break
+            }
+        }
+
+        if let meters = mode.finishMeters, skier.distanceMeters >= meters {
+            finishFreestyle(score)
+        }
+    }
+
+    private static func format(_ multiplier: Double) -> String {
+        multiplier.rounded() == multiplier ? String(format: "%.0f", multiplier) : String(format: "%.1f", multiplier)
+    }
+
+    /// El Cuico se cae donde está (sin obstáculo).
+    private func fallDown() {
+        let here = CGRect(x: skier.position.x, y: skier.position.y + 14, width: 0, height: 0)
+        apply(.crash, obstacleHitbox: here)
+    }
+
+    private func finishFreestyle(_ score: FreestyleScore) {
+        avalanche.stop()
+        let result = FreestyleResult(
+            points: score.total,
+            bestJump: score.bestJump,
+            tricks: score.tricksLanded,
+            seconds: elapsed
+        )
+        freestyleResult = result
+        skier.speed = 0
+        input.releaseAll()
+        showResult(title: result.title, summary: result.summary, hint: "R repite esta montaña · 4 para una nueva")
     }
 
     private func updateSlalom(from previous: CGPoint) {
@@ -537,6 +615,13 @@ final class GameScene: SKScene {
     func apply(_ effect: CollisionEffect, obstacleHitbox: CGRect) {
         switch effect {
         case .crash:
+            if skier.isAirborne, var score = freestyle {
+                // Chocar en pleno salto cuesta los puntos del salto.
+                if case let .crash(lost) = score.crash(), lost > 0 {
+                    showMessage("¡Choque en el aire! Pierdes \(lost) pts")
+                }
+                freestyle = score
+            }
             crashes += 1
             skier.speed = 0
             skier.airTime = 0
@@ -565,11 +650,12 @@ final class GameScene: SKScene {
     private func render(frameDelta: Double = 0) {
         cuico.position = skier.position
         cuico.zPosition = Depth.object(atY: skier.position.y) + 0.0001
-        cuico.apply(skier)
+        cuico.apply(skier, trick: freestyle?.current, trickProgress: freestyle?.currentProgress ?? 0)
 
         cameraNode.position = cameraCenter
         speckles.wrap(around: cameraNode.position)
         mountain.render(time: elapsed)
+        finishNode?.position.x = cameraCenter.x
         renderChasers()
 
         // El viento blanco tapa la vista poco a poco.
@@ -627,7 +713,18 @@ final class GameScene: SKScene {
         alertLabel.position = CGPoint(x: topLeft.x + 16, y: topLeft.y - 40)
 
         let turbo = isTurboActive ? " · TURBO" : ""
-        if let slalom {
+        if let freestyle {
+            let meters = mode.finishMeters ?? 0
+            hudLabel.text = String(
+                format: "Freestyle · %d pts · racha ×%@ · %4.0f/%.0f m · %3.0f km/h%@",
+                freestyle.total,
+                Self.format(freestyle.chain),
+                min(skier.distanceMeters, meters),
+                meters,
+                skier.speedKmh,
+                turbo
+            )
+        } else if let slalom {
             let total = slalom.course.gates.count
             hudLabel.text = String(
                 format: "%@ · puerta %d/%d · %@ · falladas: %d · %3.0f km/h%@",

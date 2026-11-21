@@ -46,7 +46,7 @@ final class SlalomCourseNode: SKNode {
             }
             flags.append(pair)
         }
-        addFinishLine(at: course.finishY)
+        addChild(FinishLineNode(y: course.finishY))
     }
 
     @available(*, unavailable)
@@ -63,7 +63,13 @@ final class SlalomCourseNode: SKNode {
         }
     }
 
-    private func addFinishLine(at y: Double) {
+}
+
+/// Línea de meta a cuadros con el letrero «META».
+final class FinishLineNode: SKNode {
+    init(y: Double) {
+        super.init()
+        name = "finish"
         // Franja a cuadros a lo ancho de la pista.
         let squares = 40
         let side: CGFloat = 20
@@ -89,6 +95,11 @@ final class SlalomCourseNode: SKNode {
         label.position = CGPoint(x: 0, y: y + 14)
         label.zPosition = Depth.object(atY: CGFloat(y))
         addChild(label)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) no está soportado")
     }
 }
 

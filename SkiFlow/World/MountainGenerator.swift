@@ -52,6 +52,17 @@ struct MountainGenerator: Sendable {
             condorChance: 0.03,
             hasLift: false
         )
+
+        /// Freestyle: muchas rampas, algo de roca y bosque, y cóndores en el cielo.
+        static let freestyle = Profile(
+            densityMultiplier: 0.6,
+            weights: [
+                (.ramp, 4), (.rock, 1.5), (.smallRock, 1), (.apacheta, 0.5),
+                (.quenua, 1), (.deepSnowZone, 0.5), (.iceZone, 0.5),
+            ],
+            condorChance: 0.15,
+            hasLift: false
+        )
     }
 
     let seed: UInt64

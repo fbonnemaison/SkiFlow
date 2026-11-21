@@ -6,7 +6,11 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+### Corregido
+- El cronómetro mostraba una décima de menos en algunos tiempos (por ejemplo, 01:15.2 en vez de 01:15.3).
+
 ### Añadido
+- Modo Freestyle (Fase 6): montaña llena de rampas, trucos en el aire (giros, mortales y el selfie del Cuico), combos, racha, tipos de aterrizaje y meta a los 1.000 m con la avalancha detrás.
 - Modos Slalom y Slalom entre árboles (Fase 5): trazado de 20 puertas reproducible, penalización por puerta fallada, meta con cronómetro, avalancha que sepulta a quien va demasiado lento y teclas 1/2/3 para cambiar de modo.
 - Modo Descenso libre (Fase 4): el Kunk aparece a los 2.000 m y persigue al Cuico (se escapa con turbo); el Chupacabras aparece en el 8 % de las bajadas, avisa y embiste (se esquiva saltando); HUD con distancia, velocidad y tiempo, y pantalla de fin de partida.
 - Controles completos (Fase 3): ratón/trackpad para apuntar y clic para brincar, mando (GameController) con conexión en caliente, brinco, turbo y pausa (también automática al cambiar de app).

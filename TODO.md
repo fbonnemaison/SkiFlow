@@ -186,7 +186,7 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [x] Nuevos animales: **zorro culpeo** (frecuente, rápido) y **puma** (raro, lento y grande)
 - [x] Probar estas mejoras en la app (`1.0.0-rc.2`)
 
-## Fase 12 — CI y distribución
+## Fase 12 — CI y distribución ✅
 > **Decisión de publicación:** tras probar las versiones previas `1.0.0-rc.1` y `rc.2` en local, App-Zilla aprobó publicar directamente: repositorio **público** en GitHub y versión **`v1.0.0`** con su DMG en Releases. En un repo público el CI de GitHub Actions es gratis.
 
 - [x] Script local `scripts/build-dmg.sh`: compila en Release (universal), firma ad hoc, crea el DMG con «Léeme» y su SHA-256 en `dist/`
@@ -194,13 +194,13 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [x] Revisión de la licencia MIT: la licencia, los créditos y las licencias CC0 de terceros viajan dentro de la app y del DMG
 - [x] Versiones previas `1.0.0-rc.1` y `rc.2` probadas en local por App-Zilla
 - [x] Correcciones de la prueba (ver «Mejoras tras probar la `1.0.0-rc.1`»)
-- [ ] Crear el repositorio **público** en GitHub y subir el código
+- [x] Repositorio **público** en GitHub con la rama `main`
 - [x] Workflow **CI** (`.github/workflows/ci.yml`): tests en cada push/PR; no se ejecuta mientras el repo sea privado
 - [x] Workflow **Release** (`.github/workflows/release.yml`): con una etiqueta `v*` pasa los tests, crea el DMG y lo publica (las `-rc` como *pre-release*); no se ejecuta mientras el repo sea privado
 - [ ] Comprobar los workflows la primera vez que el repo sea público (versión de Xcode del runner)
 - [x] README final: capturas, descarga e instalación, controles, modos, criaturas, cómo abrir la app sin notarizar y cómo crear el DMG
-- [x] `CHANGELOG.md` con la sección `1.0.0-rc.1`
-- [ ] Publicación de `v1.0.0` en GitHub Releases
+- [x] `CHANGELOG.md` con las secciones `1.0.0-rc.1`, `rc.2` y `1.0.0`
+- [x] `v1.0.0` publicada en GitHub Releases con el DMG y su SHA-256 (comprobado tras descargarlo)
 
 ---
 

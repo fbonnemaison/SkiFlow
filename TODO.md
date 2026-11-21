@@ -46,22 +46,24 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [x] Física propia sencilla: aceleración en pendiente, rozamiento con velocidad terminal y frenada derrapando con los esquís atravesados (`SkierPhysics`)
 - [x] Cámara que sigue al Cuico, adelantada para ver más montaña por delante
 - [x] Controles por teclado (flechas/WASD, R para reiniciar) con giro repetido al mantener la tecla
-- [x] Sprites provisionales (formas de colores): el Cuico con parka fucsia y lentes de sol, huellas de esquí y motas de nieve
+- [x] Sprites provisionales (formas de colores): el Cuico con la estética del icono (parka roja, casco y braga negros, antiparras espejadas, esquís negros con cantos verde lima), huellas de esquí y motas de nieve
 - [x] Indicador de depuración de velocidad (km/h) y distancia (m)
 - [x] Tests: direcciones, física, paso fijo, control de giro, teclas y escena
 
-## Fase 2 — Mundo procedural y obstáculos
-- [ ] Generador por **trozos** (chunks) con RNG con semilla (determinista y testeable); el RNG `SeededRandom` ya existe
-- [ ] Obstáculos estáticos andinos: queñuas, araucarias, rocas, cactus de altura, apachetas (montículos de piedras), penitentes de hielo, refugios de montaña
-- [ ] Obstáculos móviles: llamas, guanacos y vicuñas, perros de refugio, otros esquiadores y telesilla
-- [ ] Cóndores en vuelo como elemento decorativo (sombra en la nieve) u obstáculo en los saltos
-- [ ] Rampas (saltos) y zonas de hielo, nieve profunda y *viento blanco*
-- [ ] Bandas de altitud: más vegetación en la parte baja y más hielo y roca en la alta
-- [ ] Colisiones con hitboxes ajustadas (solo la base de los objetos altos)
-- [ ] Caída del Cuico: animación, tiempo de recuperación, pérdida de velocidad
-- [ ] Reciclado de nodos / descarga de trozos fuera de pantalla (rendimiento)
-- [ ] Ajuste de densidad y dificultad según la distancia recorrida
-- [ ] Tests: misma semilla = mismo mundo; distribución de obstáculos; colisiones
+## Fase 2 — Mundo procedural y obstáculos ✅
+- [x] Generador por **trozos** (chunks) de 768 pt con RNG con semilla (`MountainGenerator`, determinista y testeable); salida despejada
+- [x] Obstáculos estáticos andinos: queñuas, araucarias, rocas, piedras, cactus de altura, apachetas, penitentes de hielo, refugios de montaña
+- [x] Obstáculos móviles: llamas, guanacos y vicuñas que pastan de lado a lado, perros de refugio, otros esquiadores bajando en eses
+- [x] Telesilla: columna de torres a lo largo de la montaña, cable y sillas en movimiento
+- [x] Cóndores en vuelo con su sombra en la nieve; solo se chocan en pleno salto
+- [x] Rampas (saltos más largos cuanto más rápido), zonas de hielo (cuesta frenar), nieve profunda (frena) y *viento blanco* (empuja de lado y tapa la vista)
+- [x] Bandas de altitud: alta montaña (roca, hielo, penitentes, vicuñas) → puna (cactus, llamas, guanacos) → bosque andino (araucarias, queñuas)
+- [x] Colisiones con cajas ajustadas a la base de los objetos; en el aire solo chocan los objetos altos (`CollisionResolver`)
+- [x] Caída del Cuico (1,2 s en el suelo, velocidad a cero, se levanta atravesado con unos instantes de inmunidad) y tropiezo con piedras pequeñas (pierde velocidad sin caer)
+- [x] Carga y descarga de trozos alrededor de la cámara (`MountainNode`) y texturas cacheadas
+- [x] Más objetos por trozo según la distancia recorrida (de ~8 a ~22)
+- [x] Sprites pixel art provisionales generados por código (`PixelArt`, `ObstacleArt`)
+- [x] Tests: misma semilla = mismo mundo; salida despejada; separación y densidad; bandas; movimientos; reglas de choque; superficies, viento y saltos
 
 ## Fase 3 — Controles completos
 - [ ] Ratón/trackpad: el esquiador apunta hacia el cursor; clic para saltar
@@ -122,12 +124,13 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [ ] Elegir y documentar los packs CC0 (fuente, autor y licencia en `CREDITS.md`)
 - [ ] Definir la escala base (por ejemplo, sprites de 16×16/32×32) con filtrado `nearest`
 - [ ] Paleta andina: nieve y hielo de altura, roca volcánica, verdes de queñua y araucaria, cielo de alta montaña
-- [ ] Diseño del Cuico: equipo de marca reluciente, lentes de sol y pose de foto; animaciones propias (posar, *selfie* al detenerse, caída indignada)
+- [ ] Diseño del Cuico basado en el icono (parka roja, casco negro, antiparras espejadas con marco rojo, esquís negros con cantos verde lima), con equipo de marca reluciente y pose de foto; animaciones propias (posar, *selfie* al detenerse, caída indignada)
 - [ ] Atlas de texturas (`.spriteatlas`) para el Cuico, los obstáculos andinos, el Kunk, el Chupacabras, las banderas y la avalancha
 - [ ] Adaptar o dibujar los sprites que no existan en packs CC0 (Kunk, Chupacabras, llamas, cóndores, apachetas, penitentes)
 - [ ] Animaciones: 9 posiciones, caída, salto, trucos, Kunk, Chupacabras y avalancha
 - [ ] Partículas de nieve (estela de esquís, choques, avalancha, viento blanco)
-- [ ] Icono de la app (`AppIcon`) y fuente pixel con licencia libre
+- [x] Icono de la app (`AppIcon`): esquiador pixel art con antiparras frente a los Andes (original en `Design/AppIcon-source.png`)
+- [ ] Fuente pixel con licencia libre
 
 ## Fase 9 — Audio
 - [ ] Efectos: deslizar, girar, choque, salto, aterrizaje, puerta, quejas del Cuico al caer, rugido del Kunk, chillido del Chupacabras, viento y avalancha

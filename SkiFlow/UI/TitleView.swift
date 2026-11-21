@@ -62,7 +62,7 @@ struct TitleView: View {
                 .frame(width: 96, height: 96)
             VStack(alignment: .leading, spacing: 4) {
                 Text("SkiFlow")
-                    .font(.system(size: 56, weight: .heavy, design: .rounded))
+                    .font(.pixel(48))
                     .foregroundStyle(.white)
                     .shadow(color: .black.opacity(0.3), radius: 4, y: 2)
                 Text("El Cuico baja los Andes. El Kunk lo espera.")

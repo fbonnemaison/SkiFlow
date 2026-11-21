@@ -36,13 +36,13 @@ enum AltitudeBand: CaseIterable, Sendable {
                 (.rock, 2), (.smallRock, 2), (.apacheta, 1.5), (.cactus, 2),
                 (.guanaco, 1), (.llama, 1), (.quenua, 1.5), (.deepSnowZone, 1),
                 (.iceZone, 0.5), (.windZone, 0.4), (.ramp, 1), (.refugio, 0.4),
-                (.skier, 1), (.dog, 0.4),
+                (.skier, 1), (.dog, 0.4), (.snowman, 0.4),
             ]
         case .low:
             [
                 (.araucaria, 3), (.quenua, 2.5), (.rock, 1), (.smallRock, 1.5),
                 (.llama, 1.5), (.dog, 1), (.skier, 1.5), (.deepSnowZone, 1),
-                (.ramp, 1.2), (.refugio, 0.5), (.cactus, 0.5),
+                (.ramp, 1.2), (.refugio, 0.5), (.cactus, 0.5), (.snowman, 0.6),
             ]
         }
     }

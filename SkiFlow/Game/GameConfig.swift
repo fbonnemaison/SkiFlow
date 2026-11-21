@@ -6,6 +6,10 @@ enum GameConfig {
     /// Tamaño lógico de la escena (en puntos). La vista lo escala para llenar la ventana.
     static let sceneSize = CGSize(width: 1024, height: 768)
 
+    /// Puntos de escena por píxel de sprite (todos los sprites usan la misma
+    /// escala para que el pixel art sea coherente; los árboles grandes usan 4).
+    static let pixelScale: CGFloat = 3
+
     /// Escala del mundo: puntos de escena por metro.
     static let pointsPerMeter: Double = 16
 

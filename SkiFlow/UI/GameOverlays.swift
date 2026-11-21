@@ -8,22 +8,22 @@ struct HUDView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 18) {
                 Text(hud.mode.displayName)
-                    .font(.system(.headline, design: .rounded))
+                    .font(.pixel(16))
                     .foregroundStyle(Theme.jacketRed)
                 ForEach(hud.items) { item in
                     VStack(alignment: .leading, spacing: 0) {
                         Text(item.label.uppercased())
-                            .font(.system(size: 10, weight: .semibold, design: .rounded))
+                            .font(.pixel(8))
                             .foregroundStyle(Theme.ink.opacity(0.6))
                         Text(item.value)
-                            .font(.system(.title3, design: .monospaced).bold())
+                            .font(.pixel(16))
                             .foregroundStyle(Theme.ink)
                     }
                     .accessibilityElement(children: .combine)
                 }
                 if hud.isTurbo {
                     Text("TURBO")
-                        .font(.system(.caption, design: .rounded).bold())
+                        .font(.pixel(8))
                         .padding(.horizontal, 8)
                         .padding(.vertical, 3)
                         .background(Theme.lime, in: Capsule())
@@ -36,7 +36,7 @@ struct HUDView: View {
 
             if let alert = hud.alert {
                 Label(alert, systemImage: "exclamationmark.triangle.fill")
-                    .font(.system(.headline, design: .rounded))
+                    .font(.pixel(16))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
@@ -58,7 +58,7 @@ struct PauseView: View {
     var body: some View {
         OverlayCard {
             Text("Pausa")
-                .font(.system(size: 40, weight: .heavy, design: .rounded))
+                .font(.pixel(32))
             Text("Semilla de esta montaña: \(String(model.currentSeed))")
                 .font(.caption.monospacedDigit())
                 .foregroundStyle(.secondary)
@@ -86,7 +86,7 @@ struct ResultView: View {
     var body: some View {
         OverlayCard {
             Text(outcome.title)
-                .font(.system(size: 36, weight: .heavy, design: .rounded))
+                .font(.pixel(24))
                 .multilineTextAlignment(.center)
             Text(outcome.summary)
                 .font(.system(.title3, design: .rounded))

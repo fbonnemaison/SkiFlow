@@ -7,6 +7,7 @@ struct SkiFlowApp: App {
     @State private var model: GameModel
 
     init() {
+        PixelFont.register()
         let settings = SettingsStore()
         _settings = State(initialValue: settings)
         _model = State(initialValue: GameModel(settings: settings))

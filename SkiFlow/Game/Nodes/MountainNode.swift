@@ -144,7 +144,8 @@ final class MountainNode: SKNode {
         case .condor:
             return makeCondorNode()
         default:
-            let sprite = SpriteFactory.shared.sprite(for: obstacle.kind)
+            let variant = Int(obstacle.origin.x.rounded()) &+ Int(obstacle.origin.y.rounded())
+            let sprite = SpriteFactory.shared.sprite(for: obstacle.kind, variant: variant)
             sprite.position = obstacle.origin
             sprite.zPosition = Depth.object(atY: obstacle.origin.y)
             return sprite
@@ -237,8 +238,8 @@ final class MountainNode: SKNode {
 
         chunk.liftRange = (bottom + cableTop)...(top + cableTop)
         for i in 0..<4 {
-            let chair = SpriteFactory.shared.sprite(named: "chair", art: ObstacleArt.chair)
-            chair.anchorPoint = CGPoint(x: 0.5, y: 1)
+            let chair = SpriteFactory.shared.sprite(.liftChair)
+            chair.anchorPoint = CGPoint(x: 0.5, y: 0.85)
             chair.position = CGPoint(x: x, y: bottom)
             chair.zPosition = Depth.overhead
             chunk.node.addChild(chair)

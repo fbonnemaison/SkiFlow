@@ -13,6 +13,13 @@ enum Theme {
     static let sky = LinearGradient(colors: [skyTop, skyBottom], startPoint: .top, endPoint: .bottom)
 }
 
+extension Font {
+    /// Fuente pixel Public Pixel (CC0). Se ve nítida en múltiplos de 8 puntos.
+    static func pixel(_ size: CGFloat) -> Font {
+        .custom(PixelFont.name, fixedSize: size)
+    }
+}
+
 /// Tarjeta oscura semitransparente para pausa y resultados.
 struct OverlayCard<Content: View>: View {
     @ViewBuilder var content: Content
@@ -35,7 +42,7 @@ struct MenuButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(.headline, design: .rounded))
+            .font(.pixel(16))
             .frame(maxWidth: .infinity)
             .padding(.vertical, 10)
             .background(

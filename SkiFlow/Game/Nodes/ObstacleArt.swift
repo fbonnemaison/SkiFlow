@@ -5,7 +5,6 @@ enum ObstacleArt {
         switch kind {
         case .araucaria: araucaria
         case .quenua: quenua
-        case .rock: rock
         case .smallRock: smallRock
         case .cactus: cactus
         case .apacheta: apacheta
@@ -17,9 +16,9 @@ enum ObstacleArt {
         case .guanaco: PixelArt(rows: llama.rows, overrides: ["T": 0xC68B59, "t": 0xF2EBDD])
         case .vicuna: PixelArt(rows: llama.rows, scale: 2.5, overrides: ["T": 0xE0B07A, "t": 0xFFFFFF])
         case .dog: dog
-        case .skier: skier
         case .condor: condor
-        case .iceZone, .deepSnowZone, .windZone: PixelArt(rows: [])
+        // Estos usan tiles de Kenney (ver `SpriteFactory.sprite(for:variant:)`).
+        case .rock, .skier, .snowman, .iceZone, .deepSnowZone, .windZone: PixelArt(rows: [])
         }
     }
 
@@ -57,14 +56,6 @@ enum ObstacleArt {
         "....DD..DD....",
     ], scale: 4)
 
-    static let rock = PixelArt(rows: [
-        "....rrrr....",
-        "..rrrWrrRR..",
-        ".rrWrrrrRRR.",
-        "rrrrrrrRRRRR",
-        "RrrrrRRRRRRR",
-        ".RRRRRRRRRR.",
-    ])
 
     static let smallRock = PixelArt(rows: [
         "..rrR...",
@@ -180,15 +171,6 @@ enum ObstacleArt {
         ".D.D..D.D..",
     ])
 
-    static let skier = PixelArt(rows: [
-        "...KK...",
-        "..NNNN..",
-        "..NWNN..",
-        "..NNNN..",
-        "...KK...",
-        "..Y..Y..",
-        "..Y..Y..",
-    ])
 
     static let condor = PixelArt(rows: [
         "KK..................KK",
@@ -200,10 +182,4 @@ enum ObstacleArt {
         "..........KK..........",
     ])
 
-    static let chair = PixelArt(rows: [
-        "..K..",
-        "..K..",
-        "EEEEE",
-        "E...E",
-    ])
 }

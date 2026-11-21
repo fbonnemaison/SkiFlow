@@ -4,42 +4,25 @@ import SpriteKit
 final class SlalomCourseNode: SKNode {
     private var flags: [[SKSpriteNode]] = []
 
-    static let redFlag = PixelArt(rows: [
-        "KEEEE",
-        "KEEEEE",
-        "KEEEE",
-        "K",
-        "K",
-        "K",
-        "K",
-        "K",
-    ], scale: 3)
-
-    static let blueFlag = PixelArt(rows: [
-        "KNNNN",
-        "KNNNNN",
-        "KNNNN",
-        "K",
-        "K",
-        "K",
-        "K",
-        "K",
-    ], scale: 3)
+    /// En el tile rojo de Kenney la tela queda a la izquierda del mástil; en el
+    /// azul, a la derecha. Posición del mástil dentro del tile (0…1).
+    private static let redPole: CGFloat = 13.5 / 16
+    private static let bluePole: CGFloat = 2.5 / 16
 
     init(course: SlalomCourse) {
         super.init()
         name = "slalom"
         let factory = SpriteFactory.shared
         for gate in course.gates {
-            let art = gate.isRed ? Self.redFlag : Self.blueFlag
-            let texture = factory.texture(named: gate.isRed ? "flag-red" : "flag-blue", art: art)
+            let tile: KenneySprite = gate.isRed ? .flagRed : .flagBlue
+            let clothOnLeft = gate.isRed
             var pair: [SKSpriteNode] = []
-            for (x, mirrored) in [(gate.leftX, true), (gate.rightX, false)] {
-                let flag = SKSpriteNode(texture: texture, size: art.size)
-                flag.anchorPoint = CGPoint(x: 0.1, y: 0)
+            // La tela de cada bandera apunta hacia fuera de la puerta.
+            for (x, wantsClothLeft) in [(gate.leftX, true), (gate.rightX, false)] {
+                let flag = factory.sprite(tile)
+                flag.anchorPoint = CGPoint(x: gate.isRed ? Self.redPole : Self.bluePole, y: 0)
                 flag.position = CGPoint(x: x, y: gate.y)
-                // La tela apunta hacia fuera de la puerta.
-                flag.xScale = mirrored ? -1 : 1
+                flag.xScale = wantsClothLeft == clothOnLeft ? 1 : -1
                 flag.zPosition = Depth.object(atY: gate.y)
                 addChild(flag)
                 pair.append(flag)
@@ -132,6 +115,10 @@ final class AvalancheNode: SKNode {
             puffs.append(puff)
         }
         zPosition = Depth.overhead - 5
+
+        let dust = SnowEffects.avalancheDust(width: width)
+        dust.position = CGPoint(x: 0, y: 4)
+        addChild(dust)
     }
 
     @available(*, unavailable)

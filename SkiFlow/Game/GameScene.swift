@@ -101,7 +101,9 @@ final class GameScene: SKScene {
     private var avalancheNode: AvalancheNode?
     private let cameraNode = SKCameraNode()
     private let whiteout = SKSpriteNode(color: .white, size: .zero)
-    private let messageLabel = SKLabelNode(fontNamed: "Menlo-Bold")
+    private let messageLabel: SKLabelNode
+    private let spray = SnowEffects.spray()
+    private var blizzard: SKEmitterNode?
 
     var seed: UInt64 { currentSeed }
     var heldActions: Set<InputAction> { input.held }
@@ -122,6 +124,8 @@ final class GameScene: SKScene {
         self.avalancheConfig = avalancheConfig
         currentSeed = seed ?? UInt64.random(in: .min ... .max)
         speckles = SnowSpeckleNode(area: CGSize(width: size.width * 1.2, height: size.height * 1.2))
+        PixelFont.register()
+        messageLabel = SKLabelNode(fontNamed: PixelFont.name)
         mountain = MountainNode(seed: currentSeed)
         kunk = KunkChaser(config: kunkConfig, side: 1)
         chupacabras = ChupacabrasChaser(config: chupacabrasConfig, seed: currentSeed)
@@ -160,7 +164,18 @@ final class GameScene: SKScene {
         whiteout.zPosition = Depth.overhead + 10
         cameraNode.addChild(whiteout)
 
-        messageLabel.fontSize = 18
+        // Nieve que levantan los esquís (las partículas se quedan en el mundo).
+        spray.position = CGPoint(x: 0, y: -8)
+        spray.zPosition = -0.5
+        spray.targetNode = world
+        cuico.addChild(spray)
+
+        let blizzard = SnowEffects.blizzard(size: size)
+        blizzard.zPosition = Depth.overhead + 11
+        cameraNode.addChild(blizzard)
+        self.blizzard = blizzard
+
+        messageLabel.fontSize = 16
         messageLabel.fontColor = SKColor(red: 0.15, green: 0.25, blue: 0.45, alpha: 1)
         messageLabel.position = CGPoint(x: 0, y: -size.height * 0.35)
         messageLabel.zPosition = Depth.overhead + 20
@@ -421,7 +436,19 @@ final class GameScene: SKScene {
 
         if !skier.isAirborne {
             trail.record(position: skier.position, direction: skier.direction)
+            if wasAirborne, !skier.isFallen {
+                snowBurst(count: 18)
+            }
         }
+    }
+
+    /// Estallido de nieve a los pies del Cuico.
+    private func snowBurst(count: Int) {
+        let burst = SnowEffects.burst(count: count)
+        burst.position = skier.position
+        burst.zPosition = Depth.object(atY: skier.position.y) + 0.001
+        burst.targetNode = world
+        world.addChild(burst)
     }
 
     private var wasAirborne = false
@@ -590,6 +617,7 @@ final class GameScene: SKScene {
                 freestyle = score
             }
             crashes += 1
+            snowBurst(count: 36)
             skier.speed = 0
             skier.airTime = 0
             skier.stumbleTime = 0
@@ -625,9 +653,21 @@ final class GameScene: SKScene {
         finishNode?.position.x = cameraCenter.x
         renderChasers()
 
-        // El viento blanco tapa la vista poco a poco.
+        // El viento blanco tapa la vista poco a poco y trae ventisca.
         let targetAlpha: CGFloat = environment.isWhiteout ? 0.55 : 0
         whiteout.alpha += (targetAlpha - whiteout.alpha) * min(1, CGFloat(frameDelta) * 3)
+        if let blizzard {
+            blizzard.particleBirthRate = whiteout.alpha * 400
+            // Los copos cruzan en el sentido del viento.
+            let towardsRight = environment.wind > 0
+            blizzard.emissionAngle = towardsRight ? 0 : .pi
+            blizzard.position.x = (towardsRight ? -1 : 1) * size.width * 0.6
+        }
+
+        // Derrape: más nieve cuanto más fuerte se frena o se gira.
+        let skidding = !skier.isAirborne && !skier.isFallen && skier.speed > 80
+        let hardEdge = skier.direction.isSideways || abs(skier.direction.rawValue) >= 3
+        spray.particleBirthRate = skidding && hardEdge ? CGFloat(min(skier.speed, 500) / 3) : 0
 
         renderHUD()
     }

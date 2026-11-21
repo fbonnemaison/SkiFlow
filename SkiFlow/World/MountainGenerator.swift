@@ -58,7 +58,7 @@ struct MountainGenerator: Sendable {
             densityMultiplier: 0.6,
             weights: [
                 (.ramp, 4), (.rock, 1.5), (.smallRock, 1), (.apacheta, 0.5),
-                (.quenua, 1), (.deepSnowZone, 0.5), (.iceZone, 0.5),
+                (.quenua, 1), (.deepSnowZone, 0.5), (.iceZone, 0.5), (.snowman, 0.3),
             ],
             condorChance: 0.15,
             hasLift: false

@@ -130,17 +130,18 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [ ] Revisar a mano la ventana de Ajustes y el campo de semilla (no se pueden dibujar fuera de pantalla en los tests)
 - [ ] Navegar los menús con el mando (se puede jugar con mando, pero los menús aún piden ratón o teclado)
 
-## Fase 8 — Arte pixel art (packs CC0)
-- [ ] Elegir y documentar los packs CC0 (fuente, autor y licencia en `CREDITS.md`)
-- [ ] Definir la escala base (por ejemplo, sprites de 16×16/32×32) con filtrado `nearest`
-- [ ] Paleta andina: nieve y hielo de altura, roca volcánica, verdes de queñua y araucaria, cielo de alta montaña
-- [ ] Diseño del Cuico basado en el icono (parka roja, casco negro, antiparras espejadas con marco rojo, esquís negros con cantos verde lima), con equipo de marca reluciente y pose de foto; animaciones propias (posar, *selfie* al detenerse, caída indignada)
-- [ ] Atlas de texturas (`.spriteatlas`) para el Cuico, los obstáculos andinos, el Kunk, el Chupacabras, las banderas y la avalancha
-- [ ] Adaptar o dibujar los sprites que no existan en packs CC0 (Kunk, Chupacabras, llamas, cóndores, apachetas, penitentes)
-- [ ] Animaciones: 9 posiciones, caída, salto, trucos, Kunk, Chupacabras y avalancha
-- [ ] Partículas de nieve (estela de esquís, choques, avalancha, viento blanco)
+## Fase 8 — Arte pixel art (packs CC0) ✅
+- [x] Packs CC0 elegidos y documentados en `CREDITS.md` (licencias originales en `Licenses/`): **Tiny Ski** de Kenney y la fuente **Public Pixel** de GGBotNet
+- [x] Escala base común: 1 píxel de sprite = 3 pt (`GameConfig.pixelScale`), tiles de 16 × 16 y filtrado `nearest`
+- [x] Atlas `Kenney.spriteatlas`: banderas de slalom, cuatro esquiadores, mono de nieve (nuevo obstáculo), roca y silla del telesilla. Los tiles del yeti del pack se descartan a propósito
+- [x] Sprites propios con contorno automático del mismo color que Kenney para que todo combine (`PixelArt.outlined`)
+- [x] El Cuico en pixel art a partir del icono (casco, antiparras espejadas, parka roja con cremallera, esquís con cantos lima)
+- [x] Partículas de nieve: derrape al frenar o girar fuerte, estallido al caer y al aterrizar, polvo en el frente de la avalancha y ventisca con el viento blanco
+- [x] Fuente pixel en el título, el HUD, los botones, los avisos y los títulos de pausa y resultados
 - [x] Icono de la app (`AppIcon`): esquiador pixel art con antiparras frente a los Andes (original en `Design/AppIcon-source.png`)
-- [ ] Fuente pixel con licencia libre
+- [ ] Animaciones por fotogramas del Cuico (de momento: esquís que giran, figura que se tumba, giros y mortales por transformación)
+- [ ] Redibujar araucarias y queñuas a escala 3 (hoy usan escala 4 para que se vean grandes)
+- [ ] Revisar las partículas en la app (no se ven al dibujar fuera de pantalla en los tests)
 
 ## Fase 9 — Audio
 - [ ] Efectos: deslizar, girar, choque, salto, aterrizaje, puerta, quejas del Cuico al caer, rugido del Kunk, chillido del Chupacabras, viento y avalancha

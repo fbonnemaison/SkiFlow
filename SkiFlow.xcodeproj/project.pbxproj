@@ -24,16 +24,19 @@
 		4F7BE281E208BBD315909704 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C62024030451463C3C66F594 /* SettingsView.swift */; };
 		50C2637190E19B7A1F428BD4 /* SkiDirectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1751E53FB1B3C35876D3CCE3 /* SkiDirectionTests.swift */; };
 		58206CD300683F78803F2E80 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9AA6446C4A325D4D2DFF5D9 /* ContentView.swift */; };
+		5C7B6DD179D4FBB9D8B8D95D /* Effects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C387CA53CEF9379CB8C7F26 /* Effects.swift */; };
 		5CB8D4FADEE5935BDCA11424 /* GameMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4AFBBC0E1B90128786B850E /* GameMode.swift */; };
 		5D6186C216680E1A86E694D1 /* Chasers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17FE744F703B08CD94BC94D6 /* Chasers.swift */; };
 		5DD1BF380D970846D43237D7 /* MountainNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F55E05C2A0E3F64142254B25 /* MountainNode.swift */; };
 		636A925C7F33592936F4240C /* ChaserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07DA868DDA829955856BEA3E /* ChaserTests.swift */; };
 		640333A4E36C4A40F6487FBC /* InputTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7150921054719B5882D5CA4 /* InputTests.swift */; };
+		670A38B557E75D96C9567DDE /* PublicPixel.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FF8224A9DC45EDC55047BFD0 /* PublicPixel.ttf */; };
 		679DF8377614007992A33F06 /* CuicoNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640477D12402077114F1187E /* CuicoNode.swift */; };
 		6F5F2CBEDC52AF33750C95D3 /* Gamepad.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB2E02D0E9903957DC39BA16 /* Gamepad.swift */; };
 		70F64672982CD6DE60D642D8 /* CollisionResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27AA709C68CDB229D92148B2 /* CollisionResolver.swift */; };
 		78F701621AF9F906F8F9FF7A /* MountainGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308B69D76D7580D18BE560F1 /* MountainGenerator.swift */; };
 		79D73789F9F58409229988A5 /* SnowSpeckleNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4077FFD265F52BA89DEE66B /* SnowSpeckleNode.swift */; };
+		8852FB719ECA7FA3439FEF19 /* ArtTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1680AB237B4DAD7D414A61 /* ArtTests.swift */; };
 		8B60CAE15454BCC028AA994A /* SkiDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F08738D69D0C687D488D5E1B /* SkiDirection.swift */; };
 		8E252825EFB2CA46E28FB01F /* AltitudeBand.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80535A69B738192016F116CB /* AltitudeBand.swift */; };
 		919360328A5942BEF30EFA16 /* ChaserNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E3046B12A05566F8F085D0C /* ChaserNode.swift */; };
@@ -78,6 +81,7 @@
 		06D034C8FB439A8E6BEC6FA8 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
 		072C546BA0E1DE89F4479932 /* Freestyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Freestyle.swift; sourceTree = "<group>"; };
 		07DA868DDA829955856BEA3E /* ChaserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaserTests.swift; sourceTree = "<group>"; };
+		0A1680AB237B4DAD7D414A61 /* ArtTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtTests.swift; sourceTree = "<group>"; };
 		0E64D1BB015CE0529D0F8F6A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0ECBD856A59911C29A2C4B0D /* CollisionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionTests.swift; sourceTree = "<group>"; };
 		1751E53FB1B3C35876D3CCE3 /* SkiDirectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkiDirectionTests.swift; sourceTree = "<group>"; };
@@ -88,6 +92,7 @@
 		22E9E8091145ACEC336A1EFF /* TitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleView.swift; sourceTree = "<group>"; };
 		27AA709C68CDB229D92148B2 /* CollisionResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionResolver.swift; sourceTree = "<group>"; };
 		2C379C9AE6B962E5C0EE4B5D /* InputMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputMonitor.swift; sourceTree = "<group>"; };
+		2C387CA53CEF9379CB8C7F26 /* Effects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Effects.swift; sourceTree = "<group>"; };
 		3052EAA18CBA5D85339EEBB0 /* SystemsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemsTests.swift; sourceTree = "<group>"; };
 		308B69D76D7580D18BE560F1 /* MountainGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MountainGenerator.swift; sourceTree = "<group>"; };
 		314F841A50CB888F0FA3ADCC /* SkierPhysicsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkierPhysicsTests.swift; sourceTree = "<group>"; };
@@ -125,6 +130,7 @@
 		F55E05C2A0E3F64142254B25 /* MountainNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MountainNode.swift; sourceTree = "<group>"; };
 		F5A52D27B9B17995553FF065 /* SlalomNodes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlalomNodes.swift; sourceTree = "<group>"; };
 		F7F57335C647239F73D64EA4 /* GameOverlays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverlays.swift; sourceTree = "<group>"; };
+		FF8224A9DC45EDC55047BFD0 /* PublicPixel.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = PublicPixel.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -190,6 +196,7 @@
 				6E3046B12A05566F8F085D0C /* ChaserNode.swift */,
 				8AB43C8F5325304DC8A9DAD0 /* CreatureArt.swift */,
 				640477D12402077114F1187E /* CuicoNode.swift */,
+				2C387CA53CEF9379CB8C7F26 /* Effects.swift */,
 				F55E05C2A0E3F64142254B25 /* MountainNode.swift */,
 				1E3892CA6B98A10957606494 /* ObstacleArt.swift */,
 				01B8A22F73BBBB788044D156 /* PixelArt.swift */,
@@ -198,6 +205,14 @@
 				C4077FFD265F52BA89DEE66B /* SnowSpeckleNode.swift */,
 			);
 			path = Nodes;
+			sourceTree = "<group>";
+		};
+		6D9CD1293E57641F83381C97 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				FF8224A9DC45EDC55047BFD0 /* PublicPixel.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		6F30ADD1105380959D336997 /* UI */ = {
@@ -233,6 +248,7 @@
 		9A1FE93F46ED1BF73E95EB55 /* SkiFlowTests */ = {
 			isa = PBXGroup;
 			children = (
+				0A1680AB237B4DAD7D414A61 /* ArtTests.swift */,
 				07DA868DDA829955856BEA3E /* ChaserTests.swift */,
 				0ECBD856A59911C29A2C4B0D /* CollisionTests.swift */,
 				31CB04E5E61EA8641BD7F67D /* FreestyleTests.swift */,
@@ -265,6 +281,7 @@
 			children = (
 				0E64D1BB015CE0529D0F8F6A /* Assets.xcassets */,
 				D8939C0AA09FFF9EE529E33E /* Localizable.xcstrings */,
+				6D9CD1293E57641F83381C97 /* Fonts */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -377,6 +394,7 @@
 			files = (
 				308FE9F16569F5DA9FAF414E /* Assets.xcassets in Resources */,
 				04D14BEA0D8A3CB74D3ABD97 /* Localizable.xcstrings in Resources */,
+				670A38B557E75D96C9567DDE /* PublicPixel.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,6 +412,7 @@
 				58206CD300683F78803F2E80 /* ContentView.swift in Sources */,
 				49EAD0AF00F96378A630BFE9 /* CreatureArt.swift in Sources */,
 				679DF8377614007992A33F06 /* CuicoNode.swift in Sources */,
+				5C7B6DD179D4FBB9D8B8D95D /* Effects.swift in Sources */,
 				06FCC5495AA68AE28A1C5103 /* FixedTimestep.swift in Sources */,
 				DE6DD7F1C923967F9BE578BD /* Freestyle.swift in Sources */,
 				BEEEA3E89DF5A635FA9ADAC2 /* GameConfig.swift in Sources */,
@@ -432,6 +451,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8852FB719ECA7FA3439FEF19 /* ArtTests.swift in Sources */,
 				636A925C7F33592936F4240C /* ChaserTests.swift in Sources */,
 				EBAA5A0D2203862640207CC0 /* CollisionTests.swift in Sources */,
 				B871F84972742F6FAA52F5AD /* FreestyleTests.swift in Sources */,

@@ -1,21 +1,45 @@
 import SpriteKit
 
-/// Representación provisional del Cuico hecha con formas de colores, con la
-/// estética del icono de la app: parka roja, casco y braga negros, antiparras
-/// espejadas y esquís negros con cantos verde lima.
-/// Se sustituirá por sprites pixel art en la Fase 8.
+/// El Cuico en pixel art, con la estética del icono de la app: casco y braga
+/// negros, antiparras espejadas con marco rojo, parka roja con cremallera blanca
+/// y esquís con cantos verde lima. Los esquís giran según la dirección.
 final class CuicoNode: SKNode {
-    private enum Palette {
-        static let jacketRed = SKColor(red: 0.89, green: 0.12, blue: 0.13, alpha: 1)
-        static let jacketShadow = SKColor(red: 0.55, green: 0.05, blue: 0.07, alpha: 1)
-        static let zipper = SKColor(white: 0.95, alpha: 1)
-        static let black = SKColor(red: 0.10, green: 0.11, blue: 0.13, alpha: 1)
-        static let helmetShine = SKColor(red: 0.35, green: 0.37, blue: 0.42, alpha: 1)
-        static let goggleLens = SKColor(red: 0.20, green: 0.55, blue: 0.95, alpha: 1)
-        static let goggleFrame = SKColor(red: 0.90, green: 0.15, blue: 0.15, alpha: 1)
-        static let skiBase = SKColor(red: 0.12, green: 0.12, blue: 0.14, alpha: 1)
-        static let skiEdge = SKColor(red: 0.72, green: 0.95, blue: 0.10, alpha: 1)
-    }
+    /// Cuerpo visto de frente (10 × 15 píxeles más el contorno).
+    static let bodyArt = PixelArt(
+        rows: [
+            "...KKKK...",
+            "..KKKKKK..",
+            "..FIIIiF..",
+            "..FIIIIF..",
+            "..KKKKKK..",
+            "...KKKK...",
+            "..EEWWEE..",
+            ".EEEWWEEE.",
+            "EEEEWWEEEE",
+            "E.EEWWEE.E",
+            "K.EEWWEE.K",
+            "..EEEEEE..",
+            "..PPPPPP..",
+            "..PP..PP..",
+            "..PP..PP..",
+        ],
+        overrides: [
+            "K": 0x1A1B20, // casco, braga y guantes
+            "F": 0xE52626, // marco de las antiparras
+            "I": 0x3A8CF2, // lente espejada
+            "i": 0xBFE6FF, // reflejo
+            "E": 0xE31E21, // parka
+            "W": 0xF5F5F5, // cremallera
+            "P": 0x2A2C35, // pantalón
+        ]
+    )
+
+    /// Un esquí: canto lima y suela negra, sin contorno para que quede fino.
+    static let skiArt = PixelArt(
+        rows: Array(repeating: "LK", count: 12),
+        overrides: ["L": 0xB8F21A, "K": 0x16171C],
+        outlined: false
+    )
 
     private let shadow = SKShapeNode(ellipseOf: CGSize(width: 22, height: 8))
     /// Contenedor de esquís y cuerpo; se eleva en los saltos y se tumba al caer.
@@ -64,7 +88,7 @@ final class CuicoNode: SKNode {
         let wobble = state.stumbleTime > 0 ? sin(CGFloat(state.stumbleTime) * 40) * 0.35 : 0
         figure.zRotation = wobble
         skis.zRotation = angle
-        body.zRotation = angle * 0.25
+        body.zRotation = 0
 
         let turn = CGFloat(trickProgress) * 2 * .pi
         switch trick {
@@ -90,7 +114,7 @@ final class CuicoNode: SKNode {
     func startTrickEffect(_ trick: Trick) {
         guard trick == .selfie else { return }
         let phone = SKSpriteNode(color: SKColor(white: 0.1, alpha: 1), size: CGSize(width: 5, height: 8))
-        phone.position = CGPoint(x: 10, y: 30)
+        phone.position = CGPoint(x: 14, y: 40)
         let flash = SKShapeNode(circleOfRadius: 14)
         flash.fillColor = .white
         flash.strokeColor = SKColor(red: 1, green: 0.95, blue: 0.6, alpha: 1)
@@ -103,50 +127,23 @@ final class CuicoNode: SKNode {
     }
 
     private func buildSkis() {
-        for offset in [-5.0, 5.0] {
-            // Canto verde lima que asoma por los lados del esquí negro.
-            let edge = SKSpriteNode(color: Palette.skiEdge, size: CGSize(width: 4, height: 34))
-            edge.position = CGPoint(x: offset, y: -4)
-            let base = SKSpriteNode(color: Palette.skiBase, size: CGSize(width: 2, height: 32))
-            edge.addChild(base)
-            skis.addChild(edge)
+        let texture = SpriteFactory.shared.texture(named: "cuico-ski", art: Self.skiArt)
+        for offset in [-4.5, 4.5] {
+            let ski = SKSpriteNode(texture: texture, size: Self.skiArt.size)
+            ski.position = CGPoint(x: offset, y: -4)
+            ski.xScale = offset < 0 ? 1 : -1 // cantos lima hacia fuera
+            skis.addChild(ski)
         }
         skis.zPosition = 0
         figure.addChild(skis)
     }
 
     private func buildBody() {
-        // Pantalones negros.
-        let legs = SKSpriteNode(color: Palette.black, size: CGSize(width: 12, height: 10))
-        legs.position = CGPoint(x: 0, y: 2)
-
-        // Parka roja con cremallera blanca.
-        let jacket = SKShapeNode(rectOf: CGSize(width: 16, height: 14), cornerRadius: 4)
-        jacket.fillColor = Palette.jacketRed
-        jacket.strokeColor = Palette.jacketShadow
-        jacket.position = CGPoint(x: 0, y: 13)
-        let zipper = SKSpriteNode(color: Palette.zipper, size: CGSize(width: 1.5, height: 11))
-        jacket.addChild(zipper)
-
-        // Cabeza: braga negra y casco negro con un brillo.
-        let head = SKShapeNode(circleOfRadius: 5.5)
-        head.fillColor = Palette.black
-        head.strokeColor = Palette.black
-        head.position = CGPoint(x: 0, y: 24)
-        let shine = SKSpriteNode(color: Palette.helmetShine, size: CGSize(width: 3, height: 1.5))
-        shine.position = CGPoint(x: -1.5, y: 4)
-        head.addChild(shine)
-
-        // Antiparras espejadas con marco rojo.
-        let goggles = SKSpriteNode(color: Palette.goggleFrame, size: CGSize(width: 11, height: 4.5))
-        goggles.position = CGPoint(x: 0, y: 0.5)
-        let lens = SKSpriteNode(color: Palette.goggleLens, size: CGSize(width: 9, height: 2.5))
-        goggles.addChild(lens)
-        head.addChild(goggles)
-
-        body.addChild(legs)
-        body.addChild(jacket)
-        body.addChild(head)
+        let texture = SpriteFactory.shared.texture(named: "cuico-body", art: Self.bodyArt)
+        let sprite = SKSpriteNode(texture: texture, size: Self.bodyArt.size)
+        sprite.anchorPoint = CGPoint(x: 0.5, y: 0)
+        sprite.position = CGPoint(x: 0, y: -3)
+        body.addChild(sprite)
         body.zPosition = 1
         figure.addChild(body)
     }

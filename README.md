@@ -2,7 +2,7 @@
 
 Juego de esquí 2D para macOS inspirado en el clásico *SkiFree* (1991), ambientado en la **cordillera de los Andes**. Eres **el Cuico**, un típico chileno que sube a la nieve más a posar que a esquiar. Baja la montaña esquivando queñuas, rocas, llamas y otros esquiadores, compite contra el reloj en slalom, haz acrobacias en freestyle… y huye del **Kunk**. Y si tienes muy mala suerte, también del **Chupacabras**.
 
-> Estado: en desarrollo (los cuatro modos con menús y ajustes, Fase 7). Consulta el plan en [TODO.md](TODO.md).
+> Estado: en desarrollo (arte pixel art, Fase 8). Consulta el plan en [TODO.md](TODO.md).
 
 ## Controles
 
@@ -108,6 +108,10 @@ SkiFlow/
 └── Resources/    Assets, atlas de sprites y sonidos
 SkiFlowTests/     Tests con Swift Testing
 ```
+
+## Créditos
+
+Arte CC0 de [Kenney](https://www.kenney.nl) («Tiny Ski») y fuente «Public Pixel» de GGBotNet (CC0). El resto del arte es propio. Detalles en [CREDITS.md](CREDITS.md).
 
 ## Licencia
 

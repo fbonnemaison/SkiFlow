@@ -23,6 +23,13 @@ final class GameModel {
     private(set) var sessionBests: [GameMode: Double] = [:]
     /// Se muestra la pantalla de récords.
     var isShowingRecords = false
+    /// Easter egg: escribir CUICO en el menú viste al Cuico de oro.
+    private(set) var isGoldenCuico = false
+    @ObservationIgnored private var secretCode = SecretCode.cuico
+    @ObservationIgnored private let menuGamepadReader = GamepadReader()
+    @ObservationIgnored private var menuGamepad = GamepadState()
+    @ObservationIgnored private var menuStickLatched = false
+    @ObservationIgnored private var menuTimer: Timer?
     /// Cambia cada vez que se guardan o borran récords, para refrescar las vistas.
     private(set) var recordsVersion = 0
 
@@ -43,6 +50,7 @@ final class GameModel {
         self.scene = scene
         selectedMode = scene.mode
         scene.pixelZoom = CGFloat(settings.pixelZoom)
+        scene.reduceMotion = settings.reduceMotion
 
         scene.onHUDChange = { [weak self] hud in self?.hud = hud }
         scene.onPauseChange = { [weak self] paused in
@@ -51,9 +59,57 @@ final class GameModel {
         }
         scene.onRunEnded = { [weak self] outcome in self?.runEnded(outcome) }
         scene.onRunStarted = { [weak self] mode in self?.runStarted(mode) }
+        scene.onMenuRequested = { [weak self] in self?.backToMenu() }
         hud = scene.makeHUD()
         audio?.setVolumes(music: settings.musicVolume, effects: settings.effectsVolume)
         audio?.playMusic(.menu)
+    }
+
+    /// Empieza a leer el mando en el menú principal (la escena lo lee al jugar).
+    func startMenuGamepadPolling() {
+        guard menuTimer == nil else { return }
+        menuTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated {
+                guard let self else { return }
+                self.handleMenuGamepad(self.menuGamepadReader.read())
+            }
+        }
+    }
+
+    /// Mando en el menú principal: cruceta o stick eligen el modo; A o Menú empiezan.
+    func handleMenuGamepad(_ state: GamepadState?) {
+        let new = state ?? GamepadState()
+        defer { menuGamepad = new }
+        guard screen == .title, !isShowingRecords else { return }
+
+        let modes = GameMode.allCases
+        let index = modes.firstIndex(of: selectedMode) ?? 0
+        for transition in GamepadState.transitions(from: menuGamepad, to: new) where transition.pressed {
+            switch transition.action {
+            case .left: selectedMode = modes[(index + modes.count - 1) % modes.count]
+            case .right: selectedMode = modes[(index + 1) % modes.count]
+            case .jump, .pause:
+                start(selectedMode)
+                return
+            default: break
+            }
+        }
+
+        // Stick: un paso por cada inclinación.
+        if abs(new.stick.dx) > 0.6 {
+            if !menuStickLatched {
+                menuStickLatched = true
+                let step = new.stick.dx > 0 ? 1 : modes.count - 1
+                selectedMode = modes[(modes.firstIndex(of: selectedMode)! + step) % modes.count]
+            }
+        } else if abs(new.stick.dx) < 0.3 {
+            menuStickLatched = false
+        }
+    }
+
+    /// Aplica los ajustes de accesibilidad a la escena.
+    func applyAccessibility() {
+        scene.reduceMotion = settings.reduceMotion
     }
 
     /// Aplica los volúmenes de los Ajustes.
@@ -168,6 +224,11 @@ final class GameModel {
 
         switch screen {
         case .title:
+            if pressed, !isRepeat, secretCode.register(keyCode) {
+                isGoldenCuico.toggle()
+                scene.isCuicoGolden = isGoldenCuico
+                audio?.play(.finish)
+            }
             // ↩︎ empieza el modo elegido.
             guard keyCode == 36, pressed, !isRepeat, window?.isKeyWindow ?? true else { return false }
             start(selectedMode)

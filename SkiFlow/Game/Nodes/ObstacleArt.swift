@@ -22,39 +22,46 @@ enum ObstacleArt {
         }
     }
 
+    /// Araucaria: tronco recto y ramas en pisos con la copa en forma de paraguas.
     static let araucaria = PixelArt(rows: [
-        "......GGGG......",
-        "....GGGGGGGG....",
-        "..GGGgGGGGgGGG..",
-        ".GGgGGGGGGGGgGG.",
-        "GGGGGGGBBGGGGGGG",
-        ".....GGBBGG.....",
-        "...GGGGBBGGGG...",
-        "..GGgGGBBGGgGG..",
-        ".......BB.......",
-        ".......BB.......",
-        "....GGGBBGGG....",
-        "...GGgGBBGgGG...",
-        ".......BB.......",
-        ".......BB.......",
-        ".......BB.......",
-        ".......BB.......",
-        "......DBBD......",
-    ], scale: 4)
+        ".......GGGGGGG.......",
+        ".....GGgGGGGGgGG.....",
+        "...GGGGGGGgGGGGGGG...",
+        ".GGgGGGGGGGGGGGGGgGG.",
+        "GGGGGGGGGBBBGGGGGGGGG",
+        "..GGGg...BBB...gGGG..",
+        ".........BBB.........",
+        "...GGGGGGBBBGGGGGG...",
+        "..GGgGGGGBBBGGGGgGG..",
+        ".........BBB.........",
+        ".........BBB.........",
+        "....GGGGGBBBGGGGG....",
+        "...GGgGGGBBBGGGgGG...",
+        ".........BBB.........",
+        ".........BBB.........",
+        ".........BBB.........",
+        ".........BBB.........",
+        ".........BBB.........",
+        ".........BBB.........",
+        "........DBBBD........",
+    ])
 
+    /// Queñua: copa densa y tronco retorcido de corteza rojiza.
     static let quenua = PixelArt(rows: [
-        "....gggGG.....",
-        "..gGGgggGGg...",
-        ".gGGGgGGGgGG..",
-        "gGGgGGGgGGGGg.",
-        ".GGGgDGGgGGg..",
-        "..gG.DD.GDg...",
-        ".....DDODD....",
-        "......DDO.....",
-        "......ODD.....",
-        ".....DDOD.....",
-        "....DD..DD....",
-    ], scale: 4)
+        ".....gggGGGg......",
+        "...gGGGgggGGGg....",
+        "..gGGgGGGGgGGGGg..",
+        ".gGGGGgGGGGGgGGGg.",
+        "gGGgGGGGgGGGGGgGGg",
+        ".GGGGgDGGgGGOGGGg.",
+        "..gGG.DD.GGOO.Gg..",
+        "......DDO.OD......",
+        ".......DOOD.......",
+        "........DOD.......",
+        ".......ODDO.......",
+        "......DDOOD.......",
+        ".....DD...DD......",
+    ])
 
 
     static let smallRock = PixelArt(rows: [

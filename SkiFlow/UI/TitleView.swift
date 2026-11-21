@@ -51,6 +51,15 @@ struct TitleView: View {
                 }
                 .controlSize(.large)
 
+                if model.isGoldenCuico {
+                    Label("¡Cuico dorado activado!", systemImage: "sparkles")
+                        .font(.pixel(16))
+                        .foregroundStyle(Theme.ink)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Color(red: 0.95, green: 0.76, blue: 0.19), in: Capsule())
+                }
+
                 Text("Haz clic en un modo o pulsa ↩︎ · ⌘1–⌘4 desde el menú Juego")
                     .font(.callout)
                     .foregroundStyle(Theme.ink.opacity(0.7))

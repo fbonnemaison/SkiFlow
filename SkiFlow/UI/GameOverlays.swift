@@ -3,21 +3,27 @@ import SwiftUI
 /// HUD encima de la partida: datos del modo, avisos y turbo.
 struct HUDView: View {
     let hud: HUDSnapshot
+    /// Fondo oscuro sólido y texto blanco (Ajustes › Accesibilidad).
+    var highContrast = false
+
+    private var labelColor: Color { highContrast ? .white.opacity(0.85) : Theme.ink.opacity(0.6) }
+    private var valueColor: Color { highContrast ? .white : Theme.ink }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 18) {
                 Text(hud.mode.displayName)
                     .font(.pixel(16))
-                    .foregroundStyle(Theme.jacketRed)
+                    .foregroundStyle(highContrast ? Theme.lime : Theme.jacketRed)
                 ForEach(hud.items) { item in
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text(item.label.uppercased())
+                    VStack(alignment: .leading, spacing: 2) {
+                        // Sin mayúsculas: la fuente pixel no tiene vocales acentuadas mayúsculas.
+                        Text(item.label)
                             .font(.pixel(8))
-                            .foregroundStyle(Theme.ink.opacity(0.6))
+                            .foregroundStyle(labelColor)
                         Text(item.value)
                             .font(.pixel(16))
-                            .foregroundStyle(Theme.ink)
+                            .foregroundStyle(valueColor)
                     }
                     .accessibilityElement(children: .combine)
                 }
@@ -32,7 +38,13 @@ struct HUDView: View {
             }
             .padding(.horizontal, 14)
             .padding(.vertical, 8)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .background {
+                if highContrast {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Color.black.opacity(0.88))
+                } else {
+                    RoundedRectangle(cornerRadius: 12, style: .continuous).fill(.ultraThinMaterial)
+                }
+            }
 
             if let alert = hud.alert {
                 Label(alert, systemImage: "exclamationmark.triangle.fill")
@@ -40,7 +52,10 @@ struct HUDView: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
-                    .background(Theme.alert, in: Capsule())
+                    .background(highContrast ? Color.black : Theme.alert, in: Capsule())
+                    .overlay {
+                        if highContrast { Capsule().strokeBorder(Theme.alert, lineWidth: 3) }
+                    }
                     .transition(.opacity)
             }
         }

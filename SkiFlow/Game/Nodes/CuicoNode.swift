@@ -46,6 +46,11 @@ final class CuicoNode: SKNode {
     private let figure = SKNode()
     private let skis = SKNode()
     private let body = SKNode()
+    private var bodySprite: SKSpriteNode?
+    private let bubble = SKNode()
+    private(set) var isGolden = false
+    /// Última frase dicha (para los tests).
+    private(set) var lastLine: String?
 
     override init() {
         super.init()
@@ -141,10 +146,67 @@ final class CuicoNode: SKNode {
     private func buildBody() {
         let texture = SpriteFactory.shared.texture(named: "cuico-body", art: Self.bodyArt)
         let sprite = SKSpriteNode(texture: texture, size: Self.bodyArt.size)
+        bodySprite = sprite
         sprite.anchorPoint = CGPoint(x: 0.5, y: 0)
         sprite.position = CGPoint(x: 0, y: -3)
         body.addChild(sprite)
         body.zPosition = 1
         figure.addChild(body)
+    }
+
+    // MARK: Personalidad
+
+    /// Parka dorada (easter egg del código CUICO).
+    static let goldenBodyArt = PixelArt(
+        rows: bodyArt.rows,
+        overrides: bodyArt.overrides.merging(["E": 0xF2C230, "W": 0xFFF6D5, "F": 0xB8860B]) { $1 }
+    )
+
+    func setGolden(_ golden: Bool) {
+        guard golden != isGolden else { return }
+        isGolden = golden
+        let art = golden ? Self.goldenBodyArt : Self.bodyArt
+        bodySprite?.texture = SpriteFactory.shared.texture(named: golden ? "cuico-body-gold" : "cuico-body", art: art)
+    }
+
+    /// Muestra una frase en un bocadillo sobre la cabeza durante unos segundos.
+    func say(_ text: String) {
+        lastLine = text
+        bubble.removeAllActions()
+        bubble.removeAllChildren()
+        if bubble.parent == nil {
+            bubble.zPosition = 50
+            addChild(bubble)
+        }
+
+        let label = SKLabelNode(fontNamed: PixelFont.name)
+        label.text = text
+        label.fontSize = 16
+        label.fontColor = SKColor(red: 0.1, green: 0.12, blue: 0.2, alpha: 1)
+        label.verticalAlignmentMode = .center
+        label.horizontalAlignmentMode = .center
+
+        let width = label.frame.width + 20
+        let box = SKShapeNode(rectOf: CGSize(width: width, height: 30), cornerRadius: 6)
+        box.fillColor = .white
+        box.strokeColor = SKColor(
+            red: CGFloat((PixelArt.outlineColor >> 16) & 0xFF) / 255,
+            green: CGFloat((PixelArt.outlineColor >> 8) & 0xFF) / 255,
+            blue: CGFloat(PixelArt.outlineColor & 0xFF) / 255,
+            alpha: 1
+        )
+        box.lineWidth = 3
+        let tail = SKShapeNode(rectOf: CGSize(width: 8, height: 8))
+        tail.fillColor = .white
+        tail.strokeColor = .clear
+        tail.position = CGPoint(x: -width / 2 + 18, y: -16)
+        tail.zRotation = .pi / 4
+
+        bubble.addChild(tail)
+        bubble.addChild(box)
+        bubble.addChild(label)
+        bubble.position = CGPoint(x: width / 2 - 14, y: 78)
+        bubble.alpha = 1
+        bubble.run(.sequence([.wait(forDuration: 2.2), .fadeOut(withDuration: 0.3), .removeFromParent()]))
     }
 }

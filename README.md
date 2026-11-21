@@ -2,7 +2,21 @@
 
 Juego de esquí 2D para macOS inspirado en el clásico *SkiFree* (1991), ambientado en la **cordillera de los Andes**. Eres **el Cuico**, un típico chileno que sube a la nieve más a posar que a esquiar. Baja la montaña esquivando queñuas, rocas, llamas y otros esquiadores, compite contra el reloj en slalom, haz acrobacias en freestyle… y huye del **Kunk**. Y si tienes muy mala suerte, también del **Chupacabras**.
 
-> Estado: en desarrollo (con récords y estadísticas, Fase 10). Consulta el plan en [TODO.md](TODO.md).
+<p align="center">
+  <img src="Design/Screenshots/screenshot-descenso.png" width="32%" alt="Descenso libre: el Kunk persigue al Cuico">
+  <img src="Design/Screenshots/screenshot-slalom.png" width="32%" alt="Slalom entre araucarias y queñuas">
+  <img src="Design/Screenshots/screenshot-freestyle.png" width="32%" alt="Freestyle: rampas y trucos">
+</p>
+
+> Versión **1.0.0-rc.1** (versión previa para probar). Historial en [CHANGELOG.md](CHANGELOG.md) y plan de desarrollo en [TODO.md](TODO.md).
+
+## Descargar e instalar
+
+1. Descarga el último `SkiFlow-<versión>.dmg` de la página **Releases** del repositorio.
+2. Ábrelo y arrastra **SkiFlow** a la carpeta **Aplicaciones**.
+3. La primera vez, macOS no te dejará abrirlo porque no está notarizado: sigue los pasos de [Abrir la app por primera vez](#abrir-la-app-por-primera-vez).
+
+Requiere **macOS 26 o superior**. Es gratis y no necesita cuenta.
 
 ## Controles
 
@@ -19,7 +33,7 @@ Juego de esquí 2D para macOS inspirado en el clásico *SkiFree* (1991), ambient
 
 Al tocar las teclas de giro se desactiva el apuntado con ratón; vuelve a activarse en cuanto mueves el ratón. La partida se pausa sola si cambias de app.
 
-Las teclas se pueden reasignar en **Ajustes › Controles** (⌘,). Atajos del menú **Juego**: ⌘N nueva bajada, ⌘P pausa, ⌘R reiniciar, ⌘1–⌘4 elegir modo, ⇧⌘M menú principal y ⌘F pantalla completa.
+Las teclas se pueden reasignar en **Ajustes › Controles** (⌘,). En **Ajustes › General** hay opciones de accesibilidad: reducir movimiento y HUD de alto contraste. Con mando también se manejan los menús (cruceta para elegir, A para empezar, B para volver). Atajos del menú **Juego**: ⌘N nueva bajada, ⌘P pausa, ⌘R reiniciar, ⌘1–⌘4 elegir modo, ⇧⌘M menú principal y ⌘F pantalla completa.
 
 En **Récords** (menú principal) ves tu top 10 de cada modo y tus estadísticas; el botón **Repetir** vuelve a bajar la misma montaña de una marca. Los récords se guardan en el Mac con SwiftData.
 
@@ -51,17 +65,20 @@ En el menú principal puedes escribir una **semilla** (un número) para repetir 
 
 Varios trucos en el mismo salto multiplican los puntos, y cada aterrizaje limpio sube la racha (hasta ×4). Si terminas el truco justo al tocar el suelo o aterrizas atravesado, solo te llevas la mitad y se corta la racha. Si tocas el suelo a mitad de un truco, te caes y pierdes los puntos del salto.
 
+## El Cuico
+
+Un típico chileno que sube a la nieve más a posar que a esquiar: casco negro, antiparras espejadas, parka roja de marca y esquís con cantos verde lima. Comenta lo que le pasa («¡Pucha, mi parka nueva!») y, si se queda quieto, saca el teléfono para una foto con la cordillera.
+
+> Descripción y frases provisionales: la personalidad definitiva la afina App-Zilla.
+
 ## Las criaturas
 
-- **El Kunk**: a partir de los 2.000 m sale a por ti y no para. Corre más que tú… salvo que mantengas el **turbo** (F). Si te caes, te alcanza.
+- **El Kunk**: a partir de los 2.000 m sale a por ti. Corre más que tú… salvo que mantengas el **turbo** (F). Si te caes, te alcanza; si le sacas unos 100 m durante unos segundos, se cansa y vuelve más abajo.
 - **El Chupacabras**: casi nunca aparece (más o menos en una de cada doce bajadas largas). Cuando acecha verás un aviso: tienes poco más de un segundo antes de que embista. **Salta** (Espacio) para esquivarlo.
 
-## Requisitos
-
-- macOS 26 o superior
-- Para compilar: Xcode 27 y [XcodeGen](https://github.com/yonaskolb/XcodeGen) (solo si cambias `project.yml`)
-
 ## Compilar desde el código
+
+Necesitas Xcode 27 (y [XcodeGen](https://github.com/yonaskolb/XcodeGen) solo si cambias `project.yml`).
 
 ```bash
 git clone <url-del-repositorio> SkiFlow
@@ -88,6 +105,14 @@ Ejecutar los tests desde la terminal:
 xcodebuild test -project SkiFlow.xcodeproj -scheme SkiFlow -destination 'platform=macOS'
 ```
 
+Crear el DMG de una versión (compila en Release, firma ad hoc y deja el DMG y su SHA-256 en `dist/`):
+
+```bash
+scripts/build-dmg.sh 1.0.0-rc.1
+```
+
+En GitHub, al subir una etiqueta `vX.Y.Z` el workflow **Release** hace lo mismo y publica el DMG (las `-rc.N` como *pre-release*). El workflow **CI** pasa los tests en cada push y PR. Ambos están desactivados mientras el repositorio sea privado.
+
 ## Abrir la app por primera vez
 
 SkiFlow se distribuye con **firma ad hoc** y **sin notarizar** (no se usa una cuenta de desarrollador de Apple de pago), así que macOS la bloqueará la primera vez:
@@ -105,10 +130,13 @@ SkiFlow/
 ├── Game/         Escena de SpriteKit, entidades y sistemas
 ├── World/        Generación procedural de la montaña
 ├── UI/           Menús, HUD y ajustes (SwiftUI)
-├── Audio/        Efectos y música
-├── Persistence/  Récords y ajustes
-└── Resources/    Assets, atlas de sprites y sonidos
+├── Audio/        Sintetizador, efectos y música
+├── Persistence/  Récords (SwiftData) y ajustes
+└── Resources/    Assets, atlas de Kenney y fuente pixel
 SkiFlowTests/     Tests con Swift Testing
+scripts/          DMG y notas de versión
+Design/           Icono original y capturas
+Licenses/         Licencias de los recursos CC0
 ```
 
 ## Créditos

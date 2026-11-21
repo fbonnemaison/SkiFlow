@@ -79,9 +79,66 @@ final class GameScene: SKScene {
         didSet { audio?.playMusic(musicForState) }
     }
 
+    /// Se llama cuando el mando pide volver al menú (B en pausa o en resultados).
+    var onMenuRequested: (() -> Void)?
+
     /// Se llama al empezar una bajada (también al reiniciar o cambiar de modo).
     var onRunStarted: ((GameMode) -> Void)?
     private(set) var hud = HUDSnapshot()
+
+    // MARK: Personalidad del Cuico
+
+    /// Metros del easter egg: la altura del Aconcagua.
+    static let aconcaguaMeters: Double = 6961
+    /// Segundos parado antes de sacar el teléfono para la foto.
+    static let idlePoseDelay: Double = 1.5
+
+    private var voice = CuicoVoice(seed: 0)
+    private var stillTime = 0.0
+    private var posedThisStop = false
+    private(set) var reachedAconcagua = false
+
+    /// Última frase del Cuico (para los tests).
+    var lastCuicoLine: String? { cuico.lastLine }
+
+    /// Parka dorada (easter egg).
+    var isCuicoGolden: Bool {
+        get { cuico.isGolden }
+        set { cuico.setGolden(newValue) }
+    }
+
+    private func say(_ moment: CuicoMoment) {
+        if let line = voice.line(for: moment, at: elapsed) {
+            cuico.say(line)
+        }
+    }
+
+    // MARK: Respuesta al jugador
+
+    /// Accesibilidad: sin temblores ni hit-stop y con menos partículas.
+    var reduceMotion = false
+    private var shakeTime = 0.0
+    private var shakeDuration = 0.0
+    private var shakeStrength: CGFloat = 0
+    private var shakeClock = 0.0
+    /// Congelación breve al chocar para que el golpe "pese".
+    private(set) var hitStop = 0.0
+
+    /// Hace temblar la cámara. Si ya está temblando más fuerte, no hace nada.
+    func shake(_ strength: CGFloat, duration: Double) {
+        guard !reduceMotion else { return }
+        let remaining = shakeDuration > 0 ? shakeStrength * CGFloat(shakeTime / shakeDuration) : 0
+        guard strength >= remaining else { return }
+        shakeStrength = strength
+        shakeDuration = duration
+        shakeTime = duration
+    }
+
+    private var shakeOffset: CGPoint {
+        guard shakeTime > 0, shakeDuration > 0 else { return .zero }
+        let amplitude = shakeStrength * CGFloat(shakeTime / shakeDuration)
+        return CGPoint(x: sin(shakeClock * 73) * amplitude, y: cos(shakeClock * 91) * amplitude)
+    }
 
     /// Zoom de la cámara (escala de píxel de los Ajustes).
     var pixelZoom: CGFloat = 1 {
@@ -203,17 +260,24 @@ final class GameScene: SKScene {
         switch action {
         case .restart:
             restart()
-        case _ where caughtBy != nil || isRunOver:
-            // Bajada terminada: solo se puede volver a empezar.
+        case _ where isRunOver:
+            // Bajada terminada: con el mando, A repite y B vuelve al menú.
+            if source == .gamepad {
+                if action == .jump { restart() }
+                if action == .brake { onMenuRequested?() }
+            }
+        case _ where caughtBy != nil:
+            // Animación de captura: no se puede hacer nada.
             break
         case .pause:
             setPaused(!isGamePaused)
         case _ where isGamePaused:
-            break
+            if action == .brake, source == .gamepad { onMenuRequested?() }
         case _ where freestyle != nil && skier.isAirborne && Trick(action: action) != nil:
             // En el aire, en freestyle, las teclas de giro y salto hacen trucos.
             if let trick = Trick(action: action), freestyle?.start(trick) == true {
                 cuico.startTrickEffect(trick)
+                if trick == .selfie { say(.selfie) }
                 audio?.play(trick == .selfie ? .selfie : .swish)
             }
         case .jump:
@@ -349,6 +413,11 @@ final class GameScene: SKScene {
 
         if isGamePaused { setPaused(false) }
         render()
+        voice = CuicoVoice(seed: currentSeed)
+        stillTime = 0
+        posedThisStop = false
+        reachedAconcagua = false
+        say(.runStart)
         audio?.playMusic(.run)
         onRunStarted?(mode)
     }
@@ -364,6 +433,12 @@ final class GameScene: SKScene {
 
         let frameDelta = lastUpdateTime.map { currentTime - $0 } ?? 0
         lastUpdateTime = currentTime
+
+        if hitStop > 0 {
+            hitStop = max(0, hitStop - frameDelta)
+            render(frameDelta: min(frameDelta, 0.1))
+            return
+        }
 
         if !isGamePaused {
             let steps = timestep.advance(by: frameDelta)
@@ -416,6 +491,7 @@ final class GameScene: SKScene {
 
         updateSlalom(from: previousPosition)
         updateFreestyle(dt: dt)
+        checkAconcagua()
         guard !isRunOver else { return }
         updateChasers(dt: dt)
     }
@@ -443,18 +519,46 @@ final class GameScene: SKScene {
             apply(hit.effect, obstacleHitbox: hit.snapshot.hitbox)
         }
 
+        updateIdlePose(dt: dt)
+
         if !skier.isAirborne {
             trail.record(position: skier.position, direction: skier.direction)
             if wasAirborne, !skier.isFallen {
+                shake(skier.airDuration > 0.8 ? 4 : 2, duration: 0.15)
                 snowBurst(count: 18)
                 audio?.play(.land)
             }
         }
     }
 
+    /// Parado un rato (y sin peligro cerca), el Cuico se saca una foto.
+    private func updateIdlePose(dt: Double) {
+        let still = skier.speed < 5 && !skier.isAirborne && !skier.isFallen
+        guard still else {
+            stillTime = 0
+            posedThisStop = false
+            return
+        }
+        stillTime += dt
+        guard stillTime >= Self.idlePoseDelay, !posedThisStop else { return }
+        posedThisStop = true
+        cuico.startTrickEffect(.selfie)
+        audio?.play(.selfie)
+        say(.idle)
+    }
+
+    /// Easter egg: bajar la altura del Aconcagua en Descenso libre.
+    private func checkAconcagua() {
+        guard mode == .freeDescent, !reachedAconcagua, skier.distanceMeters >= Self.aconcaguaMeters else { return }
+        reachedAconcagua = true
+        say(.aconcagua)
+        audio?.play(.finish)
+        showMessage("¡6.961 m: la altura del Aconcagua!")
+    }
+
     /// Estallido de nieve a los pies del Cuico.
     private func snowBurst(count: Int) {
-        let burst = SnowEffects.burst(count: count)
+        let burst = SnowEffects.burst(count: reduceMotion ? max(4, count / 4) : count)
         burst.position = skier.position
         burst.zPosition = Depth.object(atY: skier.position.y) + 0.001
         burst.targetNode = world
@@ -478,6 +582,7 @@ final class GameScene: SKScene {
             switch score.land(sideways: skier.direction.isSideways) {
             case let .clean(points):
                 audio?.play(.cleanLanding)
+                say(.cleanLanding)
                 showMessage("¡Aterrizaje limpio! +\(points) pts · racha ×\(Self.format(score.chain))")
             case let .forced(points):
                 audio?.play(.bump)
@@ -535,6 +640,7 @@ final class GameScene: SKScene {
             case let .missed(gate):
                 courseNode?.mark(gate: gate, passed: false)
                 audio?.play(.gateMissed)
+                say(.gateMissed)
                 showMessage(String(format: "¡Puerta fallada! +%.0f s", SlalomProgress.missPenalty))
             case .finished:
                 finishSlalom(progress)
@@ -546,12 +652,17 @@ final class GameScene: SKScene {
         if mode.hasCreatures {
             switch kunk.update(dt: dt, skier: skier) {
             case .appeared:
+                shake(5, duration: 0.5)
                 audio?.play(.kunkRoar)
+                say(.kunk)
                 audio?.playMusic(musicForState)
                 showMessage("¡Viene el Kunk! Mantén F (turbo) para escapar")
             case .caught:
                 catchCuico(by: .kunk)
                 return
+            case .escaped:
+                audio?.playMusic(musicForState)
+                showMessage("¡Dejaste atrás al Kunk! Volverá más abajo…")
             default:
                 break
             }
@@ -561,6 +672,7 @@ final class GameScene: SKScene {
                 chupacabrasEncounters += 1
                 audio?.play(.chupacabrasScreech)
                 audio?.playMusic(musicForState)
+                say(.chupacabras)
                 showMessage("¡Algo acecha entre las rocas! Prepárate para saltar")
             case .caught:
                 catchCuico(by: .chupacabras)
@@ -574,8 +686,13 @@ final class GameScene: SKScene {
         }
 
         if mode.hasAvalanche {
+            if avalanche.phase == .chasing {
+                let gap = avalanche.gap(to: skier)
+                if gap < 320 { shake(CGFloat(3 * (1 - max(gap, 0) / 320)), duration: 0.1) }
+            }
             switch avalanche.update(dt: dt, skier: skier) {
             case .appeared:
+                shake(4, duration: 0.6)
                 audio?.play(.avalancheRumble)
                 showMessage("¡Avalancha! No te detengas")
             case .caught:
@@ -588,6 +705,7 @@ final class GameScene: SKScene {
 
     private func catchCuico(by kind: ChaserKind) {
         caughtBy = kind
+        shake(10, duration: 0.5)
         switch kind {
         case .kunk: audio?.play(.kunkRoar)
         case .chupacabras: audio?.play(.chupacabrasScreech)
@@ -637,6 +755,20 @@ final class GameScene: SKScene {
         if let outcome { onRunEnded?(outcome) }
     }
 
+    /// Obstáculos cerca de un punto (para pilotos simulados en los tests).
+    func obstacles(near point: CGPoint, radius: CGFloat) -> [ObstacleSnapshot] {
+        mountain.snapshots(near: point, radius: radius, time: elapsed)
+    }
+
+    /// Nodos del mundo (para vigilar que no crezcan sin límite).
+    var worldNodeCount: Int {
+        var count = 0
+        world.enumerateChildNodes(withName: "//*") { _, _ in count += 1 }
+        return count
+    }
+
+    var loadedChunkCount: Int { mountain.loadedCoords.count }
+
     /// Aplica el efecto de un choque. Es interno para poder testearlo.
     func apply(_ effect: CollisionEffect, obstacleHitbox: CGRect) {
         switch effect {
@@ -649,6 +781,9 @@ final class GameScene: SKScene {
                 freestyle = score
             }
             crashes += 1
+            shake(9, duration: 0.3)
+            say(.crash)
+            if !reduceMotion { hitStop = 0.08 }
             snowBurst(count: 36)
             audio?.play(.crash)
             audio?.play(.ouch)
@@ -659,7 +794,9 @@ final class GameScene: SKScene {
             // Rueda hasta quedar justo por debajo del obstáculo.
             skier.position.y = min(skier.position.y, obstacleHitbox.minY - 14)
         case .trip:
+            shake(3, duration: 0.12)
             audio?.play(.bump)
+            say(.trip)
             skier.speed *= 0.45
             skier.stumbleTime = 0.4
             skier.graceTime = 0.5
@@ -691,7 +828,12 @@ final class GameScene: SKScene {
         cuico.zPosition = Depth.object(atY: skier.position.y) + 0.0001
         cuico.apply(skier, trick: freestyle?.current, trickProgress: freestyle?.currentProgress ?? 0)
 
-        cameraNode.position = cameraCenter
+        if shakeTime > 0 {
+            shakeTime = max(0, shakeTime - frameDelta)
+            shakeClock += frameDelta
+        }
+        let offset = shakeOffset
+        cameraNode.position = CGPoint(x: cameraCenter.x + offset.x, y: cameraCenter.y + offset.y)
         speckles.wrap(around: cameraNode.position)
         mountain.render(time: elapsed)
         finishNode?.position.x = cameraCenter.x
@@ -701,7 +843,7 @@ final class GameScene: SKScene {
         let targetAlpha: CGFloat = environment.isWhiteout ? 0.55 : 0
         whiteout.alpha += (targetAlpha - whiteout.alpha) * min(1, CGFloat(frameDelta) * 3)
         if let blizzard {
-            blizzard.particleBirthRate = whiteout.alpha * 400
+            blizzard.particleBirthRate = whiteout.alpha * (reduceMotion ? 80 : 400)
             // Los copos cruzan en el sentido del viento.
             let towardsRight = environment.wind > 0
             blizzard.emissionAngle = towardsRight ? 0 : .pi
@@ -717,7 +859,8 @@ final class GameScene: SKScene {
         // Derrape: más nieve cuanto más fuerte se frena o se gira.
         let skidding = !skier.isAirborne && !skier.isFallen && skier.speed > 80
         let hardEdge = skier.direction.isSideways || abs(skier.direction.rawValue) >= 3
-        spray.particleBirthRate = skidding && hardEdge ? CGFloat(min(skier.speed, 500) / 3) : 0
+        let sprayRate = skidding && hardEdge ? CGFloat(min(skier.speed, 500) / 3) : 0
+        spray.particleBirthRate = reduceMotion ? sprayRate * 0.3 : sprayRate
 
         renderHUD()
     }
@@ -797,7 +940,9 @@ final class GameScene: SKScene {
         if caughtBy == nil, !isRunOver {
             if kunk.phase == .chasing {
                 let meters = kunk.distance(to: skier) / GameConfig.pointsPerMeter
-                alert = String(format: "¡El Kunk te persigue! a %.0f m", meters)
+                alert = kunk.escapeProgress > 0
+                    ? String(format: "¡El Kunk se está cansando! a %.0f m", meters)
+                    : String(format: "¡El Kunk te persigue! a %.0f m", meters)
             } else if chupacabras.phase == .warning {
                 alert = "¡Cuidado con el Chupacabras!"
             } else if avalanche.phase == .chasing {

@@ -24,7 +24,7 @@ Autor: **App-Zilla** · Licencia: **MIT**
 | Récords | Solo locales (SwiftData). Sin Game Center ni iCloud, porque requieren cuenta de pago |
 | Audio | Efectos de sonido + música chiptune (CC0 o generada) |
 | Idioma | Solo español (String Catalog preparado por si se traduce más adelante) |
-| Distribución | DMG firmado ad hoc en GitHub Releases. Sin notarización, Developer ID ni App Store |
+| Distribución | DMG firmado ad hoc. Primero versión previa en repo **privado** para probar; tras aprobarla, repo **público** y `v1.0.0` en GitHub Releases. Sin notarización, Developer ID ni App Store |
 | Calidad | Swift Testing para la lógica + CI en GitHub Actions (compila, testea y genera el DMG) |
 
 ---
@@ -128,7 +128,7 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [x] Textos de la interfaz en un String Catalog (español)
 - [x] Tests: asignación de teclas, ajustes guardados, marcas por modo, modelo de pantallas/pausa/resultado y HUD
 - [ ] Revisar a mano la ventana de Ajustes y el campo de semilla (no se pueden dibujar fuera de pantalla en los tests)
-- [ ] Navegar los menús con el mando (se puede jugar con mando, pero los menús aún piden ratón o teclado)
+- [x] Navegar los menús con el mando (hecho en la Fase 11)
 
 ## Fase 8 — Arte pixel art (packs CC0) ✅
 - [x] Packs CC0 elegidos y documentados en `CREDITS.md` (licencias originales en `Licenses/`): **Tiny Ski** de Kenney y la fuente **Public Pixel** de GGBotNet
@@ -140,7 +140,7 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [x] Fuente pixel en el título, el HUD, los botones, los avisos y los títulos de pausa y resultados
 - [x] Icono de la app (`AppIcon`): esquiador pixel art con antiparras frente a los Andes (original en `Design/AppIcon-source.png`)
 - [ ] Animaciones por fotogramas del Cuico (de momento: esquís que giran, figura que se tumba, giros y mortales por transformación)
-- [ ] Redibujar araucarias y queñuas a escala 3 (hoy usan escala 4 para que se vean grandes)
+- [x] Redibujar araucarias y queñuas a escala 3 (hecho en la Fase 11)
 - [ ] Revisar las partículas en la app (no se ven al dibujar fuera de pantalla en los tests)
 
 ## Fase 9 — Audio ✅
@@ -164,21 +164,36 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [x] Tests: guardado, orden por modo, marcas que no cuentan, top 10, recorte, estadísticas, semillas grandes, repetir y borrar
 - [ ] Revisar a mano la tabla de récords (las listas con desplazamiento no se dibujan fuera de pantalla en los tests)
 
-## Fase 11 — Pulido y equilibrio
-- [ ] Ajuste fino de la física, la dificultad y la persecución
-- [ ] *Screen shake*, *hit-stop* y otros detalles de respuesta al jugador
-- [ ] Rendimiento: 60/120 fps estables (ProMotion) y uso de memoria con mundo infinito
-- [ ] Accesibilidad: reducir movimiento, alto contraste en el HUD y reasignación de controles
-- [ ] Mejorar la descripción y personalidad del Cuico (texto definitivo, frases y gestos) y reflejarla en el arte y los textos
-- [ ] Easter eggs propios
-- [ ] Partidas de prueba y lista de errores
+## Fase 11 — Pulido y equilibrio ✅
+- [x] Ajuste con un piloto simulado (`BalanceTests`). El Kunk baja su velocidad máxima de 650 a 620 pt/s, se queda hasta ~125 m atrás y **se cansa** si el Cuico le saca ~100 m durante 4 s (vuelve 1.500 m más abajo). El HUD avisa «¡El Kunk se está cansando!»
+- [x] Temblor de cámara (caídas, saltos grandes, Kunk, avalancha cerca) y *hit-stop* de 80 ms al chocar
+- [x] Rendimiento medido: ~0,05 ms por paso de simulación (presupuesto a 120 fps: 8,3 ms), como mucho 16 trozos cargados y ~1.400 nodos al bajar más de 4 km
+- [x] Accesibilidad: **Reducir movimiento** (sin temblores ni hit-stop y con menos partículas) y **HUD de alto contraste**, que siguen por defecto las preferencias de macOS; reasignación de teclas (Fase 7)
+- [x] Personalidad del Cuico (borrador para revisar): frases en bocadillo según lo que pasa, sin repetirse y sin hablar sin parar, y pose de selfie si se queda quieto
+- [x] Easter eggs: escribir **CUICO** en el menú le pone la parka dorada; bajar **6.961 m** (la altura del Aconcagua) en Descenso libre
+- [x] Menús con el mando: en el menú, cruceta o stick eligen el modo y A o Menú empiezan; en resultados, A repite y B vuelve al menú; en pausa, B vuelve al menú
+- [x] Araucarias y queñuas redibujadas a la escala común
+- [ ] **Revisar con App-Zilla** la descripción y las frases del Cuico (`CuicoLines.swift`) y ajustarlas a la personalidad definitiva
+- [ ] Partidas de prueba reales y lista de errores (el piloto simulado no sustituye a jugar): sensación del control, dificultad del Kunk y de la avalancha, mezcla de audio
+- [ ] Decidir si se cambian los signos ¡ y ! de la fuente pixel (Public Pixel los dibuja como rombos)
 
 ## Fase 12 — CI y distribución
-- [ ] GitHub Actions: compilar y ejecutar tests en cada push/PR (runner macOS)
-- [ ] Workflow de release: compilar en Release, firmar ad hoc y crear el DMG (`hdiutil`)
-- [ ] Publicar el DMG en GitHub Releases al crear una etiqueta `vX.Y.Z`
-- [ ] README final: capturas, controles, modos, instalación y cómo abrir la app sin notarizar
-- [ ] `CHANGELOG.md` actualizado y primera versión `v1.0.0`
+> **Decisión de publicación (en dos pasos):**
+> 1. **Repositorio privado** mientras App-Zilla prueba una versión previa (`v1.0.0-rc.N`). El DMG de prueba se genera **en local** con un script, para no gastar minutos de Actions (en repos privados son limitados y los de macOS cuentan unas 10 veces).
+> 2. Cuando la versión previa esté **aprobada**, el repositorio pasa a **público**, se activa el CI (gratis en repos públicos) y se publica **`v1.0.0`** con su DMG en GitHub Releases.
+
+- [x] Script local `scripts/build-dmg.sh`: compila en Release (universal), firma ad hoc, crea el DMG con «Léeme» y su SHA-256 en `dist/`
+- [x] DMG `v1.0.0-rc.1` generado y comprobado en local (firma, versión, arquitecturas y contenido)
+- [ ] Crear el repositorio **privado** en GitHub y subir el código (pendiente de la aprobación de App-Zilla)
+- [ ] Versión previa `v1.0.0-rc.1`: DMG generado en local y adjunto a una *pre-release* privada para que App-Zilla la pruebe
+- [ ] Corregir lo que salga de la prueba (`rc.2`, `rc.3`… si hace falta)
+- [ ] Tras la aprobación: pasar el repositorio a **público**
+- [x] Workflow **CI** (`.github/workflows/ci.yml`): tests en cada push/PR; no se ejecuta mientras el repo sea privado
+- [x] Workflow **Release** (`.github/workflows/release.yml`): con una etiqueta `v*` pasa los tests, crea el DMG y lo publica (las `-rc` como *pre-release*); no se ejecuta mientras el repo sea privado
+- [ ] Comprobar los workflows la primera vez que el repo sea público (versión de Xcode del runner)
+- [x] README final: capturas, descarga e instalación, controles, modos, criaturas, cómo abrir la app sin notarizar y cómo crear el DMG
+- [x] `CHANGELOG.md` con la sección `1.0.0-rc.1`
+- [ ] Publicación de `v1.0.0` (tras aprobar la versión previa)
 
 ---
 

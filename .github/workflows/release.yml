@@ -1,0 +1,52 @@
+# Al subir una etiqueta vX.Y.Z (o vX.Y.Z-rc.N): compila en Release, firma ad hoc,
+# crea el DMG y lo publica en GitHub Releases (las -rc como pre-release).
+#
+# Mientras el repositorio sea privado no se ejecuta: las versiones previas se
+# generan en local con scripts/build-dmg.sh.
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: ${{ !github.event.repository.private }}
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Elegir el Xcode más reciente
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Tests
+        run: |
+          xcodebuild test -project SkiFlow.xcodeproj -scheme SkiFlow \
+            -destination 'platform=macOS' -derivedDataPath build/DerivedData \
+            CODE_SIGN_IDENTITY="-" CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=""
+
+      - name: DMG
+        run: scripts/build-dmg.sh "${GITHUB_REF_NAME#v}"
+
+      - name: Publicar en GitHub Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          PRERELEASE=""
+          [[ "$VERSION" == *-* ]] && PRERELEASE="--prerelease"
+          gh release create "$GITHUB_REF_NAME" \
+            "dist/SkiFlow-$VERSION.dmg" "dist/SkiFlow-$VERSION.dmg.sha256" \
+            --title "SkiFlow $VERSION" \
+            --notes-file <(scripts/release-notes.sh "$VERSION") \
+            $PRERELEASE

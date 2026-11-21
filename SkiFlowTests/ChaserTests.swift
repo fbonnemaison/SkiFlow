@@ -41,7 +41,7 @@ struct KunkTests {
         func run(speed: Double) -> Bool {
             var kunk = KunkChaser(config: .init(spawnMeters: 0), side: 1)
             var skier = skierAt(meters: 10, speed: speed)
-            for _ in 0..<Int(20 / dt) {
+            for _ in 0..<Int(40 / dt) {
                 skier.position.y -= speed * dt
                 if kunk.update(dt: dt, skier: skier) == .caught { return true }
             }
@@ -163,5 +163,43 @@ struct GameOverInfoTests {
         #expect(chupa.minMeters == 60)
         #expect(chupa.maxMeters == 60)
         defaults.removePersistentDomain(forName: "SkiFlowTests.tuning")
+    }
+}
+
+struct KunkEscapeTests {
+    private let dt = 1.0 / 120.0
+
+    @Test func tiresAfterAKeptLeadAndComesBackLower() {
+        var kunk = KunkChaser(config: .init(spawnMeters: 0), side: 1)
+        var skier = SkierState(position: CGPoint(x: 0, y: -16))
+        #expect(kunk.update(dt: dt, skier: skier) == .appeared)
+
+        // El Cuico se aleja muy rápido (más que el Kunk).
+        var events: [ChaserEvent] = []
+        for _ in 0..<Int(30 / dt) {
+            skier.position.y -= 1200 * dt
+            if let event = kunk.update(dt: dt, skier: skier) { events.append(event) }
+            if events.contains(.escaped) { break }
+        }
+        #expect(events.contains(.escaped))
+        #expect(kunk.phase == .waiting)
+        #expect(kunk.escapes == 1)
+        #expect(kunk.nextSpawnMeters > skier.distanceMeters)
+
+        // Vuelve a aparecer más abajo.
+        skier.position.y = -(kunk.nextSpawnMeters + 1) * GameConfig.pointsPerMeter
+        #expect(kunk.update(dt: dt, skier: skier) == .appeared)
+    }
+
+    @Test func aShortLeadIsNotEnough() {
+        var kunk = KunkChaser(config: .init(spawnMeters: 0, escapeTime: 4), side: 1)
+        var skier = SkierState()
+        _ = kunk.update(dt: dt, skier: skier)
+        // Ventaja grande pero solo 2 s: no se cansa.
+        for _ in 0..<Int(2 / dt) {
+            skier.position.y -= 1200 * dt
+            #expect(kunk.update(dt: dt, skier: skier) != .escaped)
+        }
+        #expect(kunk.phase == .chasing)
     }
 }

@@ -1,3 +1,4 @@
+import AppKit
 import Foundation
 import Observation
 
@@ -18,6 +19,10 @@ final class SettingsStore {
     var pixelZoom: Double { didSet { defaults.set(pixelZoom, forKey: Keys.zoom) } }
     /// Abrir el juego en pantalla completa.
     var startFullScreen: Bool { didSet { defaults.set(startFullScreen, forKey: Keys.fullScreen) } }
+    /// Accesibilidad: sin temblores de cámara ni hit-stop y con menos partículas.
+    var reduceMotion: Bool { didSet { defaults.set(reduceMotion, forKey: Keys.reduceMotion) } }
+    /// Accesibilidad: HUD con fondo oscuro sólido y texto blanco.
+    var highContrastHUD: Bool { didSet { defaults.set(highContrastHUD, forKey: Keys.highContrast) } }
     /// Mientras los Ajustes esperan una tecla, el juego no debe recibirla.
     @ObservationIgnored var isCapturingKey = false
 
@@ -35,6 +40,8 @@ final class SettingsStore {
         static let zoom = "pixelZoom"
         static let fullScreen = "startFullScreen"
         static let bindings = "keyBindings"
+        static let reduceMotion = "reduceMotion"
+        static let highContrast = "highContrastHUD"
     }
 
     init(defaults: UserDefaults = .standard) {
@@ -44,6 +51,12 @@ final class SettingsStore {
         let zoom = defaults.object(forKey: Keys.zoom) as? Double ?? 1
         pixelZoom = Self.pixelZooms.contains(zoom) ? zoom : 1
         startFullScreen = defaults.bool(forKey: Keys.fullScreen)
+        // Si el jugador no lo ha tocado, se sigue la preferencia de macOS.
+        let workspace = NSWorkspace.shared
+        reduceMotion = defaults.object(forKey: Keys.reduceMotion) as? Bool
+            ?? workspace.accessibilityDisplayShouldReduceMotion
+        highContrastHUD = defaults.object(forKey: Keys.highContrast) as? Bool
+            ?? workspace.accessibilityDisplayShouldIncreaseContrast
         keyBindings = defaults.data(forKey: Keys.bindings)
             .flatMap { try? JSONDecoder().decode(KeyBindings.self, from: $0) } ?? .defaults
     }

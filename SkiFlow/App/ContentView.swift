@@ -21,7 +21,7 @@ struct ContentView: View {
                     preferredFramesPerSecond: 120,
                     debugOptions: debugOptions
                 )
-                HUDView(hud: model.hud)
+                HUDView(hud: model.hud, highContrast: settings.highContrastHUD)
                 if let outcome = model.outcome {
                     ResultView(outcome: outcome)
                 } else if model.isPaused {
@@ -31,7 +31,10 @@ struct ContentView: View {
         }
         .frame(minWidth: 800, minHeight: 600)
         .background(WindowReader(window: $window))
-        .onAppear { startInput() }
+        .onAppear {
+            startInput()
+            model.startMenuGamepadPolling()
+        }
         .onDisappear { inputMonitor.stop() }
         .onChange(of: window) { _, window in
             if settings.startFullScreen, let window, !window.styleMask.contains(.fullScreen) {
@@ -43,6 +46,7 @@ struct ContentView: View {
         }
         .onChange(of: settings.musicVolume) { model.applyVolumes() }
         .onChange(of: settings.effectsVolume) { model.applyVolumes() }
+        .onChange(of: settings.reduceMotion) { model.applyAccessibility() }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
             // Al cambiar de app se sueltan las teclas y se pausa la partida.
             model.pauseIfPlaying()

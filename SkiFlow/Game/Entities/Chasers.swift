@@ -62,9 +62,10 @@ protocol Chaser: Sendable {
 
 // MARK: - Kunk
 
-/// El Kunk: aparece siempre a partir de cierta distancia y persigue al Cuico sin
-/// descanso. Corre más que el Cuico normal pero menos que con turbo, así que se
-/// puede escapar… a costa de ir peligrosamente rápido. Atraviesa los obstáculos.
+/// El Kunk: aparece siempre a partir de cierta distancia y persigue al Cuico.
+/// Corre más que el Cuico normal pero menos que con turbo, así que se puede
+/// escapar… a costa de ir peligrosamente rápido. Atraviesa los obstáculos. Si el
+/// Cuico le saca mucha ventaja durante unos segundos, se cansa y vuelve más abajo.
 struct KunkChaser: Chaser {
     struct Config: Sendable {
         /// Metros de descenso a partir de los que aparece.
@@ -75,11 +76,19 @@ struct KunkChaser: Chaser {
         var startSpeed: Double = 430
         /// Cuánto acelera por segundo de persecución.
         var acceleration: Double = 12
-        /// Entre la velocidad normal del Cuico (~520) y la del turbo (~780).
-        var maxSpeed: Double = 650
+        /// Entre la velocidad normal del Cuico (~520) y la del turbo (~780),
+        /// con margen suficiente para escapar con turbo (ajustado en la Fase 11).
+        var maxSpeed: Double = 620
         var catchRadius: Double = 20
         /// Si se queda más atrás que esto, recorta distancia para no perder la tensión.
-        var maxLag: Double = 1100
+        /// Es amplio (≈125 m) para que sacar ventaja con turbo sirva de algo.
+        var maxLag: Double = 2000
+        /// Ventaja (≈100 m) que hay que mantener para que el Kunk se canse…
+        var escapeDistance: Double = 1600
+        /// …durante estos segundos.
+        var escapeTime: Double = 4
+        /// Metros más abajo a los que vuelve tras cansarse.
+        var respawnGap: Double = 1500
     }
 
     let kind = ChaserKind.kunk
@@ -91,11 +100,20 @@ struct KunkChaser: Chaser {
     private(set) var position: CGPoint = .zero
     private(set) var speed: Double = 0
     private(set) var facesLeft = false
+    /// Metros a los que aparece (la primera vez y tras cansarse).
+    private(set) var nextSpawnMeters: Double
+    /// Veces que el Cuico lo dejó atrás en esta bajada.
+    private(set) var escapes = 0
+    private var farTime: Double = 0
 
     init(config: Config = Config(), side: Double) {
         self.config = config
         self.side = side < 0 ? -1 : 1
+        nextSpawnMeters = config.spawnMeters
     }
+
+    /// Segundos que el Cuico lleva con mucha ventaja (para el HUD).
+    var escapeProgress: Double { min(1, farTime / config.escapeTime) }
 
     /// Distancia (puntos) hasta el Cuico.
     func distance(to skier: SkierState) -> Double {
@@ -105,7 +123,8 @@ struct KunkChaser: Chaser {
     mutating func update(dt: Double, skier: SkierState) -> ChaserEvent? {
         switch phase {
         case .waiting:
-            guard skier.distanceMeters >= config.spawnMeters else { return nil }
+            guard skier.distanceMeters >= nextSpawnMeters else { return nil }
+            farTime = 0
             position = CGPoint(
                 x: skier.position.x + side * config.spawnSideOffset,
                 y: skier.position.y + config.spawnHeight
@@ -131,6 +150,17 @@ struct KunkChaser: Chaser {
                 dx = skier.position.x - position.x
                 dy = skier.position.y - position.y
                 distance = keep
+            }
+
+            // Si el Cuico le saca mucha ventaja un rato, se cansa.
+            farTime = distance >= config.escapeDistance ? farTime + dt : 0
+            if farTime >= config.escapeTime {
+                escapes += 1
+                farTime = 0
+                phase = .waiting
+                nextSpawnMeters = skier.distanceMeters + config.respawnGap
+                speed = 0
+                return .escaped
             }
 
             speed = min(config.maxSpeed, speed + config.acceleration * dt)

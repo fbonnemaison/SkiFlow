@@ -6,30 +6,21 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
-### Cambiado
-- El tipo de terreno de la física pasa a llamarse `Terrain` (chocaba con `@Environment` de SwiftUI).
+## [1.0.0-rc.1] - 2026-11-21
 
-### Corregido
-- El cronómetro mostraba una décima de menos en algunos tiempos (por ejemplo, 01:15.2 en vez de 01:15.3).
+Primera versión previa, para probar antes de publicar la 1.0.0.
 
 ### Añadido
-- Récords y estadísticas con SwiftData (Fase 10): top 10 por modo, botón para repetir la montaña de un récord, estadísticas del jugador (incluidas capturas del Kunk y encuentros con el Chupacabras) y borrado con confirmación.
-- Audio (Fase 9): sintetizador chiptune propio, 19 efectos, bucles de esquís y viento, y cuatro temas con aire andino (menú, bajada, Kunk y Chupacabras) con fundidos; volúmenes de los Ajustes aplicados.
-- Arte pixel art (Fase 8): tiles CC0 de «Tiny Ski» (Kenney) para banderas, esquiadores, roca, telesilla y el nuevo mono de nieve; el Cuico en pixel art; contorno común para los sprites propios; partículas de nieve; fuente pixel «Public Pixel» (GGBotNet, CC0); `CREDITS.md` y licencias en `Licenses/`.
-- Interfaz completa (Fase 7): pantalla de título con selector de modo y semilla, HUD en SwiftUI, menú de pausa, pantalla de resultados con mejor marca de la sesión, ventana de Ajustes con reasignación de teclas, menú Juego con atajos y String Catalog.
-- Modo Freestyle (Fase 6): montaña llena de rampas, trucos en el aire (giros, mortales y el selfie del Cuico), combos, racha, tipos de aterrizaje y meta a los 1.000 m con la avalancha detrás.
-- Modos Slalom y Slalom entre árboles (Fase 5): trazado de 20 puertas reproducible, penalización por puerta fallada, meta con cronómetro, avalancha que sepulta a quien va demasiado lento y teclas 1/2/3 para cambiar de modo.
-- Modo Descenso libre (Fase 4): el Kunk aparece a los 2.000 m y persigue al Cuico (se escapa con turbo); el Chupacabras aparece en el 8 % de las bajadas, avisa y embiste (se esquiva saltando); HUD con distancia, velocidad y tiempo, y pantalla de fin de partida.
-- Controles completos (Fase 3): ratón/trackpad para apuntar y clic para brincar, mando (GameController) con conexión en caliente, brinco, turbo y pausa (también automática al cambiar de app).
-- Montaña andina infinita (Fase 2): generación por trozos con semilla, bandas de altitud, obstáculos fijos y móviles (araucarias, queñuas, penitentes, apachetas, refugios, llamas, guanacos, vicuñas, perros, esquiadores, telesilla y cóndores), rampas, hielo, nieve profunda y viento blanco; caídas, tropiezos y saltos.
-- Icono de la app en pixel art (esquiador con antiparras frente a los Andes); el original está en `Design/AppIcon-source.png`.
-- El Cuico provisional adopta la estética del icono: parka roja, casco y braga negros, antiparras espejadas y esquís negros con cantos verde lima.
-- Prototipo jugable (Fase 1): el Cuico baja la montaña con 9 posiciones de esquí, física de paso fijo, frenada derrapando, cámara que lo sigue, huellas en la nieve y controles por teclado (flechas/WASD, R para reiniciar).
-- Proyecto Xcode generado con XcodeGen (`project.yml`): app macOS 26+ en Swift 6 con SwiftUI y SpriteKit.
-- Escena de SpriteKit vacía como punto de partida.
-- Target de tests con Swift Testing.
-- Firma ad hoc, licencia MIT, README y plan de desarrollo (`TODO.md`).
-- El Cuico como protagonista (descripción provisional).
-- Ambientación en la cordillera de los Andes, con el Kunk como perseguidor principal y el Chupacabras como perseguidor raro (definido en el plan).
+- **Cuatro modos**: Descenso libre, Slalom, Slalom entre árboles y Freestyle.
+- **El Cuico** como protagonista, con frases propias, pose de selfie y una parka dorada secreta.
+- **Montaña andina infinita** generada con semilla: bandas de altitud con araucarias, queñuas, cactus, penitentes, apachetas y refugios; llamas, guanacos, vicuñas, perros, otros esquiadores, telesilla y cóndores; rampas, hielo, nieve profunda y viento blanco.
+- **El Kunk**, que aparece a los 2.000 m y se cansa si le sacas ventaja con el turbo; **el Chupacabras**, raro, que avisa y embiste (se esquiva saltando); **la avalancha** en los modos con meta.
+- **Slalom** de 20 puertas con cronómetro y penalizaciones; **Freestyle** con giros, mortales y selfies, combos y racha.
+- **Controles** con teclado (reasignable), ratón o trackpad y mando, también en los menús.
+- **Interfaz**: menú principal, HUD, pausa, resultados, Ajustes (⌘,) y menú Juego con atajos.
+- **Récords** con top 10 por modo, botón para repetir la montaña de una marca y estadísticas.
+- **Arte pixel art** propio junto a tiles CC0 de Kenney y la fuente Public Pixel; partículas de nieve y temblores de cámara.
+- **Música y sonidos** chiptune con aire andino, sintetizados por el propio juego.
+- **Accesibilidad**: reducir movimiento y HUD de alto contraste.
 
 Autor: App-Zilla

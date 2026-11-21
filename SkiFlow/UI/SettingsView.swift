@@ -34,6 +34,13 @@ private struct GeneralSettingsView: View {
                 }
                 Toggle("Abrir en pantalla completa", isOn: $settings.startFullScreen)
             }
+            Section("Accesibilidad") {
+                Toggle("Reducir movimiento", isOn: $settings.reduceMotion)
+                Text("Sin temblores de cámara ni pausas al chocar, y con menos partículas de nieve.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                Toggle("HUD de alto contraste", isOn: $settings.highContrastHUD)
+            }
         }
         .formStyle(.grouped)
     }

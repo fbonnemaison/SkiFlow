@@ -1,0 +1,39 @@
+# Compila y ejecuta los tests en cada push a main y en cada PR.
+#
+# Mientras el repositorio sea privado no se ejecuta (los minutos de macOS en
+# repos privados son limitados); en cuanto sea público, es gratis.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    if: ${{ !github.event.repository.private }}
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Elegir el Xcode más reciente
+        run: |
+          XCODE=$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)
+          echo "Usando $XCODE"
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+
+      - name: Tests
+        run: |
+          xcodebuild test \
+            -project SkiFlow.xcodeproj \
+            -scheme SkiFlow \
+            -destination 'platform=macOS' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGN_IDENTITY="-" CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=""

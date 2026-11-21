@@ -160,6 +160,14 @@ struct SkierController: Sendable {
     private var rightTimer: Double = 0
     private var aimTimer: Double = 0
 
+    /// Inicializador explícito: con propiedades privadas, Swift 6.2 (Xcode 26)
+    /// no genera el inicializador por miembros con argumentos.
+    init(repeatDelay: Double = 0.22, repeatInterval: Double = 0.11, aimStepInterval: Double = 0.05) {
+        self.repeatDelay = repeatDelay
+        self.repeatInterval = repeatInterval
+        self.aimStepInterval = aimStepInterval
+    }
+
     /// Respuesta inmediata a una pulsación de giro.
     mutating func press(_ action: InputAction, direction: inout SkiDirection) {
         switch action {

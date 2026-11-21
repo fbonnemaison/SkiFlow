@@ -58,7 +58,14 @@ enum AltitudeBand: CaseIterable, Sendable {
 
     /// Elige un tipo según los pesos de la banda.
     func randomKind(using rng: inout some RandomNumberGenerator) -> ObstacleKind {
-        let entries = weights
+        Self.pick(from: weights, using: &rng)
+    }
+
+    /// Elige un tipo de una tabla de pesos.
+    static func pick(
+        from entries: [(kind: ObstacleKind, weight: Double)],
+        using rng: inout some RandomNumberGenerator
+    ) -> ObstacleKind {
         let total = entries.reduce(0) { $0 + $1.weight }
         var roll = Double.random(in: 0..<total, using: &rng)
         for entry in entries {

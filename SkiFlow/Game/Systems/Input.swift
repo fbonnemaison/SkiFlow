@@ -11,6 +11,10 @@ enum InputAction: Hashable, Sendable, CaseIterable {
     case turbo
     case pause
     case restart
+    /// Atajos temporales para cambiar de modo (hasta tener menú en la Fase 7).
+    case modeFreeDescent
+    case modeSlalom
+    case modeTreeSlalom
 
     /// Traduce un código de tecla físico de macOS (independiente de la distribución
     /// del teclado, así WASD funciona por posición).
@@ -24,7 +28,20 @@ enum InputAction: Hashable, Sendable, CaseIterable {
         case 3: self = .turbo // F
         case 53, 35: self = .pause // Esc / P
         case 15: self = .restart // R
+        case 18: self = .modeFreeDescent // 1
+        case 19: self = .modeSlalom // 2
+        case 20: self = .modeTreeSlalom // 3
         default: return nil
+        }
+    }
+
+    /// Modo al que lleva un atajo de modo, si lo es.
+    var gameMode: GameMode? {
+        switch self {
+        case .modeFreeDescent: .freeDescent
+        case .modeSlalom: .slalom
+        case .modeTreeSlalom: .treeSlalom
+        default: nil
         }
     }
 
@@ -131,7 +148,7 @@ struct SkierController: Sendable {
             direction = .down
         case .brake:
             direction = direction.braking()
-        case .jump, .turbo, .pause, .restart:
+        case .jump, .turbo, .pause, .restart, .modeFreeDescent, .modeSlalom, .modeTreeSlalom:
             break
         }
     }

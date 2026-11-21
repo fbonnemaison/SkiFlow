@@ -54,9 +54,14 @@ final class MountainNode: SKNode {
 
     /// Vacía la montaña y empieza otra con una semilla nueva.
     func reset(seed: UInt64) {
+        reset(generator: MountainGenerator(seed: seed))
+    }
+
+    /// Vacía la montaña y empieza otra con el generador indicado (modo de juego).
+    func reset(generator: MountainGenerator) {
         removeAllChildren()
         loaded.removeAll()
-        generator = MountainGenerator(seed: seed)
+        self.generator = generator
     }
 
     /// Carga los trozos visibles alrededor de `center` y descarga el resto.
@@ -210,6 +215,7 @@ final class MountainNode: SKNode {
     }
 
     private func addLift(to chunk: LoadedChunk, coord: ChunkCoord) {
+        guard generator.profile.hasLift else { return }
         let rect = MountainGenerator.rect(for: coord)
         let x = generator.liftX
         guard Double(rect.minX) <= x, x < Double(rect.maxX) else { return }

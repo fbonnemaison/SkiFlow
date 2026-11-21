@@ -5,7 +5,7 @@ import Testing
 @MainActor
 struct GameSceneTests {
     private func makeScene() -> GameScene {
-        GameScene(size: GameConfig.sceneSize, seed: 2026)
+        GameScene(size: GameConfig.sceneSize, seed: 2026, kunkConfig: .init(), chupacabrasConfig: .init(chance: 0))
     }
 
     @Test func sceneUsesConfiguredSizeAndCamera() {
@@ -119,7 +119,7 @@ struct GameSceneTests {
 @MainActor
 struct GameSceneInputTests {
     private func makeScene() -> GameScene {
-        GameScene(size: GameConfig.sceneSize, seed: 2026)
+        GameScene(size: GameConfig.sceneSize, seed: 2026, kunkConfig: .init(), chupacabrasConfig: .init(chance: 0))
     }
 
     @Test func spaceHops() {
@@ -187,5 +187,54 @@ struct GameSceneInputTests {
         let scene = makeScene()
         scene.handle(.jump, pressed: true, source: .mouse)
         #expect(scene.skier.isAirborne)
+    }
+}
+
+@MainActor
+struct GameSceneChaseTests {
+    private let dt = 1.0 / 120.0
+
+    @Test func kunkCatchesTheCuicoAndTheRunEnds() {
+        let scene = GameScene(
+            size: GameConfig.sceneSize, seed: 2026,
+            kunkConfig: .init(spawnMeters: 0), chupacabrasConfig: .init(chance: 0)
+        )
+        // Frenado en la salida: el Kunk llega enseguida.
+        scene.handle(.brake, pressed: true)
+        for _ in 0..<Int(4 / dt) {
+            scene.simulate(dt: dt)
+        }
+        #expect(scene.caughtBy == .kunk)
+        #expect(scene.kunk.phase == .caught)
+
+        // Atrapado: no se puede pausar ni girar.
+        scene.handle(.pause, pressed: true)
+        #expect(!scene.isGamePaused)
+
+        for _ in 0..<Int((GameScene.catchDuration + 0.1) / dt) {
+            scene.simulate(dt: dt)
+        }
+        let info = try! #require(scene.gameOver)
+        #expect(info.caughtBy == .kunk)
+
+        // Reiniciar deja todo como al principio.
+        scene.handle(.restart, pressed: true)
+        #expect(scene.gameOver == nil)
+        #expect(scene.caughtBy == nil)
+        #expect(scene.kunk.phase == .waiting)
+        #expect(scene.skier == SkierState())
+    }
+
+    @Test func chupacabrasEncounterIsCounted() {
+        let scene = GameScene(
+            size: GameConfig.sceneSize, seed: 2026,
+            kunkConfig: .init(spawnMeters: 1_000_000),
+            chupacabrasConfig: .init(chance: 1, minMeters: 5, maxMeters: 5)
+        )
+        for _ in 0..<Int(1 / dt) {
+            scene.simulate(dt: dt)
+        }
+        #expect(scene.chupacabrasEncounters == 1)
+        #expect(scene.chupacabras.phase != .waiting)
     }
 }

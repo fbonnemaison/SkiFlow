@@ -18,10 +18,51 @@ struct MountainGenerator: Sendable {
     /// Separación vertical entre torres del telesilla.
     static let pylonSpacing: Double = 640
 
-    let seed: UInt64
+    /// Cómo se puebla la montaña según el modo de juego.
+    struct Profile: Sendable {
+        /// Multiplica el número de objetos de cada trozo.
+        var densityMultiplier: Double = 1
+        /// Tabla de objetos fija; `nil` = según la banda de altitud.
+        var weights: [(kind: ObstacleKind, weight: Double)]?
+        /// Probabilidad de cóndor por trozo; `nil` = según la banda de altitud.
+        var condorChance: Double?
+        var hasLift = true
 
-    init(seed: UInt64) {
+        /// Descenso libre: toda la variedad andina, cada vez más densa.
+        static let freeDescent = Profile()
+
+        /// Slalom: pista abierta con pocos obstáculos de alta montaña.
+        static let slalom = Profile(
+            densityMultiplier: 0.35,
+            weights: [
+                (.rock, 2), (.smallRock, 2), (.penitente, 1), (.apacheta, 1),
+                (.iceZone, 1), (.vicuna, 0.5),
+            ],
+            condorChance: 0.05,
+            hasLift: false
+        )
+
+        /// Slalom entre árboles: bosque denso de araucarias y queñuas.
+        static let treeSlalom = Profile(
+            densityMultiplier: 1.4,
+            weights: [
+                (.araucaria, 5), (.quenua, 4), (.rock, 1), (.smallRock, 1),
+                (.deepSnowZone, 0.6),
+            ],
+            condorChance: 0.03,
+            hasLift: false
+        )
+    }
+
+    let seed: UInt64
+    let profile: Profile
+    /// Zonas que deben quedar libres (por ejemplo, las puertas del slalom).
+    let exclusions: [CGRect]
+
+    init(seed: UInt64, profile: Profile = .freeDescent, exclusions: [CGRect] = []) {
         self.seed = seed
+        self.profile = profile
+        self.exclusions = exclusions
     }
 
     /// Columna en la que corre el telesilla (a un lado de la salida).
@@ -79,11 +120,15 @@ struct MountainGenerator: Sendable {
         let band = AltitudeBand(meters: meters)
         var result: [Obstacle] = []
 
-        addPylons(in: rect, to: &result)
+        if profile.hasLift {
+            addPylons(in: rect, to: &result)
+        }
 
-        let count = Self.baseCount(meters: meters) + Int.random(in: -2...2, using: &rng)
+        let rawCount = Self.baseCount(meters: meters) + Int.random(in: -2...2, using: &rng)
+        let count = Int((Double(rawCount) * profile.densityMultiplier).rounded())
         for _ in 0..<max(0, count) {
-            let kind = band.randomKind(using: &rng)
+            let kind = profile.weights.map { AltitudeBand.pick(from: $0, using: &rng) }
+                ?? band.randomKind(using: &rng)
             for _ in 0..<8 {
                 let point = CGPoint(
                     x: Double.random(in: rect.minX + 20...rect.maxX - 20, using: &rng),
@@ -96,7 +141,7 @@ struct MountainGenerator: Sendable {
             }
         }
 
-        if Double.random(in: 0..<1, using: &rng) < band.condorChance {
+        if Double.random(in: 0..<1, using: &rng) < (profile.condorChance ?? band.condorChance) {
             let point = CGPoint(
                 x: Double.random(in: rect.minX...rect.maxX, using: &rng),
                 y: Double.random(in: rect.minY...rect.maxY, using: &rng)
@@ -119,6 +164,10 @@ struct MountainGenerator: Sendable {
 
     // MARK: Privado
 
+    private func isExcluded(_ point: CGPoint) -> Bool {
+        exclusions.contains { $0.contains(point) }
+    }
+
     private func chunkSeed(_ coord: ChunkCoord) -> UInt64 {
         var h = seed ^ 0x51ED_270B_2742_7E4F
         h = (h ^ UInt64(bitPattern: Int64(coord.x))) &* 0x9E37_79B9_7F4A_7C15
@@ -132,7 +181,7 @@ struct MountainGenerator: Sendable {
         var y = (Double(rect.maxY) / Self.pylonSpacing).rounded(.down) * Self.pylonSpacing
         while y > Double(rect.minY) {
             let point = CGPoint(x: x, y: y)
-            if !Self.startClearing.contains(point) {
+            if !Self.startClearing.contains(point), !isExcluded(point) {
                 result.append(Obstacle(kind: .liftPylon, origin: point))
             }
             y -= Self.pylonSpacing
@@ -170,11 +219,13 @@ struct MountainGenerator: Sendable {
                 x: point.x - size.width / 2, y: point.y - size.height / 2,
                 width: size.width, height: size.height
             )
-            guard !Self.startClearing.intersects(zoneRect) else { return nil }
+            guard !Self.startClearing.intersects(zoneRect),
+                  !exclusions.contains(where: { $0.intersects(zoneRect) })
+            else { return nil }
             return Obstacle(kind: kind, origin: point, zoneSize: size, windStrength: wind)
         }
 
-        guard !Self.startClearing.contains(point) else { return nil }
+        guard !Self.startClearing.contains(point), !isExcluded(point) else { return nil }
         let crowded = existing.contains { other in
             !other.kind.isZone
                 && hypot(other.origin.x - point.x, other.origin.y - point.y) < Self.minSpacing

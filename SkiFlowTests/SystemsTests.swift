@@ -69,6 +69,9 @@ struct InputActionTests {
         #expect(InputAction(keyCode: 53) == .pause)
         #expect(InputAction(keyCode: 35) == .pause)
         #expect(InputAction(keyCode: 6) == nil)
+        #expect(InputAction(keyCode: 18) == .modeFreeDescent)
+        #expect(InputAction(keyCode: 19)?.gameMode == .slalom)
+        #expect(InputAction(keyCode: 20)?.gameMode == .treeSlalom)
     }
 }
 

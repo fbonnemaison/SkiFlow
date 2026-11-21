@@ -73,35 +73,40 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [x] Tests: apuntado, flancos de pulsación por dispositivo, transiciones del mando, brinco, turbo, pausa y ratón
 - [ ] Reasignación de teclas → se hace junto a los Ajustes en la Fase 7
 
-## Fase 4 — Modo Descenso libre y perseguidores
-- [ ] Contador de distancia y velocidad en el HUD
-- [ ] Protocolo común `Chaser` (aparición, persecución, captura) que comparten las dos criaturas
+## Fase 4 — Modo Descenso libre y perseguidores ✅
+- [x] HUD con distancia, velocidad, tiempo, caídas, turbo y avisos de persecución
+- [x] Protocolo común `Chaser` (aparición, persecución, captura) que comparten las dos criaturas
+- [x] Modo `freeDescent`, secuencia de captura (1,8 s) y pantalla de fin de partida con resumen
 
 ### Kunk (perseguidor principal)
-- [ ] Diseño propio del Kunk: aspecto, animaciones (correr, rugir, atrapar) y ficha de personaje
-- [ ] Aparición segura a partir de una distancia configurable (por ejemplo, 2.000 m)
-- [ ] IA de persecución: velocidad superior a la normal e inferior al turbo; aceleración progresiva
-- [ ] Posibilidad de escapar con el turbo y riesgo de chocar al ir tan rápido
-- [ ] Secuencia de captura y pantalla de fin de partida
+- [x] Diseño provisional propio del Kunk: mole peluda pardo-gris de ojos rojos, animación de carrera y de captura (arte final en la Fase 8)
+- [x] Aparición segura a los 2.000 m, por encima del Cuico y fuera de pantalla
+- [x] IA de persecución: empieza a 430 pt/s y acelera hasta 650 (más que el Cuico normal, menos que con turbo); atraviesa los obstáculos y recorta distancia si se queda muy atrás
+- [x] Se escapa con el turbo, con el riesgo de chocar al ir tan rápido
+- [x] Secuencia de captura y pantalla de fin de partida
 
 ### Chupacabras (perseguidor raro)
-- [ ] Diseño propio del Chupacabras: aspecto y animaciones (acecho, salto, captura)
-- [ ] Aparición **poco frecuente** y aleatoria (con semilla), muy por debajo de la del Kunk; por ejemplo, un 5–10 % de las partidas largas
-- [ ] Comportamiento distinto del Kunk: emboscada lateral desde rocas o vegetación, *sprint* corto muy rápido y retirada si no te alcanza
-- [ ] Aviso previo (sonido o sombra) para que se pueda esquivar
-- [ ] Decidir si también aparece en otros modos como sorpresa
-- [ ] Contador en las estadísticas de encuentros con el Chupacabras
+- [x] Diseño provisional propio del Chupacabras: bicho reptiliano gris verdoso con púas, animación de carrera
+- [x] Aparición **poco frecuente** decidida con la semilla de la bajada: 8 % de las partidas, entre los 800 y los 3.000 m
+- [x] Comportamiento distinto del Kunk: acecha a un lado, embiste en línea recta hacia donde va a estar el Cuico y se esfuma si falla
+- [x] Aviso previo de 1,3 s en pantalla; **saltar por encima lo esquiva**
+- [x] No aparece en slalom (decidido en la Fase 5); en freestyle se decide en la Fase 6
+- [x] Contador de encuentros en la partida (las estadísticas guardadas llegan en la Fase 10)
 
-- [ ] Tests: lógica de aparición (incluida la frecuencia del Chupacabras con semilla fija) y persecución
+- [x] Ajustes para probar al lanzar la app: `-kunkSpawnMeters`, `-chupacabrasChance`, `-chupacabrasMeters`
+- [x] Tests: aparición, persecución, escape con turbo, frecuencia del Chupacabras con semillas fijas, esquive saltando y fin de partida
 
-## Fase 5 — Modos Slalom
-- [ ] Banderas/puertas generadas por semilla con trazado reproducible
-- [ ] Detección de puerta superada o fallada (lado correcto)
-- [ ] Cronómetro, penalización por puerta fallada y meta
-- [ ] **Slalom contrarreloj**: trazado abierto con pocos obstáculos
-- [ ] **Slalom entre árboles**: misma lógica con bosque denso
-- [ ] **Avalancha** como evento de presión si vas demasiado lento
-- [ ] Tests: puertas, penalizaciones y tiempos
+## Fase 5 — Modos Slalom ✅
+- [x] Puertas generadas por semilla con trazado reproducible (`SlalomCourse`): 20 puertas en zigzag, rojas y azules alternas
+- [x] Detección de puerta superada o fallada al cruzar su línea (con interpolación, `SlalomProgress`)
+- [x] Cronómetro con décimas, penalización de 5 s por puerta fallada, línea de meta y pantalla de resultado
+- [x] **Slalom contrarreloj**: pista abierta con pocos obstáculos de alta montaña (perfil `slalom` del generador)
+- [x] **Slalom entre árboles**: misma lógica en un bosque denso de araucarias y queñuas (perfil `treeSlalom`)
+- [x] El generador deja libres las puertas y la meta; sin telesilla en los modos de slalom
+- [x] **Avalancha** como evento de presión: se suelta a los 2,5 s y acelera hasta 320 pt/s; sepulta a quien se para o se cae demasiado
+- [x] R repite el mismo trazado para mejorar el tiempo; teclas 1/2/3 cambian de modo (provisional hasta el menú de la Fase 7) y `-mode slalom` al lanzar
+- [x] El Kunk y el Chupacabras no aparecen en slalom, para que las contrarrelojes sean justas
+- [x] Tests: trazado reproducible, puertas despejadas, densidad por perfil, pasar/fallar/meta, avalancha y un "piloto" simulado que termina el slalom por delante de la avalancha
 
 ## Fase 6 — Modo Freestyle
 - [ ] Rampas y saltos con tiempo en el aire según la velocidad

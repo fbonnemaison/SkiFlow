@@ -1,3 +1,4 @@
+import CoreGraphics
 import Foundation
 
 /// Orientación de los esquís del Cuico respecto a la línea de máxima pendiente.
@@ -36,6 +37,17 @@ enum SkiDirection: Int, CaseIterable, Sendable {
     /// Gira un paso hacia la derecha de la pantalla (sin pasar de `hardRight`).
     func turnedRight() -> SkiDirection {
         SkiDirection(rawValue: min(rawValue + 1, Self.hardRight.rawValue)) ?? .hardRight
+    }
+
+    /// Dirección más parecida a un vector en coordenadas de escena (y hacia arriba).
+    /// Si el vector apunta cuesta arriba, el Cuico se atraviesa hacia ese lado y frena.
+    static func aiming(at vector: CGVector) -> SkiDirection {
+        if vector.dy >= 0 {
+            return vector.dx < 0 ? .hardLeft : .hardRight
+        }
+        let angle = atan2(Double(vector.dx), -Double(vector.dy))
+        let steps = Int((angle / stepAngle).rounded())
+        return SkiDirection(rawValue: min(max(steps, hardLeft.rawValue), hardRight.rawValue)) ?? .down
     }
 
     /// Posición atravesada del lado hacia el que se mira (izquierda si va recto).

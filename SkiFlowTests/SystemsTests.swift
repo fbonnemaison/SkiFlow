@@ -64,7 +64,11 @@ struct InputActionTests {
         #expect(InputAction(keyCode: 126) == .brake)
         #expect(InputAction(keyCode: 13) == .brake)
         #expect(InputAction(keyCode: 15) == .restart)
-        #expect(InputAction(keyCode: 49) == nil)
+        #expect(InputAction(keyCode: 49) == .jump)
+        #expect(InputAction(keyCode: 3) == .turbo)
+        #expect(InputAction(keyCode: 53) == .pause)
+        #expect(InputAction(keyCode: 35) == .pause)
+        #expect(InputAction(keyCode: 6) == nil)
     }
 }
 

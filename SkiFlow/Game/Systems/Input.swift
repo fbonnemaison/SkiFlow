@@ -1,9 +1,15 @@
+import CoreGraphics
+import Foundation
+
 /// Acciones de juego, independientes del dispositivo de entrada.
-enum InputAction: Hashable, Sendable {
+enum InputAction: Hashable, Sendable, CaseIterable {
     case left
     case right
     case down
     case brake
+    case jump
+    case turbo
+    case pause
     case restart
 
     /// Traduce un código de tecla físico de macOS (independiente de la distribución
@@ -14,24 +20,105 @@ enum InputAction: Hashable, Sendable {
         case 124, 2: self = .right // → / D
         case 125, 1: self = .down // ↓ / S
         case 126, 13: self = .brake // ↑ / W
+        case 49: self = .jump // Espacio
+        case 3: self = .turbo // F
+        case 53, 35: self = .pause // Esc / P
         case 15: self = .restart // R
         default: return nil
         }
     }
+
+    /// Acciones que giran al Cuico de forma digital.
+    var isSteering: Bool {
+        switch self {
+        case .left, .right, .down, .brake: true
+        default: false
+        }
+    }
+}
+
+/// De dónde viene una acción.
+enum InputSource: Hashable, Sendable {
+    case keyboard
+    case mouse
+    case gamepad
+}
+
+/// Estado unificado de la entrada: une teclado, ratón y mando.
+///
+/// Cada dispositivo mantiene sus propias teclas pulsadas, de modo que soltar una
+/// tecla no anula el mismo botón mantenido en el mando.
+struct InputState: Sendable {
+    private var heldBySource: [InputSource: Set<InputAction>] = [:]
+
+    /// Posición del cursor relativa a la cámara (o `nil` si el ratón no apunta).
+    var mouseAim: CGPoint?
+    /// Inclinación del stick del mando (`x`, `y` entre -1 y 1; `y` positivo = arriba).
+    var stickAim: CGVector = .zero
+
+    /// Acciones mantenidas por cualquier dispositivo.
+    var held: Set<InputAction> {
+        heldBySource.values.reduce(into: Set()) { $0.formUnion($1) }
+    }
+
+    /// Registra una pulsación o suelta. Devuelve `true` solo cuando la acción pasa
+    /// de no estar pulsada en ningún dispositivo a estarlo (flanco de subida).
+    @discardableResult
+    mutating func set(_ action: InputAction, pressed: Bool, source: InputSource) -> Bool {
+        let wasHeld = held.contains(action)
+        if pressed {
+            heldBySource[source, default: []].insert(action)
+        } else {
+            heldBySource[source]?.remove(action)
+        }
+        return pressed && !wasHeld
+    }
+
+    mutating func releaseAll() {
+        heldBySource.removeAll()
+        stickAim = .zero
+    }
+
+    /// Dirección hacia la que apuntan el stick o el ratón, si alguno lo hace.
+    ///
+    /// - Parameters:
+    ///   - skier: posición del Cuico en el mundo.
+    ///   - camera: posición de la cámara en el mundo.
+    func aimDirection(skier: CGPoint, camera: CGPoint) -> SkiDirection? {
+        let stickLength = hypot(stickAim.dx, stickAim.dy)
+        if stickLength >= Self.stickDeadZone {
+            return SkiDirection.aiming(at: stickAim)
+        }
+        if let mouseAim {
+            let target = CGPoint(x: camera.x + mouseAim.x, y: camera.y + mouseAim.y)
+            let vector = CGVector(dx: target.x - skier.x, dy: target.y - skier.y)
+            guard hypot(vector.dx, vector.dy) >= Self.mouseDeadZone else { return nil }
+            return SkiDirection.aiming(at: vector)
+        }
+        return nil
+    }
+
+    /// Por debajo de esta inclinación se ignora el stick.
+    static let stickDeadZone: Double = 0.35
+    /// Si el cursor está encima del Cuico no se cambia la dirección.
+    static let mouseDeadZone: Double = 24
 }
 
 /// Convierte las acciones pulsadas en cambios de dirección del Cuico.
 ///
 /// Al pulsar izquierda/derecha se gira un paso al instante; si se mantiene la tecla,
-/// se sigue girando tras `repeatDelay` cada `repeatInterval` segundos.
+/// se sigue girando tras `repeatDelay` cada `repeatInterval` segundos. Con ratón o
+/// stick se gira paso a paso hacia la dirección apuntada.
 struct SkierController: Sendable {
     var repeatDelay: Double = 0.22
     var repeatInterval: Double = 0.11
+    var aimStepInterval: Double = 0.05
 
     private var leftTimer: Double = 0
     private var rightTimer: Double = 0
+    private var aimTimer: Double = 0
 
-    /// Respuesta inmediata a una pulsación.
+    /// Respuesta inmediata a una pulsación de giro.
     mutating func press(_ action: InputAction, direction: inout SkiDirection) {
         switch action {
         case .left:
@@ -44,7 +131,7 @@ struct SkierController: Sendable {
             direction = .down
         case .brake:
             direction = direction.braking()
-        case .restart:
+        case .jump, .turbo, .pause, .restart:
             break
         }
     }
@@ -67,6 +154,19 @@ struct SkierController: Sendable {
                 direction = direction.turnedRight()
                 rightTimer += repeatInterval
             }
+        }
+    }
+
+    /// Gira paso a paso hacia `target` (ratón o stick).
+    mutating func steer(toward target: SkiDirection, dt: Double, direction: inout SkiDirection) {
+        guard direction != target else {
+            aimTimer = 0
+            return
+        }
+        aimTimer -= dt
+        while aimTimer <= 0, direction != target {
+            direction = target.rawValue < direction.rawValue ? direction.turnedLeft() : direction.turnedRight()
+            aimTimer += aimStepInterval
         }
     }
 }

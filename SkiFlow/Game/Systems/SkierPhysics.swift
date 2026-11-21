@@ -50,11 +50,22 @@ struct SkierPhysics: Sendable {
     var maxSpeed: Double = 540
     /// Rapidez mínima para despegar de una rampa.
     var minJumpSpeed: Double = 60
+    /// El turbo multiplica la gravedad y sube el tope de velocidad.
+    var turboGravityMultiplier: Double = 1.5
+    var turboMaxSpeed: Double = 780
 
     /// Velocidad terminal yendo recto hacia abajo sobre nieve normal.
     var terminalSpeed: Double { min(gravity / drag, maxSpeed) }
 
-    func step(_ state: inout SkierState, dt: Double, environment: Environment = Environment()) {
+    /// Velocidad terminal con turbo.
+    var turboTerminalSpeed: Double { min(gravity * turboGravityMultiplier / drag, turboMaxSpeed) }
+
+    func step(
+        _ state: inout SkierState,
+        dt: Double,
+        environment: Environment = Environment(),
+        turbo: Bool = false
+    ) {
         guard dt > 0, !state.isFallen else { return }
 
         if state.isAirborne {
@@ -65,11 +76,14 @@ struct SkierPhysics: Sendable {
 
         let direction = state.direction
         let surface = environment.surface
-        var acceleration = gravity * cos(direction.angle) - drag * surface.dragMultiplier * state.speed
+        let pull = gravity * (turbo ? turboGravityMultiplier : 1)
+        var acceleration = pull * cos(direction.angle) - drag * surface.dragMultiplier * state.speed
         if direction.isSideways {
             acceleration -= sidewaysBrake * surface.brakeMultiplier
         }
-        state.speed = min(max(state.speed + acceleration * dt, 0), maxSpeed)
+        // Al soltar el turbo, el exceso de velocidad se pierde por rozamiento.
+        let cap = turbo ? turboMaxSpeed : max(maxSpeed, state.speed)
+        state.speed = min(max(state.speed + acceleration * dt, 0), cap)
 
         move(&state, dt: dt)
 
@@ -85,6 +99,17 @@ struct SkierPhysics: Sendable {
     func launch(_ state: inout SkierState) -> Bool {
         guard !state.isAirborne, state.speed >= minJumpSpeed else { return false }
         let duration = min(1.3, 0.4 + 0.9 * state.speed / terminalSpeed)
+        state.airDuration = duration
+        state.airTime = duration
+        return true
+    }
+
+    /// Pequeño brinco a voluntad (Espacio, clic o botón A), sin rampa.
+    /// Sirve para saltar piedras, animales y otros obstáculos bajos.
+    @discardableResult
+    func hop(_ state: inout SkierState) -> Bool {
+        guard !state.isAirborne, !state.isFallen else { return false }
+        let duration = 0.35 + 0.25 * min(1, state.speed / terminalSpeed)
         state.airDuration = duration
         state.airTime = duration
         return true

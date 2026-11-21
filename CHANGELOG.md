@@ -7,6 +7,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 ## [Sin publicar]
 
 ### Añadido
+- Controles completos (Fase 3): ratón/trackpad para apuntar y clic para brincar, mando (GameController) con conexión en caliente, brinco, turbo y pausa (también automática al cambiar de app).
 - Montaña andina infinita (Fase 2): generación por trozos con semilla, bandas de altitud, obstáculos fijos y móviles (araucarias, queñuas, penitentes, apachetas, refugios, llamas, guanacos, vicuñas, perros, esquiadores, telesilla y cóndores), rampas, hielo, nieve profunda y viento blanco; caídas, tropiezos y saltos.
 - Icono de la app en pixel art (esquiador con antiparras frente a los Andes); el original está en `Design/AppIcon-source.png`.
 - El Cuico provisional adopta la estética del icono: parka roja, casco y braga negros, antiparras espejadas y esquís negros con cantos verde lima.

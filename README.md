@@ -2,17 +2,21 @@
 
 Juego de esquí 2D para macOS inspirado en el clásico *SkiFree* (1991), ambientado en la **cordillera de los Andes**. Eres **el Cuico**, un típico chileno que sube a la nieve más a posar que a esquiar. Baja la montaña esquivando queñuas, rocas, llamas y otros esquiadores, compite contra el reloj en slalom, haz acrobacias en freestyle… y huye del **Kunk**. Y si tienes muy mala suerte, también del **Chupacabras**.
 
-> Estado: en desarrollo (montaña con obstáculos, Fase 2). Consulta el plan en [TODO.md](TODO.md).
+> Estado: en desarrollo (controles completos, Fase 3). Consulta el plan en [TODO.md](TODO.md).
 
 ## Controles
 
-| Tecla | Acción |
-|---|---|
-| ← / A | Girar a la izquierda (mantén pulsado para seguir girando) |
-| → / D | Girar a la derecha |
-| ↓ / S | Apuntar recto hacia abajo |
-| ↑ / W | Frenar (esquís atravesados) |
-| R | Reiniciar la bajada en una montaña nueva |
+| Teclado | Ratón / trackpad | Mando | Acción |
+|---|---|---|---|
+| ← / A, → / D | Mover el cursor | Stick izquierdo o cruceta | Girar (mantén la tecla para seguir girando) |
+| ↓ / S | Cursor bajo el Cuico | Cruceta ↓ | Apuntar recto hacia abajo |
+| ↑ / W | Cursor por encima | Cruceta ↑ o B (○) | Frenar (esquís atravesados) |
+| Espacio | Clic | A (✕) | Brincar |
+| F (mantener) | | X (□) o gatillo derecho | Turbo |
+| Esc / P | | Menú (Options) | Pausa |
+| R | | Vista (Share) | Reiniciar la bajada en una montaña nueva |
+
+Al tocar las teclas de giro se desactiva el apuntado con ratón; vuelve a activarse en cuanto mueves el ratón. La partida se pausa sola si cambias de app.
 
 ## En la montaña
 

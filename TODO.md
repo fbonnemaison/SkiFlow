@@ -65,12 +65,13 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [x] Sprites pixel art provisionales generados por código (`PixelArt`, `ObstacleArt`)
 - [x] Tests: misma semilla = mismo mundo; salida despejada; separación y densidad; bandas; movimientos; reglas de choque; superficies, viento y saltos
 
-## Fase 3 — Controles completos
-- [ ] Ratón/trackpad: el esquiador apunta hacia el cursor; clic para saltar
-- [ ] Mando con GameController (stick, botones, conexión y desconexión en caliente)
-- [ ] Acciones comunes: saltar, **turbo** (modo rápido), pausa
-- [ ] Capa de entrada abstracta (`InputState`) que unifica los tres dispositivos
-- [ ] Reasignación de teclas en Ajustes (opcional dentro de esta fase)
+## Fase 3 — Controles completos ✅
+- [x] Ratón/trackpad: el Cuico gira paso a paso hacia el cursor (cursor por encima = frenar); clic para brincar
+- [x] Mando con GameController: stick para apuntar, cruceta, botones; se consulta cada fotograma, así que funciona conectado y desconectado en caliente (con aviso en pantalla)
+- [x] Acciones comunes: brincar (Espacio / clic / A), **turbo** mantenido (F / X / gatillo derecho), pausa (Esc / P / Menú, y automática al cambiar de app)
+- [x] Capa de entrada común (`InputState`): cada dispositivo guarda sus propias pulsaciones; el stick manda sobre el ratón y las teclas desactivan el apuntado con ratón
+- [x] Tests: apuntado, flancos de pulsación por dispositivo, transiciones del mando, brinco, turbo, pausa y ratón
+- [ ] Reasignación de teclas → se hace junto a los Ajustes en la Fase 7
 
 ## Fase 4 — Modo Descenso libre y perseguidores
 - [ ] Contador de distancia y velocidad en el HUD
@@ -116,7 +117,7 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [ ] HUD superpuesto: tiempo, distancia, velocidad, puntos y puertas
 - [ ] Pausa (Esc/P/botón Menú) y reanudar
 - [ ] Pantalla de resultados con récord personal
-- [ ] Ajustes: volumen, controles, pantalla completa y escala de píxel
+- [ ] Ajustes: volumen, controles (incluida la reasignación de teclas), pantalla completa y escala de píxel
 - [ ] Menús de la barra de macOS y atajos estándar (⌘F pantalla completa, ⌘Q)
 - [ ] Textos en String Catalog (español)
 

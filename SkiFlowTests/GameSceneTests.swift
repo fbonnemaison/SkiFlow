@@ -115,3 +115,77 @@ struct GameSceneTests {
         #expect(mountain.loadedCoords.count <= 12)
     }
 }
+
+@MainActor
+struct GameSceneInputTests {
+    private func makeScene() -> GameScene {
+        GameScene(size: GameConfig.sceneSize, seed: 2026)
+    }
+
+    @Test func spaceHops() {
+        let scene = makeScene()
+        scene.handle(.jump, pressed: true)
+        #expect(scene.skier.isAirborne)
+    }
+
+    @Test func pauseFreezesTheGameAndBlocksSteering() {
+        let scene = makeScene()
+        scene.handle(.pause, pressed: true)
+        #expect(scene.isGamePaused)
+        scene.handle(.pause, pressed: false)
+
+        scene.handle(.left, pressed: true)
+        #expect(scene.skier.direction == .down)
+        scene.handle(.left, pressed: false)
+
+        scene.update(10)
+        scene.update(11)
+        #expect(scene.skier.position == .zero)
+
+        scene.handle(.pause, pressed: true)
+        #expect(!scene.isGamePaused)
+    }
+
+    @Test func turboWhileHeld() {
+        let scene = makeScene()
+        scene.handle(.turbo, pressed: true)
+        #expect(scene.isTurboActive)
+        scene.handle(.turbo, pressed: false)
+        #expect(!scene.isTurboActive)
+    }
+
+    @Test func gamepadButtonsAndStick() {
+        let scene = makeScene()
+        scene.applyGamepad(GamepadState(held: [.jump], stick: CGVector(dx: 0.9, dy: -0.9)))
+        #expect(scene.skier.isAirborne)
+
+        for _ in 0..<60 {
+            scene.simulate(dt: 1.0 / 120.0)
+        }
+        #expect(scene.skier.direction == .right2)
+
+        // Al desconectar el mando se sueltan sus botones.
+        scene.applyGamepad(nil)
+        #expect(scene.heldActions.isEmpty)
+    }
+
+    @Test func mouseAimSteersAndKeyboardTakesOver() {
+        let scene = makeScene()
+        // Cursor abajo a la izquierda del Cuico.
+        scene.aimMouse(atScenePoint: CGPoint(x: -300, y: -300))
+        for _ in 0..<60 {
+            scene.simulate(dt: 1.0 / 120.0)
+        }
+        #expect(scene.skier.direction.rawValue < 0)
+
+        scene.handle(.down, pressed: true)
+        #expect(scene.skier.direction == .down)
+        #expect(scene.input.mouseAim == nil)
+    }
+
+    @Test func mouseClickJumps() {
+        let scene = makeScene()
+        scene.handle(.jump, pressed: true, source: .mouse)
+        #expect(scene.skier.isAirborne)
+    }
+}

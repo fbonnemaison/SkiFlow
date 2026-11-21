@@ -29,4 +29,7 @@ Esquiador pixel art frente a los Andes (`Design/AppIcon-source.png`), aportado p
 
 ## Audio
 
-Llegará en la Fase 9; los créditos se añadirán aquí.
+Todo el sonido es **original de App-Zilla** y se sintetiza por código al arrancar el juego (`SkiFlow/Audio/`): no hay grabaciones ni muestras de terceros.
+
+- Música en La menor pentatónica con timbres chiptune que evocan la quena, el charango y el bombo legüero, con ritmo de huayno.
+- Efectos de sonido y ambientes (esquís, viento, avalancha) hechos con ondas y ruido.

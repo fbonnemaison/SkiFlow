@@ -13,6 +13,8 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 - El cronómetro mostraba una décima de menos en algunos tiempos (por ejemplo, 01:15.2 en vez de 01:15.3).
 
 ### Añadido
+- Récords y estadísticas con SwiftData (Fase 10): top 10 por modo, botón para repetir la montaña de un récord, estadísticas del jugador (incluidas capturas del Kunk y encuentros con el Chupacabras) y borrado con confirmación.
+- Audio (Fase 9): sintetizador chiptune propio, 19 efectos, bucles de esquís y viento, y cuatro temas con aire andino (menú, bajada, Kunk y Chupacabras) con fundidos; volúmenes de los Ajustes aplicados.
 - Arte pixel art (Fase 8): tiles CC0 de «Tiny Ski» (Kenney) para banderas, esquiadores, roca, telesilla y el nuevo mono de nieve; el Cuico en pixel art; contorno común para los sprites propios; partículas de nieve; fuente pixel «Public Pixel» (GGBotNet, CC0); `CREDITS.md` y licencias en `Licenses/`.
 - Interfaz completa (Fase 7): pantalla de título con selector de modo y semilla, HUD en SwiftUI, menú de pausa, pantalla de resultados con mejor marca de la sesión, ventana de Ajustes con reasignación de teclas, menú Juego con atajos y String Catalog.
 - Modo Freestyle (Fase 6): montaña llena de rampas, trucos en el aire (giros, mortales y el selfie del Cuico), combos, racha, tipos de aterrizaje y meta a los 1.000 m con la avalancha detrás.

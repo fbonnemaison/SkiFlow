@@ -93,14 +93,17 @@ struct ResultView: View {
                 .multilineTextAlignment(.center)
 
             if model.isNewBest {
-                Label("¡Nueva mejor marca de la sesión!", systemImage: "star.fill")
+                Label("¡Nuevo récord!", systemImage: "star.fill")
                     .font(.headline)
                     .foregroundStyle(Theme.ink)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
                     .background(Theme.lime, in: Capsule())
+            } else if let rank = model.lastRank {
+                Label("Puesto \(rank) de tu top 10", systemImage: "list.number")
+                    .font(.headline)
             } else if let best = model.best(for: model.selectedMode) {
-                Text("Mejor de la sesión: \(best)")
+                Text("Récord: \(best)")
                     .font(.callout.monospacedDigit())
                     .foregroundStyle(.secondary)
             }

@@ -74,6 +74,11 @@ final class GameScene: SKScene {
     var onRunEnded: ((RunOutcome) -> Void)?
     /// Se llama al pausar o reanudar.
     var onPauseChange: ((Bool) -> Void)?
+    /// Salida de sonido (música y efectos). `nil` = mudo (por ejemplo, en tests).
+    weak var audio: GameAudio? {
+        didSet { audio?.playMusic(musicForState) }
+    }
+
     /// Se llama al empezar una bajada (también al reiniciar o cambiar de modo).
     var onRunStarted: ((GameMode) -> Void)?
     private(set) var hud = HUDSnapshot()
@@ -209,18 +214,21 @@ final class GameScene: SKScene {
             // En el aire, en freestyle, las teclas de giro y salto hacen trucos.
             if let trick = Trick(action: action), freestyle?.start(trick) == true {
                 cuico.startTrickEffect(trick)
+                audio?.play(trick == .selfie ? .selfie : .swish)
             }
         case .jump:
-            physics.hop(&skier)
+            if physics.hop(&skier) { audio?.play(.hop) }
         case .turbo:
-            break
+            if !skier.isFallen { audio?.play(.turbo) }
         default:
             // Girar con teclas o cruceta desactiva el apuntado con ratón.
             if action.isSteering, source != .mouse {
                 input.mouseAim = nil
             }
             if !skier.isFallen {
+                let before = skier.direction
                 controller.press(action, direction: &skier.direction)
+                if skier.direction != before, !skier.isAirborne { audio?.play(.swish) }
             }
         }
     }
@@ -341,6 +349,7 @@ final class GameScene: SKScene {
 
         if isGamePaused { setPaused(false) }
         render()
+        audio?.playMusic(.run)
         onRunStarted?(mode)
     }
 
@@ -438,6 +447,7 @@ final class GameScene: SKScene {
             trail.record(position: skier.position, direction: skier.direction)
             if wasAirborne, !skier.isFallen {
                 snowBurst(count: 18)
+                audio?.play(.land)
             }
         }
     }
@@ -458,6 +468,7 @@ final class GameScene: SKScene {
         defer { freestyle = score }
 
         if let done = score.update(dt: dt) {
+            audio?.play(.trick)
             showMessage("\(done.displayName)! · salto: \(score.pendingPoints) pts")
         }
 
@@ -466,8 +477,10 @@ final class GameScene: SKScene {
             wasAirborne = false
             switch score.land(sideways: skier.direction.isSideways) {
             case let .clean(points):
+                audio?.play(.cleanLanding)
                 showMessage("¡Aterrizaje limpio! +\(points) pts · racha ×\(Self.format(score.chain))")
             case let .forced(points):
+                audio?.play(.bump)
                 skier.stumbleTime = 0.4
                 skier.speed *= 0.7
                 showMessage("Aterrizaje forzado +\(points) pts")
@@ -503,6 +516,8 @@ final class GameScene: SKScene {
             seconds: elapsed
         )
         freestyleResult = result
+        audio?.play(.finish)
+        audio?.playMusic(.menu)
         skier.speed = 0
         input.releaseAll()
         endRun()
@@ -516,8 +531,10 @@ final class GameScene: SKScene {
             switch event {
             case let .passed(gate):
                 courseNode?.mark(gate: gate, passed: true)
+                audio?.play(.gate)
             case let .missed(gate):
                 courseNode?.mark(gate: gate, passed: false)
+                audio?.play(.gateMissed)
                 showMessage(String(format: "¡Puerta fallada! +%.0f s", SlalomProgress.missPenalty))
             case .finished:
                 finishSlalom(progress)
@@ -529,6 +546,8 @@ final class GameScene: SKScene {
         if mode.hasCreatures {
             switch kunk.update(dt: dt, skier: skier) {
             case .appeared:
+                audio?.play(.kunkRoar)
+                audio?.playMusic(musicForState)
                 showMessage("¡Viene el Kunk! Mantén F (turbo) para escapar")
             case .caught:
                 catchCuico(by: .kunk)
@@ -540,11 +559,14 @@ final class GameScene: SKScene {
             switch chupacabras.update(dt: dt, skier: skier) {
             case .warning:
                 chupacabrasEncounters += 1
+                audio?.play(.chupacabrasScreech)
+                audio?.playMusic(musicForState)
                 showMessage("¡Algo acecha entre las rocas! Prepárate para saltar")
             case .caught:
                 catchCuico(by: .chupacabras)
                 return
             case .escaped:
+                audio?.playMusic(musicForState)
                 showMessage("El Chupacabras se esfumó…")
             default:
                 break
@@ -554,6 +576,7 @@ final class GameScene: SKScene {
         if mode.hasAvalanche {
             switch avalanche.update(dt: dt, skier: skier) {
             case .appeared:
+                audio?.play(.avalancheRumble)
                 showMessage("¡Avalancha! No te detengas")
             case .caught:
                 catchCuico(by: .avalanche)
@@ -565,6 +588,12 @@ final class GameScene: SKScene {
 
     private func catchCuico(by kind: ChaserKind) {
         caughtBy = kind
+        switch kind {
+        case .kunk: audio?.play(.kunkRoar)
+        case .chupacabras: audio?.play(.chupacabrasScreech)
+        case .avalanche: audio?.play(.avalancheRumble)
+        }
+        audio?.playMusic(nil)
         catchTimer = Self.catchDuration
         skier.speed = 0
         skier.airTime = 0
@@ -575,6 +604,7 @@ final class GameScene: SKScene {
     }
 
     private func finishRun(caughtBy kind: ChaserKind) {
+        audio?.play(.caught)
         let info = GameOverInfo(
             caughtBy: kind,
             meters: skier.distanceMeters,
@@ -594,6 +624,8 @@ final class GameScene: SKScene {
             penaltySeconds: progress.penaltySeconds
         )
         slalomResult = result
+        audio?.play(.finish)
+        audio?.playMusic(.menu)
         skier.speed = 0
         input.releaseAll()
         endRun()
@@ -618,6 +650,8 @@ final class GameScene: SKScene {
             }
             crashes += 1
             snowBurst(count: 36)
+            audio?.play(.crash)
+            audio?.play(.ouch)
             skier.speed = 0
             skier.airTime = 0
             skier.stumbleTime = 0
@@ -625,12 +659,22 @@ final class GameScene: SKScene {
             // Rueda hasta quedar justo por debajo del obstáculo.
             skier.position.y = min(skier.position.y, obstacleHitbox.minY - 14)
         case .trip:
+            audio?.play(.bump)
             skier.speed *= 0.45
             skier.stumbleTime = 0.4
             skier.graceTime = 0.5
         case .jump:
-            physics.launch(&skier)
+            if physics.launch(&skier) { audio?.play(.jump) }
         }
+    }
+
+    /// Tema que corresponde al estado de la bajada.
+    var musicForState: MusicTrack? {
+        if caughtBy != nil { return nil }
+        if isRunOver { return .menu }
+        if chupacabras.phase == .warning || chupacabras.phase == .chasing { return .chupacabrasChase }
+        if kunk.phase == .chasing { return .kunkChase }
+        return .run
     }
 
     // MARK: Dibujo
@@ -663,6 +707,12 @@ final class GameScene: SKScene {
             blizzard.emissionAngle = towardsRight ? 0 : .pi
             blizzard.position.x = (towardsRight ? -1 : 1) * size.width * 0.6
         }
+
+        // Sonidos continuos: esquís sobre la nieve y viento.
+        let running = caughtBy == nil && !isRunOver && !isGamePaused
+        let gliding = running && !skier.isAirborne && !skier.isFallen
+        audio?.setSlide(gliding ? skier.speed / physics.turboMaxSpeed : 0)
+        audio?.setWind(running ? Double(whiteout.alpha / 0.55) : 0)
 
         // Derrape: más nieve cuanto más fuerte se frena o se gira.
         let skidding = !skier.isAirborne && !skier.isFallen && skier.speed > 80

@@ -143,19 +143,26 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [ ] Redibujar araucarias y queñuas a escala 3 (hoy usan escala 4 para que se vean grandes)
 - [ ] Revisar las partículas en la app (no se ven al dibujar fuera de pantalla en los tests)
 
-## Fase 9 — Audio
-- [ ] Efectos: deslizar, girar, choque, salto, aterrizaje, puerta, quejas del Cuico al caer, rugido del Kunk, chillido del Chupacabras, viento y avalancha
-- [ ] Música chiptune con aire andino (timbres que evocan quena, charango y bombo): menú, partida y persecución
-- [ ] Temas de persecución distintos para el Kunk y para el Chupacabras
-- [ ] Gestor de audio (`AVAudioEngine` o `SKAudioNode`) con mezcla y volúmenes
-- [ ] Créditos de audio en `CREDITS.md`
+## Fase 9 — Audio ✅
+- [x] Todo el audio **sintetizado por código** en estilo chiptune (`Synth`): ondas cuadrada, triangular, senoidal y ruido, envolventes ADSR, vibrato, glissando y filtro. Original, sin archivos externos ni licencias de terceros
+- [x] Efectos: girar, turbo, brinco, salto, aterrizaje, choque, queja del Cuico al caer (¡ay!), tropiezo, puerta, puerta fallada, meta, atrapado, truco, aterrizaje limpio, selfie, rugido del Kunk, chillido del Chupacabras, avalancha y clic de menú
+- [x] Bucles continuos: los esquís sobre la nieve (suben con la velocidad) y el viento blanco
+- [x] Música con aire andino en La menor pentatónica (quena, charango, bajo y bombo con ritmo de huayno): menú, bajada, persecución del Kunk y acecho del Chupacabras, con fundido entre temas
+- [x] Gestor de audio con `AVAudioEngine` (`AudioManager`): buses de música y efectos con los volúmenes de los Ajustes, música más baja en pausa, síntesis en segundo plano al arrancar y silencio en los tests
+- [x] Créditos de audio en `CREDITS.md`
+- [x] Tests: síntesis, envolventes, bucles sin cortes, voces de igual longitud, efectos sin saturar y eventos de sonido del juego
+- [ ] Escuchar y ajustar la mezcla jugando en la app (las previsualizaciones WAV están en `build/AudioPreview/`)
 
-## Fase 10 — Persistencia y récords
-- [ ] Modelo SwiftData: récords por modo (distancia, tiempo y puntos), fecha y semilla
-- [ ] Tabla de mejores marcas por modo (top 10 local)
-- [ ] Estadísticas: partidas, metros totales, capturas del Kunk y encuentros con el Chupacabras
+## Fase 10 — Persistencia y récords ✅
+- [x] Modelo SwiftData (`RunRecord`): marca por modo (metros, tiempo con penalización o puntos), fecha, semilla, resumen y caídas
+- [x] Top 10 local por modo (en slalom gana el menor tiempo); se guardan hasta 50 marcas por modo y se borran las peores
+- [x] Estadísticas (`PlayerStats`): bajadas, metros, tiempo en la nieve, caídas, capturas del Kunk, encuentros y capturas del Chupacabras, avalanchas, slaloms terminados y trucos
+- [x] Pantalla de **Récords** desde el menú, con ranking por modo, botón **Repetir** (vuelve a jugar la montaña del récord con su semilla), estadísticas y borrado con confirmación
+- [x] El récord guardado sustituye a la mejor marca de la sesión en el menú y en los resultados («¡Nuevo récord!» o «Puesto N de tu top 10»)
 - [x] Persistencia de ajustes (`SettingsStore` sobre `UserDefaults`, hecha en la Fase 7)
-- [ ] Tests: guardado y ordenación de récords
+- [x] Almacén en disco en la app y en memoria durante los tests
+- [x] Tests: guardado, orden por modo, marcas que no cuentan, top 10, recorte, estadísticas, semillas grandes, repetir y borrar
+- [ ] Revisar a mano la tabla de récords (las listas con desplazamiento no se dibujan fuera de pantalla en los tests)
 
 ## Fase 11 — Pulido y equilibrio
 - [ ] Ajuste fino de la física, la dificultad y la persecución

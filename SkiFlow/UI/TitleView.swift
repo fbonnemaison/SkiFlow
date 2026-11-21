@@ -35,6 +35,11 @@ struct TitleView: View {
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 200)
                         .help("Escribe un número para repetir una montaña concreta")
+                    Button {
+                        model.isShowingRecords = true
+                    } label: {
+                        Label("Récords", systemImage: "trophy")
+                    }
                     SettingsLink {
                         Label("Ajustes", systemImage: "gearshape")
                     }
@@ -51,6 +56,9 @@ struct TitleView: View {
                     .foregroundStyle(Theme.ink.opacity(0.7))
             }
             .padding(32)
+        }
+        .sheet(isPresented: $model.isShowingRecords) {
+            RecordsView()
         }
     }
 
@@ -97,7 +105,7 @@ private struct ModeCard: View {
                     .foregroundStyle(Theme.ink.opacity(0.75))
                     .fixedSize(horizontal: false, vertical: true)
                 Spacer(minLength: 0)
-                Text(best.map { "Mejor de la sesión: \($0)" } ?? "Sin marca todavía")
+                Text(best.map { "Récord: \($0)" } ?? "Sin marca todavía")
                     .font(.caption.monospacedDigit())
                     .foregroundStyle(Theme.ink.opacity(0.6))
             }

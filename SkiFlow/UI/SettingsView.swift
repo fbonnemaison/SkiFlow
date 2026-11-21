@@ -25,9 +25,6 @@ private struct GeneralSettingsView: View {
             Section("Sonido") {
                 Slider(value: $settings.musicVolume, in: 0...1) { Text("Música") }
                 Slider(value: $settings.effectsVolume, in: 0...1) { Text("Efectos") }
-                Text("El audio llegará en una próxima versión; el volumen elegido se guarda.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
             }
             Section("Pantalla") {
                 Picker("Escala de píxel", selection: $settings.pixelZoom) {

@@ -2,7 +2,7 @@
 
 Juego de esquí 2D para macOS inspirado en el clásico *SkiFree* (1991), ambientado en la **cordillera de los Andes**. Eres **el Cuico**, un típico chileno que sube a la nieve más a posar que a esquiar. Baja la montaña esquivando queñuas, rocas, llamas y otros esquiadores, compite contra el reloj en slalom, haz acrobacias en freestyle… y huye del **Kunk**. Y si tienes muy mala suerte, también del **Chupacabras**.
 
-> Estado: en desarrollo (arte pixel art, Fase 8). Consulta el plan en [TODO.md](TODO.md).
+> Estado: en desarrollo (con récords y estadísticas, Fase 10). Consulta el plan en [TODO.md](TODO.md).
 
 ## Controles
 
@@ -20,6 +20,8 @@ Juego de esquí 2D para macOS inspirado en el clásico *SkiFree* (1991), ambient
 Al tocar las teclas de giro se desactiva el apuntado con ratón; vuelve a activarse en cuanto mueves el ratón. La partida se pausa sola si cambias de app.
 
 Las teclas se pueden reasignar en **Ajustes › Controles** (⌘,). Atajos del menú **Juego**: ⌘N nueva bajada, ⌘P pausa, ⌘R reiniciar, ⌘1–⌘4 elegir modo, ⇧⌘M menú principal y ⌘F pantalla completa.
+
+En **Récords** (menú principal) ves tu top 10 de cada modo y tus estadísticas; el botón **Repetir** vuelve a bajar la misma montaña de una marca. Los récords se guardan en el Mac con SwiftData.
 
 En el menú principal puedes escribir una **semilla** (un número) para repetir una montaña concreta; la de la partida en curso aparece en el menú de pausa.
 
@@ -111,7 +113,7 @@ SkiFlowTests/     Tests con Swift Testing
 
 ## Créditos
 
-Arte CC0 de [Kenney](https://www.kenney.nl) («Tiny Ski») y fuente «Public Pixel» de GGBotNet (CC0). El resto del arte es propio. Detalles en [CREDITS.md](CREDITS.md).
+Arte CC0 de [Kenney](https://www.kenney.nl) («Tiny Ski») y fuente «Public Pixel» de GGBotNet (CC0). El resto del arte y toda la música y los sonidos son propios (el audio se sintetiza por código). Detalles en [CREDITS.md](CREDITS.md).
 
 ## Licencia
 

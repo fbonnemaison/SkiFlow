@@ -41,6 +41,8 @@ struct ContentView: View {
         .onChange(of: settings.pixelZoom) { _, zoom in
             model.scene.pixelZoom = CGFloat(zoom)
         }
+        .onChange(of: settings.musicVolume) { model.applyVolumes() }
+        .onChange(of: settings.effectsVolume) { model.applyVolumes() }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
             // Al cambiar de app se sueltan las teclas y se pausa la partida.
             model.pauseIfPlaying()

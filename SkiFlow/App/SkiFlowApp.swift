@@ -9,8 +9,13 @@ struct SkiFlowApp: App {
     init() {
         PixelFont.register()
         let settings = SettingsStore()
+        // En los tests la app hace de anfitriona: allí no debe sonar nada.
+        let isTesting = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil
+        let audio = isTesting ? nil : AudioManager(musicVolume: settings.musicVolume, effectsVolume: settings.effectsVolume)
+        // Récords en disco (en memoria durante los tests). Si falla, se juega sin guardar.
+        let records = (try? RecordStore.makeContainer(inMemory: isTesting)).map { RecordStore(container: $0) }
         _settings = State(initialValue: settings)
-        _model = State(initialValue: GameModel(settings: settings))
+        _model = State(initialValue: GameModel(settings: settings, audio: audio, records: records))
     }
 
     var body: some Scene {

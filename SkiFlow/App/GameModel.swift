@@ -15,10 +15,16 @@ final class GameModel {
     private(set) var hud = HUDSnapshot()
     private(set) var isPaused = false
     private(set) var outcome: RunOutcome?
-    /// La bajada que acaba de terminar mejora la marca de la sesión.
+    /// La bajada que acaba de terminar es el nuevo récord del modo.
     private(set) var isNewBest = false
-    /// Mejores marcas de esta sesión (las guardadas llegan en la Fase 10).
+    /// Puesto de la última bajada en el top 10 de su modo.
+    private(set) var lastRank: Int?
+    /// Mejores marcas en memoria, solo si no hay almacén (tests sin SwiftData).
     private(set) var sessionBests: [GameMode: Double] = [:]
+    /// Se muestra la pantalla de récords.
+    var isShowingRecords = false
+    /// Cambia cada vez que se guardan o borran récords, para refrescar las vistas.
+    private(set) var recordsVersion = 0
 
     var selectedMode: GameMode
     /// Semilla opcional escrita en el menú para repetir una montaña concreta.
@@ -26,19 +32,33 @@ final class GameModel {
 
     @ObservationIgnored let scene: GameScene
     @ObservationIgnored let settings: SettingsStore
+    @ObservationIgnored let audio: GameAudio?
+    @ObservationIgnored let records: RecordStore?
 
-    init(settings: SettingsStore, scene: GameScene? = nil) {
+    init(settings: SettingsStore, scene: GameScene? = nil, audio: GameAudio? = nil, records: RecordStore? = nil) {
         self.settings = settings
+        self.audio = audio
+        self.records = records
         let scene = scene ?? GameScene(size: GameConfig.sceneSize)
         self.scene = scene
         selectedMode = scene.mode
         scene.pixelZoom = CGFloat(settings.pixelZoom)
 
         scene.onHUDChange = { [weak self] hud in self?.hud = hud }
-        scene.onPauseChange = { [weak self] paused in self?.isPaused = paused }
+        scene.onPauseChange = { [weak self] paused in
+            self?.isPaused = paused
+            self?.audio?.setPaused(paused)
+        }
         scene.onRunEnded = { [weak self] outcome in self?.runEnded(outcome) }
         scene.onRunStarted = { [weak self] mode in self?.runStarted(mode) }
         hud = scene.makeHUD()
+        audio?.setVolumes(music: settings.musicVolume, effects: settings.effectsVolume)
+        audio?.playMusic(.menu)
+    }
+
+    /// Aplica los volúmenes de los Ajustes.
+    func applyVolumes() {
+        audio?.setVolumes(music: settings.musicVolume, effects: settings.effectsVolume)
     }
 
     /// Semilla escrita en el menú, si es un número válido.
@@ -52,6 +72,9 @@ final class GameModel {
     // MARK: Acciones
 
     func start(_ mode: GameMode) {
+        audio?.play(.uiClick)
+        // La escena solo suena mientras se juega.
+        scene.audio = audio
         selectedMode = mode
         scene.pixelZoom = CGFloat(settings.pixelZoom)
         scene.restart(mode: mode, seed: parsedSeed)
@@ -86,15 +109,51 @@ final class GameModel {
     }
 
     func backToMenu() {
+        audio?.play(.uiClick)
+        scene.audio = nil
+        audio?.setSlide(0)
+        audio?.setWind(0)
+        audio?.playMusic(.menu)
+        audio?.setPaused(false)
         scene.releaseAllInput()
         if !scene.isGamePaused { scene.setPaused(true) }
         outcome = nil
         isNewBest = false
+        lastRank = nil
         screen = .title
     }
 
+    /// Récord de un modo ya formateado (guardado, o de la sesión si no hay almacén).
     func best(for mode: GameMode) -> String? {
-        sessionBests[mode].map(mode.formatRecord)
+        _ = recordsVersion
+        if let records {
+            return records.best(mode).map { mode.formatRecord($0.value) }
+        }
+        return sessionBests[mode].map(mode.formatRecord)
+    }
+
+    /// Top 10 de un modo.
+    func topRecords(for mode: GameMode) -> [RunRecord] {
+        _ = recordsVersion
+        return records?.top(mode) ?? []
+    }
+
+    var stats: PlayerStats? {
+        _ = recordsVersion
+        return records?.stats
+    }
+
+    /// Vuelve a jugar la montaña de un récord.
+    func replay(_ record: RunRecord) {
+        isShowingRecords = false
+        seedText = String(record.seed)
+        start(record.mode)
+    }
+
+    func resetRecords() {
+        records?.reset()
+        sessionBests.removeAll()
+        recordsVersion += 1
     }
 
     // MARK: Entrada
@@ -143,16 +202,32 @@ final class GameModel {
         selectedMode = mode
         outcome = nil
         isNewBest = false
+        lastRank = nil
     }
 
     private func runEnded(_ outcome: RunOutcome) {
-        self.outcome = outcome
         let mode = scene.mode
-        guard let value = outcome.recordValue(in: mode) else {
+        if let records {
+            let placement = records.register(RunReport(
+                mode: mode,
+                outcome: outcome,
+                seed: scene.seed,
+                meters: scene.skier.distanceMeters,
+                seconds: scene.elapsed,
+                crashes: scene.crashes,
+                chupacabrasEncounters: scene.chupacabrasEncounters
+            ))
+            lastRank = placement.rank
+            isNewBest = placement.isNewBest
+            recordsVersion += 1
+        } else if let value = outcome.recordValue(in: mode) {
+            isNewBest = mode.isBetter(value, than: sessionBests[mode])
+            lastRank = isNewBest ? 1 : nil
+            if isNewBest { sessionBests[mode] = value }
+        } else {
             isNewBest = false
-            return
+            lastRank = nil
         }
-        isNewBest = mode.isBetter(value, than: sessionBests[mode])
-        if isNewBest { sessionBests[mode] = value }
+        self.outcome = outcome
     }
 }

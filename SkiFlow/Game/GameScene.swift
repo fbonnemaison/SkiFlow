@@ -19,7 +19,7 @@ final class GameScene: SKScene {
     private(set) var skier = SkierState()
     private(set) var input = InputState()
     private(set) var crashes = 0
-    private(set) var environment = Environment()
+    private(set) var environment = Terrain()
     private(set) var elapsed: Double = 0
     private(set) var isGamePaused = false
     private var physics = SkierPhysics()
@@ -58,6 +58,31 @@ final class GameScene: SKScene {
     /// La bajada terminó (atrapado o en meta).
     var isRunOver: Bool { gameOver != nil || slalomResult != nil || freestyleResult != nil }
 
+    /// Resultado de la bajada, cuando termina.
+    var outcome: RunOutcome? {
+        if let gameOver { return .caught(gameOver) }
+        if let slalomResult { return .slalom(slalomResult) }
+        if let freestyleResult { return .freestyle(freestyleResult) }
+        return nil
+    }
+
+    // MARK: Avisos a la interfaz
+
+    /// Se llama cuando cambia lo que muestra el HUD.
+    var onHUDChange: ((HUDSnapshot) -> Void)?
+    /// Se llama al terminar la bajada (tras la animación de captura, si la hay).
+    var onRunEnded: ((RunOutcome) -> Void)?
+    /// Se llama al pausar o reanudar.
+    var onPauseChange: ((Bool) -> Void)?
+    /// Se llama al empezar una bajada (también al reiniciar o cambiar de modo).
+    var onRunStarted: ((GameMode) -> Void)?
+    private(set) var hud = HUDSnapshot()
+
+    /// Zoom de la cámara (escala de píxel de los Ajustes).
+    var pixelZoom: CGFloat = 1 {
+        didSet { cameraNode.setScale(1 / max(pixelZoom, 0.1)) }
+    }
+
     // MARK: Mando
 
     private let gamepadReader = GamepadReader()
@@ -76,14 +101,7 @@ final class GameScene: SKScene {
     private var avalancheNode: AvalancheNode?
     private let cameraNode = SKCameraNode()
     private let whiteout = SKSpriteNode(color: .white, size: .zero)
-    private let pauseOverlay = SKNode()
-    private let resultOverlay = SKNode()
-    private let resultTitle = SKLabelNode(fontNamed: "Menlo-Bold")
-    private let resultSummary = SKLabelNode(fontNamed: "Menlo")
-    private let resultHint = SKLabelNode(fontNamed: "Menlo")
     private let messageLabel = SKLabelNode(fontNamed: "Menlo-Bold")
-    private let hudLabel = SKLabelNode(fontNamed: "Menlo-Bold")
-    private let alertLabel = SKLabelNode(fontNamed: "Menlo-Bold")
 
     var seed: UInt64 { currentSeed }
     var heldActions: Set<InputAction> { input.held }
@@ -142,63 +160,12 @@ final class GameScene: SKScene {
         whiteout.zPosition = Depth.overhead + 10
         cameraNode.addChild(whiteout)
 
-        buildPauseOverlay()
-        makeOverlay(resultOverlay, title: resultTitle, subtitle: resultSummary, hint: resultHint)
-
         messageLabel.fontSize = 18
         messageLabel.fontColor = SKColor(red: 0.15, green: 0.25, blue: 0.45, alpha: 1)
         messageLabel.position = CGPoint(x: 0, y: -size.height * 0.35)
         messageLabel.zPosition = Depth.overhead + 20
         messageLabel.alpha = 0
         cameraNode.addChild(messageLabel)
-
-        for label in [hudLabel, alertLabel] {
-            label.horizontalAlignmentMode = .left
-            label.verticalAlignmentMode = .top
-            label.zPosition = Depth.overhead + 20
-            cameraNode.addChild(label)
-        }
-        hudLabel.fontSize = 16
-        hudLabel.fontColor = SKColor(red: 0.15, green: 0.25, blue: 0.45, alpha: 1)
-        alertLabel.fontSize = 16
-        alertLabel.fontColor = SKColor(red: 0.80, green: 0.10, blue: 0.10, alpha: 1)
-    }
-
-    private func makeOverlay(_ overlay: SKNode, title: SKLabelNode, subtitle: SKLabelNode, hint: SKLabelNode) {
-        let shade = SKSpriteNode(
-            color: SKColor(red: 0.05, green: 0.08, blue: 0.15, alpha: 0.6),
-            size: CGSize(width: size.width * 2, height: size.height * 2)
-        )
-        overlay.addChild(shade)
-
-        title.fontSize = 44
-        title.fontColor = .white
-        title.position = CGPoint(x: 0, y: 24)
-        overlay.addChild(title)
-
-        subtitle.fontSize = 18
-        subtitle.fontColor = SKColor(white: 0.92, alpha: 1)
-        subtitle.position = CGPoint(x: 0, y: -16)
-        overlay.addChild(subtitle)
-
-        hint.fontSize = 15
-        hint.fontColor = SKColor(white: 0.8, alpha: 1)
-        hint.position = CGPoint(x: 0, y: -52)
-        overlay.addChild(hint)
-
-        overlay.zPosition = Depth.overhead + 30
-        overlay.isHidden = true
-        cameraNode.addChild(overlay)
-    }
-
-    private func buildPauseOverlay() {
-        let title = SKLabelNode(fontNamed: "Menlo-Bold")
-        title.text = "Pausa"
-        let subtitle = SKLabelNode(fontNamed: "Menlo")
-        subtitle.text = "Esc o P para seguir"
-        let hint = SKLabelNode(fontNamed: "Menlo")
-        hint.text = "R reiniciar · 1 Descenso libre · 2 Slalom · 3 Entre árboles · 4 Freestyle"
-        makeOverlay(pauseOverlay, title: title, subtitle: subtitle, hint: hint)
     }
 
     // MARK: Entrada
@@ -278,8 +245,9 @@ final class GameScene: SKScene {
     func setPaused(_ paused: Bool) {
         // Con la bajada terminada no tiene sentido pausar.
         guard !(paused && (caughtBy != nil || isRunOver)) else { return }
+        let changed = isGamePaused != paused
         isGamePaused = paused
-        pauseOverlay.isHidden = !paused
+        if changed { onPauseChange?(paused) }
         // Al reanudar no se recupera el tiempo pasado en pausa.
         lastUpdateTime = nil
         timestep.reset()
@@ -297,13 +265,15 @@ final class GameScene: SKScene {
     ///
     /// - Parameter newMode: cambia de modo (y de montaña). Sin él, el Descenso libre
     ///   estrena montaña y el slalom repite el mismo trazado para mejorar el tiempo.
-    func restart(mode newMode: GameMode? = nil) {
+    /// - Parameter seed: semilla concreta (por ejemplo, para repetir un trazado).
+    func restart(mode newMode: GameMode? = nil, seed: UInt64? = nil) {
         if let newMode {
             mode = newMode
             currentSeed = fixedSeed ?? UInt64.random(in: .min ... .max)
         } else if !mode.hasFinish {
             currentSeed = fixedSeed ?? UInt64.random(in: .min ... .max)
         }
+        if let seed { currentSeed = seed }
         startRun()
         if newMode != nil {
             showMessage(mode.displayName)
@@ -316,7 +286,7 @@ final class GameScene: SKScene {
         timestep.reset()
         elapsed = 0
         crashes = 0
-        environment = Environment()
+        environment = Terrain()
         trail.clear()
         physics.airTimeMultiplier = mode.airTimeMultiplier
         freestyle = mode == .freestyle ? FreestyleScore() : nil
@@ -351,12 +321,12 @@ final class GameScene: SKScene {
         avalancheNode?.removeFromParent()
         avalancheNode = nil
         cuico.isHidden = false
-        resultOverlay.isHidden = true
         messageLabel.removeAllActions()
         messageLabel.alpha = 0
 
         if isGamePaused { setPaused(false) }
         render()
+        onRunStarted?(mode)
     }
 
     // MARK: Bucle de juego
@@ -439,7 +409,7 @@ final class GameScene: SKScene {
 
         let nearby = mountain.snapshots(near: skier.position, radius: Self.collisionRadius, time: elapsed)
         environment = skier.isAirborne
-            ? Environment()
+            ? Terrain()
             : CollisionResolver.environment(at: skier.position, among: nearby)
         physics.step(&skier, dt: dt, environment: environment, turbo: isTurboActive)
 
@@ -508,7 +478,7 @@ final class GameScene: SKScene {
         freestyleResult = result
         skier.speed = 0
         input.releaseAll()
-        showResult(title: result.title, summary: result.summary, hint: "R repite esta montaña · 4 para una nueva")
+        endRun()
     }
 
     private func updateSlalom(from previous: CGPoint) {
@@ -585,7 +555,7 @@ final class GameScene: SKScene {
             crashes: crashes
         )
         gameOver = info
-        showResult(title: info.title, summary: info.summary, hint: "R (o Vista en el mando) para volver a bajar")
+        endRun()
     }
 
     private func finishSlalom(_ progress: SlalomProgress) {
@@ -599,16 +569,13 @@ final class GameScene: SKScene {
         slalomResult = result
         skier.speed = 0
         input.releaseAll()
-        showResult(title: result.title, summary: result.summary, hint: "R repite este trazado · 2 o 3 para uno nuevo")
+        endRun()
     }
 
-    private func showResult(title: String, summary: String, hint: String) {
-        resultTitle.text = title
-        resultSummary.text = summary
-        resultHint.text = hint
-        resultOverlay.isHidden = false
+    private func endRun() {
         messageLabel.removeAllActions()
         messageLabel.alpha = 0
+        if let outcome { onRunEnded?(outcome) }
     }
 
     /// Aplica el efecto de un choque. Es interno para poder testearlo.
@@ -701,64 +668,53 @@ final class GameScene: SKScene {
     }
 
     private func renderHUD() {
-        // Con `aspectFill` los bordes de la escena pueden quedar recortados, así que
-        // el HUD se ancla a la esquina superior izquierda visible de la vista.
-        var topLeft = CGPoint(x: -size.width / 2, y: size.height / 2)
-        if let view {
-            let topY = view.isFlipped ? 0 : view.bounds.height
-            let visibleTopLeft = convertPoint(fromView: CGPoint(x: 0, y: topY))
-            topLeft = cameraNode.convert(visibleTopLeft, from: self)
-        }
-        hudLabel.position = CGPoint(x: topLeft.x + 16, y: topLeft.y - 16)
-        alertLabel.position = CGPoint(x: topLeft.x + 16, y: topLeft.y - 40)
+        let snapshot = makeHUD()
+        guard snapshot != hud else { return }
+        hud = snapshot
+        onHUDChange?(snapshot)
+    }
 
-        let turbo = isTurboActive ? " · TURBO" : ""
+    /// Datos del HUD según el modo. Es interno para poder testearlo.
+    func makeHUD() -> HUDSnapshot {
+        let speed = HUDItem(label: "Velocidad", value: String(format: "%.0f km/h", skier.speedKmh))
+        var items: [HUDItem]
         if let freestyle {
             let meters = mode.finishMeters ?? 0
-            hudLabel.text = String(
-                format: "Freestyle · %d pts · racha ×%@ · %4.0f/%.0f m · %3.0f km/h%@",
-                freestyle.total,
-                Self.format(freestyle.chain),
-                min(skier.distanceMeters, meters),
-                meters,
-                skier.speedKmh,
-                turbo
-            )
+            items = [
+                HUDItem(label: "Puntos", value: "\(freestyle.total)"),
+                HUDItem(label: "Racha", value: "×" + Self.format(freestyle.chain)),
+                HUDItem(label: "Distancia", value: String(format: "%.0f/%.0f m", min(skier.distanceMeters, meters), meters)),
+                speed,
+            ]
         } else if let slalom {
             let total = slalom.course.gates.count
-            hudLabel.text = String(
-                format: "%@ · puerta %d/%d · %@ · falladas: %d · %3.0f km/h%@",
-                mode.displayName,
-                min(slalom.nextGate + 1, total),
-                total,
-                SlalomResult.formatTime(elapsed + slalom.penaltySeconds),
-                slalom.missed.count,
-                skier.speedKmh,
-                turbo
-            )
+            items = [
+                HUDItem(label: "Puerta", value: "\(min(slalom.nextGate + 1, total))/\(total)"),
+                HUDItem(label: "Tiempo", value: SlalomResult.formatTime(elapsed + slalom.penaltySeconds)),
+                HUDItem(label: "Falladas", value: "\(slalom.missed.count)"),
+                speed,
+            ]
         } else {
-            hudLabel.text = String(
-                format: "%5.0f m · %3.0f km/h · %@ · caídas: %d%@",
-                skier.distanceMeters,
-                skier.speedKmh,
-                GameOverInfo.formatTime(elapsed),
-                crashes,
-                turbo
-            )
+            items = [
+                HUDItem(label: "Distancia", value: String(format: "%.0f m", skier.distanceMeters)),
+                speed,
+                HUDItem(label: "Tiempo", value: GameOverInfo.formatTime(elapsed)),
+                HUDItem(label: "Caídas", value: "\(crashes)"),
+            ]
         }
 
-        if caughtBy != nil || isRunOver {
-            alertLabel.text = nil
-        } else if kunk.phase == .chasing {
-            let meters = kunk.distance(to: skier) / GameConfig.pointsPerMeter
-            alertLabel.text = String(format: "¡El Kunk te persigue! a %.0f m", meters)
-        } else if chupacabras.phase == .warning {
-            alertLabel.text = "¡Cuidado con el Chupacabras!"
-        } else if avalanche.phase == .chasing {
-            let meters = avalanche.gap(to: skier) / GameConfig.pointsPerMeter
-            alertLabel.text = String(format: "Avalancha a %.0f m", max(0, meters))
-        } else {
-            alertLabel.text = nil
+        var alert: String?
+        if caughtBy == nil, !isRunOver {
+            if kunk.phase == .chasing {
+                let meters = kunk.distance(to: skier) / GameConfig.pointsPerMeter
+                alert = String(format: "¡El Kunk te persigue! a %.0f m", meters)
+            } else if chupacabras.phase == .warning {
+                alert = "¡Cuidado con el Chupacabras!"
+            } else if avalanche.phase == .chasing {
+                let meters = avalanche.gap(to: skier) / GameConfig.pointsPerMeter
+                alert = String(format: "Avalancha a %.0f m", max(0, meters))
+            }
         }
+        return HUDSnapshot(mode: mode, items: items, alert: alert, isTurbo: isTurboActive)
     }
 }

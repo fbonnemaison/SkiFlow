@@ -117,15 +117,18 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [x] El Kunk y el Chupacabras tampoco aparecen en freestyle
 - [x] Tests: trucos, combos, racha, tipos de aterrizaje, perfil de rampas, saltos más largos y escena (giro en el aire y caída a mitad de mortal)
 
-## Fase 7 — Interfaz y flujo de juego
-- [ ] Pantalla de título y menú principal (SwiftUI)
-- [ ] Selector de modo (y semilla opcional para slalom)
-- [ ] HUD superpuesto: tiempo, distancia, velocidad, puntos y puertas
-- [ ] Pausa (Esc/P/botón Menú) y reanudar
-- [ ] Pantalla de resultados con récord personal
-- [ ] Ajustes: volumen, controles (incluida la reasignación de teclas), pantalla completa y escala de píxel
-- [ ] Menús de la barra de macOS y atajos estándar (⌘F pantalla completa, ⌘Q)
-- [ ] Textos en String Catalog (español)
+## Fase 7 — Interfaz y flujo de juego ✅
+- [x] Pantalla de título y menú principal en SwiftUI (cordillera de fondo, icono y tarjetas de modo)
+- [x] Selector de modo con descripción y mejor marca de la sesión, y semilla opcional para repetir una montaña
+- [x] HUD en SwiftUI encima de la partida: datos según el modo (distancia, tiempo, puertas, puntos, racha…), avisos en rojo y turbo
+- [x] Pausa con menú (Seguir, Reiniciar, Ajustes, Menú principal); se pausa sola al cambiar de app o de ventana
+- [x] Pantalla de resultados con la mejor marca de la sesión (la marca guardada llega en la Fase 10)
+- [x] Ajustes (⌘,): volumen de música y efectos (se guarda para la Fase 9), escala de píxel, pantalla completa al abrir y **reasignación de teclas** (dos por acción)
+- [x] Menús de macOS: Archivo › Nueva bajada (⌘N), menú Juego (⌘P pausa, ⌘R reiniciar, ⌘1–⌘4 modos, ⇧⌘M menú principal), Visualización › Pantalla completa (⌘F); una sola ventana
+- [x] Textos de la interfaz en un String Catalog (español)
+- [x] Tests: asignación de teclas, ajustes guardados, marcas por modo, modelo de pantallas/pausa/resultado y HUD
+- [ ] Revisar a mano la ventana de Ajustes y el campo de semilla (no se pueden dibujar fuera de pantalla en los tests)
+- [ ] Navegar los menús con el mando (se puede jugar con mando, pero los menús aún piden ratón o teclado)
 
 ## Fase 8 — Arte pixel art (packs CC0)
 - [ ] Elegir y documentar los packs CC0 (fuente, autor y licencia en `CREDITS.md`)
@@ -150,7 +153,7 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [ ] Modelo SwiftData: récords por modo (distancia, tiempo y puntos), fecha y semilla
 - [ ] Tabla de mejores marcas por modo (top 10 local)
 - [ ] Estadísticas: partidas, metros totales, capturas del Kunk y encuentros con el Chupacabras
-- [ ] Persistencia de ajustes (`@AppStorage`)
+- [x] Persistencia de ajustes (`SettingsStore` sobre `UserDefaults`, hecha en la Fase 7)
 - [ ] Tests: guardado y ordenación de récords
 
 ## Fase 11 — Pulido y equilibrio

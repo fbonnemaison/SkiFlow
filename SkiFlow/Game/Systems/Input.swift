@@ -2,7 +2,7 @@ import CoreGraphics
 import Foundation
 
 /// Acciones de juego, independientes del dispositivo de entrada.
-enum InputAction: Hashable, Sendable, CaseIterable {
+enum InputAction: String, Hashable, Sendable, CaseIterable, Codable {
     case left
     case right
     case down
@@ -11,14 +11,15 @@ enum InputAction: Hashable, Sendable, CaseIterable {
     case turbo
     case pause
     case restart
-    /// Atajos temporales para cambiar de modo (hasta tener menú en la Fase 7).
+    /// Atajos para cambiar de modo (teclas 1–4; también ⌘1–⌘4 en el menú Juego).
     case modeFreeDescent
     case modeSlalom
     case modeTreeSlalom
     case modeFreestyle
 
-    /// Traduce un código de tecla físico de macOS (independiente de la distribución
-    /// del teclado, así WASD funciona por posición).
+    /// Traduce un código de tecla físico de macOS con la asignación por defecto
+    /// (independiente de la distribución del teclado, así WASD funciona por posición).
+    /// Las asignaciones personalizadas están en `KeyBindings`.
     init?(keyCode: UInt16) {
         switch keyCode {
         case 123, 0: self = .left // ← / A
@@ -45,6 +46,27 @@ enum InputAction: Hashable, Sendable, CaseIterable {
         case .modeTreeSlalom: .treeSlalom
         case .modeFreestyle: .freestyle
         default: nil
+        }
+    }
+
+    /// Acciones que se pueden reasignar en Ajustes.
+    static let rebindable: [InputAction] = [.left, .right, .down, .brake, .jump, .turbo, .pause, .restart]
+
+    /// Nombre en los Ajustes.
+    var displayName: String {
+        switch self {
+        case .left: "Girar a la izquierda"
+        case .right: "Girar a la derecha"
+        case .down: "Recto hacia abajo"
+        case .brake: "Frenar"
+        case .jump: "Brincar / selfie"
+        case .turbo: "Turbo"
+        case .pause: "Pausa"
+        case .restart: "Reiniciar"
+        case .modeFreeDescent: "Descenso libre"
+        case .modeSlalom: "Slalom"
+        case .modeTreeSlalom: "Slalom entre árboles"
+        case .modeFreestyle: "Freestyle"
         }
     }
 

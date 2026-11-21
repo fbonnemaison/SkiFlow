@@ -2,42 +2,69 @@ import AppKit
 import SpriteKit
 import SwiftUI
 
-/// Ventana principal: muestra la escena de juego y le pasa teclado y ratón.
-/// El mando lo consulta la propia escena en cada fotograma.
+/// Ventana principal: menú de título o partida con su HUD, pausa y resultado.
 struct ContentView: View {
-    @State private var scene = GameScene(size: GameConfig.sceneSize)
+    @Environment(GameModel.self) private var model
+    @Environment(SettingsStore.self) private var settings
     @State private var inputMonitor = InputMonitor()
+    @State private var window: NSWindow?
 
     var body: some View {
-        SpriteView(
-            scene: scene,
-            preferredFramesPerSecond: 120,
-            debugOptions: debugOptions
-        )
-        .frame(minWidth: 640, minHeight: 480)
-        .onAppear {
-            inputMonitor.start(
-                onKey: { [scene] action, pressed in
-                    scene.handle(action, pressed: pressed, source: .keyboard)
-                },
-                onMouseMove: { [scene] point, window in
-                    scene.aimMouse(windowPoint: point, window: window)
-                },
-                onMouseButton: { [scene] pressed in
-                    scene.handle(.jump, pressed: pressed, source: .mouse)
+        ZStack {
+            switch model.screen {
+            case .title:
+                TitleView()
+                    .transition(.opacity)
+            case .playing:
+                SpriteView(
+                    scene: model.scene,
+                    preferredFramesPerSecond: 120,
+                    debugOptions: debugOptions
+                )
+                HUDView(hud: model.hud)
+                if let outcome = model.outcome {
+                    ResultView(outcome: outcome)
+                } else if model.isPaused {
+                    PauseView()
                 }
-            )
+            }
         }
-        .onDisappear {
-            inputMonitor.stop()
+        .frame(minWidth: 800, minHeight: 600)
+        .background(WindowReader(window: $window))
+        .onAppear { startInput() }
+        .onDisappear { inputMonitor.stop() }
+        .onChange(of: window) { _, window in
+            if settings.startFullScreen, let window, !window.styleMask.contains(.fullScreen) {
+                window.toggleFullScreen(nil)
+            }
+        }
+        .onChange(of: settings.pixelZoom) { _, zoom in
+            model.scene.pixelZoom = CGFloat(zoom)
         }
         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didResignActiveNotification)) { _ in
             // Al cambiar de app se sueltan las teclas y se pausa la partida.
-            scene.releaseAllInput()
-            if !scene.isGamePaused {
-                scene.setPaused(true)
+            model.pauseIfPlaying()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification)) { note in
+            // También al pasar a otra ventana de la app (por ejemplo, los Ajustes).
+            if let window, note.object as? NSWindow === window {
+                model.pauseIfPlaying()
             }
         }
+    }
+
+    private func startInput() {
+        inputMonitor.start(
+            onKey: { [model] keyCode, pressed, isRepeat, window in
+                model.handleKey(keyCode, pressed: pressed, isRepeat: isRepeat, window: window)
+            },
+            onMouseMove: { [model] point, window in
+                model.handleMouseMove(windowPoint: point, window: window)
+            },
+            onMouseButton: { [model] pressed in
+                model.handleMouseButton(pressed: pressed)
+            }
+        )
     }
 
     private var debugOptions: SpriteView.DebugOptions {
@@ -49,6 +76,25 @@ struct ContentView: View {
     }
 }
 
-#Preview {
-    ContentView()
+/// Da acceso a la `NSWindow` que contiene una vista SwiftUI.
+private struct WindowReader: NSViewRepresentable {
+    @Binding var window: NSWindow?
+
+    func makeNSView(context: Context) -> NSView {
+        let view = ReaderView()
+        view.onWindow = { window = $0 }
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {}
+
+    private final class ReaderView: NSView {
+        var onWindow: ((NSWindow?) -> Void)?
+
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            let window = window
+            DispatchQueue.main.async { [onWindow] in onWindow?(window) }
+        }
+    }
 }

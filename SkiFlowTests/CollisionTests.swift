@@ -49,7 +49,7 @@ struct CollisionResolverTests {
 
         #expect(CollisionResolver.environment(at: CGPoint(x: -50, y: 0), among: [ice]).surface == .ice)
         #expect(CollisionResolver.environment(at: CGPoint(x: 50, y: 0), among: [ice, deep]).surface == .deepSnow)
-        #expect(CollisionResolver.environment(at: CGPoint(x: 500, y: 0), among: [ice, deep]) == Environment())
+        #expect(CollisionResolver.environment(at: CGPoint(x: 500, y: 0), among: [ice, deep]) == Terrain())
 
         let windy = CollisionResolver.environment(at: .zero, among: [wind])
         #expect(windy.wind == -80)
@@ -61,7 +61,7 @@ struct SurfacePhysicsTests {
     let physics = SkierPhysics()
     let dt = 1.0 / 120.0
 
-    private func run(_ state: inout SkierState, seconds: Double, environment: Environment = Environment()) {
+    private func run(_ state: inout SkierState, seconds: Double, environment: Terrain = Terrain()) {
         for _ in 0..<Int(seconds / dt) {
             physics.step(&state, dt: dt, environment: environment)
         }
@@ -72,8 +72,8 @@ struct SurfacePhysicsTests {
         var deep = SkierState()
         var ice = SkierState()
         run(&snow, seconds: 6)
-        run(&deep, seconds: 6, environment: Environment(surface: .deepSnow))
-        run(&ice, seconds: 6, environment: Environment(surface: .ice))
+        run(&deep, seconds: 6, environment: Terrain(surface: .deepSnow))
+        run(&ice, seconds: 6, environment: Terrain(surface: .ice))
 
         #expect(deep.speed < snow.speed * 0.6)
         #expect(ice.speed > snow.speed)
@@ -83,13 +83,13 @@ struct SurfacePhysicsTests {
         var snow = SkierState(direction: .hardLeft, speed: 400)
         var ice = SkierState(direction: .hardLeft, speed: 400)
         run(&snow, seconds: 0.3)
-        run(&ice, seconds: 0.3, environment: Environment(surface: .ice))
+        run(&ice, seconds: 0.3, environment: Terrain(surface: .ice))
         #expect(ice.speed > snow.speed + 100)
     }
 
     @Test func windPushesSideways() {
         var state = SkierState()
-        run(&state, seconds: 2, environment: Environment(wind: 100))
+        run(&state, seconds: 2, environment: Terrain(wind: 100))
         #expect(state.position.x > 50)
     }
 

@@ -6,10 +6,14 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+### Cambiado
+- El tipo de terreno de la física pasa a llamarse `Terrain` (chocaba con `@Environment` de SwiftUI).
+
 ### Corregido
 - El cronómetro mostraba una décima de menos en algunos tiempos (por ejemplo, 01:15.2 en vez de 01:15.3).
 
 ### Añadido
+- Interfaz completa (Fase 7): pantalla de título con selector de modo y semilla, HUD en SwiftUI, menú de pausa, pantalla de resultados con mejor marca de la sesión, ventana de Ajustes con reasignación de teclas, menú Juego con atajos y String Catalog.
 - Modo Freestyle (Fase 6): montaña llena de rampas, trucos en el aire (giros, mortales y el selfie del Cuico), combos, racha, tipos de aterrizaje y meta a los 1.000 m con la avalancha detrás.
 - Modos Slalom y Slalom entre árboles (Fase 5): trazado de 20 puertas reproducible, penalización por puerta fallada, meta con cronómetro, avalancha que sepulta a quien va demasiado lento y teclas 1/2/3 para cambiar de modo.
 - Modo Descenso libre (Fase 4): el Kunk aparece a los 2.000 m y persigue al Cuico (se escapa con turbo); el Chupacabras aparece en el 8 % de las bajadas, avisa y embiste (se esquiva saltando); HUD con distancia, velocidad y tiempo, y pantalla de fin de partida.

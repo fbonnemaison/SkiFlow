@@ -27,7 +27,7 @@ enum Surface: Equatable, Sendable {
 }
 
 /// Condiciones del terreno en un punto.
-struct Environment: Equatable, Sendable {
+struct Terrain: Equatable, Sendable {
     var surface: Surface = .snow
     /// Empuje lateral del viento en puntos/s (positivo = derecha).
     var wind: Double = 0
@@ -65,7 +65,7 @@ struct SkierPhysics: Sendable {
     func step(
         _ state: inout SkierState,
         dt: Double,
-        environment: Environment = Environment(),
+        environment: Terrain = Terrain(),
         turbo: Bool = false
     ) {
         guard dt > 0, !state.isFallen else { return }

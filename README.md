@@ -2,7 +2,7 @@
 
 Juego de esquí 2D para macOS inspirado en el clásico *SkiFree* (1991), ambientado en la **cordillera de los Andes**. Eres **el Cuico**, un típico chileno que sube a la nieve más a posar que a esquiar. Baja la montaña esquivando queñuas, rocas, llamas y otros esquiadores, compite contra el reloj en slalom, haz acrobacias en freestyle… y huye del **Kunk**. Y si tienes muy mala suerte, también del **Chupacabras**.
 
-> Estado: en desarrollo (los cuatro modos jugables, Fase 6). Consulta el plan en [TODO.md](TODO.md).
+> Estado: en desarrollo (los cuatro modos con menús y ajustes, Fase 7). Consulta el plan en [TODO.md](TODO.md).
 
 ## Controles
 
@@ -15,9 +15,13 @@ Juego de esquí 2D para macOS inspirado en el clásico *SkiFree* (1991), ambient
 | F (mantener) | | X (□) o gatillo derecho | Turbo |
 | Esc / P | | Menú (Options) | Pausa |
 | R | | Vista (Share) | Reiniciar (montaña nueva en Descenso libre; mismo trazado en slalom) |
-| 1 / 2 / 3 / 4 | | | Descenso libre / Slalom / Slalom entre árboles / Freestyle (provisional hasta tener menú) |
+| 1 / 2 / 3 / 4 | | | Descenso libre / Slalom / Slalom entre árboles / Freestyle |
 
 Al tocar las teclas de giro se desactiva el apuntado con ratón; vuelve a activarse en cuanto mueves el ratón. La partida se pausa sola si cambias de app.
+
+Las teclas se pueden reasignar en **Ajustes › Controles** (⌘,). Atajos del menú **Juego**: ⌘N nueva bajada, ⌘P pausa, ⌘R reiniciar, ⌘1–⌘4 elegir modo, ⇧⌘M menú principal y ⌘F pantalla completa.
+
+En el menú principal puedes escribir una **semilla** (un número) para repetir una montaña concreta; la de la partida en curso aparece en el menú de pausa.
 
 ## En la montaña
 

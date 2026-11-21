@@ -1,0 +1,142 @@
+{
+  "sourceLanguage" : "es",
+  "strings" : {
+    "¡Nueva mejor marca de la sesión!" : {
+
+    },
+    "%@, tecla %lld: %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, tecla %2$lld: %3$@"
+          }
+        }
+      }
+    },
+    "Abrir en pantalla completa" : {
+
+    },
+    "Acción" : {
+
+    },
+    "Ajustes" : {
+
+    },
+    "Ajustes…" : {
+
+    },
+    "Controles" : {
+
+    },
+    "Efectos" : {
+
+    },
+    "El audio llegará en una próxima versión; el volumen elegido se guarda." : {
+
+    },
+    "El Cuico baja los Andes. El Kunk lo espera." : {
+
+    },
+    "Escala de píxel" : {
+
+    },
+    "Escribe un número para repetir una montaña concreta" : {
+
+    },
+    "General" : {
+
+    },
+    "Grande" : {
+
+    },
+    "Haz clic en un modo o pulsa ↩︎ · ⌘1–⌘4 desde el menú Juego" : {
+
+    },
+    "Haz clic en una tecla y pulsa la nueva (Esc cancela, ⌫ la borra). Ratón: el Cuico apunta al cursor y el clic brinca. Mando: stick o cruceta, A brinca, B frena, X o gatillo derecho turbo, Menú pausa." : {
+
+    },
+    "Juego" : {
+
+    },
+    "Mejor de la sesión: %@" : {
+
+    },
+    "Menú principal" : {
+
+    },
+    "Montaña nueva" : {
+
+    },
+    "Música" : {
+
+    },
+    "Muy grande" : {
+
+    },
+    "Normal" : {
+
+    },
+    "Nueva bajada" : {
+
+    },
+    "Otra bajada (R)" : {
+
+    },
+    "Pantalla" : {
+
+    },
+    "Pantalla completa" : {
+
+    },
+    "Pausa" : {
+
+    },
+    "Reiniciar bajada" : {
+
+    },
+    "Reiniciar bajada (R)" : {
+
+    },
+    "Repetir esta montaña (R)" : {
+
+    },
+    "Restaurar teclas por defecto" : {
+
+    },
+    "Salir" : {
+
+    },
+    "Seguir" : {
+
+    },
+    "Seguir (Esc)" : {
+
+    },
+    "Semilla (opcional)" : {
+
+    },
+    "Semilla de esta montaña: %@" : {
+
+    },
+    "Sin marca todavía" : {
+
+    },
+    "SkiFlow" : {
+
+    },
+    "Sonido" : {
+
+    },
+    "Tecla 1" : {
+
+    },
+    "Tecla 2" : {
+
+    },
+    "TURBO" : {
+
+    }
+  },
+  "version" : "1.0"
+}

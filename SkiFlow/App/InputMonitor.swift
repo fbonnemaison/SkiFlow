@@ -1,21 +1,23 @@
 import AppKit
 
-/// Captura teclado y ratón de la ventana activa y se los pasa a la escena.
+/// Captura teclado y ratón de la app y se los pasa al modelo del juego.
 ///
 /// Usa monitores locales de `NSEvent` porque `SpriteView` no recibe el foco del
-/// teclado de forma fiable. Los atajos con ⌘ se dejan pasar al sistema, y los
-/// eventos de ratón siguen su curso normal (para poder mover la ventana, etc.).
+/// teclado de forma fiable. Los atajos con ⌘ se dejan pasar al sistema (menús),
+/// y los eventos de ratón siguen su curso normal (botones, mover la ventana…).
 @MainActor
 final class InputMonitor {
     private var keyMonitor: Any?
     private var mouseMonitor: Any?
 
     /// - Parameters:
-    ///   - onKey: acción de teclado pulsada (`true`) o soltada (`false`).
+    ///   - onKey: código de tecla, pulsada (`true`) o soltada, si es repetición
+    ///     automática, y ventana del evento. Devuelve `true` si el juego la usó
+    ///     (entonces no llega a nadie más).
     ///   - onMouseMove: posición del cursor en la ventana; devuelve si cae sobre el juego.
     ///   - onMouseButton: botón principal pulsado o soltado sobre el juego.
     func start(
-        onKey: @escaping @MainActor (InputAction, Bool) -> Void,
+        onKey: @escaping @MainActor (UInt16, Bool, Bool, NSWindow?) -> Bool,
         onMouseMove: @escaping @MainActor (CGPoint, NSWindow?) -> Bool,
         onMouseButton: @escaping @MainActor (Bool) -> Void
     ) {
@@ -23,16 +25,14 @@ final class InputMonitor {
 
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp]) { event in
             if event.modifierFlags.contains(.command) { return event }
-            guard let action = InputAction(keyCode: event.keyCode) else { return event }
-
             let pressed = event.type == .keyDown
-            // La repetición la gestiona el propio juego.
-            if pressed && event.isARepeat { return nil }
-
-            MainActor.assumeIsolated {
-                onKey(action, pressed)
+            let isRepeat = pressed && event.isARepeat
+            let keyCode = event.keyCode
+            let window = event.window
+            let used = MainActor.assumeIsolated {
+                onKey(keyCode, pressed, isRepeat, window)
             }
-            return nil
+            return used ? nil : event
         }
 
         mouseMonitor = NSEvent.addLocalMonitorForEvents(

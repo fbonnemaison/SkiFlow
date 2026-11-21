@@ -45,8 +45,8 @@ enum CollisionResolver {
     }
 
     /// Terreno bajo los pies. La nieve profunda manda sobre el hielo.
-    static func environment(at point: CGPoint, among snapshots: [ObstacleSnapshot]) -> Environment {
-        var environment = Environment()
+    static func environment(at point: CGPoint, among snapshots: [ObstacleSnapshot]) -> Terrain {
+        var environment = Terrain()
         for snapshot in snapshots where snapshot.obstacle.zoneContains(point, at: snapshot.time) {
             switch snapshot.kind {
             case .deepSnowZone:

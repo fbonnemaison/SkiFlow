@@ -8,7 +8,7 @@ Juego de esquí 2D para macOS inspirado en el clásico *SkiFree* (1991), ambient
   <img src="Design/Screenshots/screenshot-freestyle.png" width="32%" alt="Freestyle: rampas y trucos">
 </p>
 
-> Versión **1.0.0-rc.1** (versión previa para probar). Historial en [CHANGELOG.md](CHANGELOG.md) y plan de desarrollo en [TODO.md](TODO.md).
+> Versión **1.0.0**. Historial en [CHANGELOG.md](CHANGELOG.md) y plan de desarrollo en [TODO.md](TODO.md).
 
 ## Descargar e instalar
 

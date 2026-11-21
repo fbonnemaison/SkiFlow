@@ -43,6 +43,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
+          # Si la versión ya se publicó a mano (con un DMG generado en local), no se toca.
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            echo "La versión $GITHUB_REF_NAME ya está publicada: no se reemplazan sus archivos."
+            exit 0
+          fi
           PRERELEASE=""
           [[ "$VERSION" == *-* ]] && PRERELEASE="--prerelease"
           gh release create "$GITHUB_REF_NAME" \

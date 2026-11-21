@@ -44,6 +44,10 @@ echo "▶︎ Creando el DMG…"
 rm -rf "$STAGING" && mkdir -p "$STAGING" "$DIST"
 cp -R "$APP" "$STAGING/"
 ln -s /Applications "$STAGING/Applications"
+# Licencia MIT (obligatoria en cada copia), créditos y licencias de terceros.
+cp "$ROOT/LICENSE" "$STAGING/Licencia (MIT).txt"
+cp "$ROOT/CREDITS.md" "$STAGING/Créditos.md"
+cp -R "$ROOT/Licenses" "$STAGING/Licencias de terceros"
 cat > "$STAGING/Léeme.txt" <<'TXT'
 SkiFlow — instalación
 
@@ -55,7 +59,7 @@ SkiFlow — instalación
    «Seguridad» y pulsa «Abrir igualmente» junto al aviso de SkiFlow.
 4. Confirma con tu contraseña o Touch ID. Desde entonces se abre normal.
 
-© 2026 App-Zilla · Licencia MIT
+© 2026 App-Zilla · Licencia MIT (ver «Licencia (MIT).txt»)
 TXT
 rm -f "$DMG"
 hdiutil create -volname "$APP_NAME $VERSION" -srcfolder "$STAGING" -fs HFS+ -format UDZO -ov "$DMG" -quiet

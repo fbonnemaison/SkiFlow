@@ -11,6 +11,8 @@ SkiFlow es un juego de **App-Zilla**, publicado con licencia [MIT](LICENSE).
 
 Las licencias originales están en [Licenses/](Licenses). CC0 no obliga a dar crédito, pero lo damos con gusto.
 
+La licencia MIT de SkiFlow, este archivo y las licencias de terceros se incluyen también dentro de la app (`SkiFlow.app/Contents/Resources`) y en el DMG de cada versión.
+
 Del pack Tiny Ski **no se usan** los tiles del yeti: el perseguidor de SkiFlow es el Kunk, de diseño propio, y el juego evita copiar personajes de SkiFree.
 
 ## Arte propio

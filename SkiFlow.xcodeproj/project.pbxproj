@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		04D14BEA0D8A3CB74D3ABD97 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = D8939C0AA09FFF9EE529E33E /* Localizable.xcstrings */; };
+		0523FD476561CF17FAEB2621 /* CREDITS.md in Resources */ = {isa = PBXBuildFile; fileRef = A93D913294B1EFE023016CDA /* CREDITS.md */; };
 		06FCC5495AA68AE28A1C5103 /* FixedTimestep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194299024FCD6EE2A2E466C3 /* FixedTimestep.swift */; };
 		0A0549AC52E03F4B246BFCF9 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C25BAAA3E8F7DEE51DDE7C /* GameScene.swift */; };
 		0AE9A5EB57E625C28C71E1D6 /* SkiTrailNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40B1CEC5A78F04C8F984322 /* SkiTrailNode.swift */; };
@@ -74,9 +75,12 @@
 		E5FB70B44182522BFC34DEEC /* SkiFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4451058B94CF03BCE44FE4DC /* SkiFlowApp.swift */; };
 		E60CADBDD550A77043CB36FD /* InputMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C379C9AE6B962E5C0EE4B5D /* InputMonitor.swift */; };
 		E7703A31666C61CA31DFBF50 /* Rivals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A2C1937B60ADE7AD3548484 /* Rivals.swift */; };
+		E8D37D6ABBAB7FF34C6CA7B1 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 45179A3352A7FB134A718ECA /* LICENSE */; };
 		EBAA5A0D2203862640207CC0 /* CollisionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECBD856A59911C29A2C4B0D /* CollisionTests.swift */; };
 		F3A0BAF3D23C07E3F6F63EB9 /* HUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1BB62494DAE6A70A952369 /* HUD.swift */; };
 		F3CF58C86B15965437A48C05 /* TitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E9E8091145ACEC336A1EFF /* TitleView.swift */; };
+		F54331043B942598381A3110 /* Credits.html in Resources */ = {isa = PBXBuildFile; fileRef = 6900E16DF1590A265322619A /* Credits.html */; };
+		F7205DB64065164554085B5F /* Licenses in Resources */ = {isa = PBXBuildFile; fileRef = 79953308A5CD0CF57268EAE7 /* Licenses */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,11 +122,14 @@
 		42D6833781EF3B344B3617C7 /* Input.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Input.swift; sourceTree = "<group>"; };
 		4451058B94CF03BCE44FE4DC /* SkiFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkiFlowApp.swift; sourceTree = "<group>"; };
 		44B31A333D84F51FFC76932F /* RecordsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordsTests.swift; sourceTree = "<group>"; };
+		45179A3352A7FB134A718ECA /* LICENSE */ = {isa = PBXFileReference; path = LICENSE; sourceTree = "<group>"; };
 		53F5355DD9AF3237A0D402F5 /* SpeechBubbleNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubbleNode.swift; sourceTree = "<group>"; };
 		56AFC87DF1F4D6B486DA593D /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
 		640477D12402077114F1187E /* CuicoNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuicoNode.swift; sourceTree = "<group>"; };
+		6900E16DF1590A265322619A /* Credits.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = Credits.html; sourceTree = "<group>"; };
 		6E3046B12A05566F8F085D0C /* ChaserNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaserNode.swift; sourceTree = "<group>"; };
 		716AE68CD7B63242F5557209 /* ImprovementsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImprovementsTests.swift; sourceTree = "<group>"; };
+		79953308A5CD0CF57268EAE7 /* Licenses */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Licenses; sourceTree = SOURCE_ROOT; };
 		7A2C1937B60ADE7AD3548484 /* Rivals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rivals.swift; sourceTree = "<group>"; };
 		7DA6067B5ABB4BD60BEC8E68 /* SlalomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlalomTests.swift; sourceTree = "<group>"; };
 		80535A69B738192016F116CB /* AltitudeBand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AltitudeBand.swift; sourceTree = "<group>"; };
@@ -133,6 +140,7 @@
 		8F28FD2B7C9A515B1CF83ACD /* BalanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BalanceTests.swift; sourceTree = "<group>"; };
 		98EA6F5AF445428557914B76 /* SkiFlowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SkiFlowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A56478404936CE0E30EA39A4 /* Music.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music.swift; sourceTree = "<group>"; };
+		A93D913294B1EFE023016CDA /* CREDITS.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CREDITS.md; sourceTree = "<group>"; };
 		A97C1829090A254C21B20C1E /* KeyBindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyBindings.swift; sourceTree = "<group>"; };
 		AEB9D0327D6ABC902354D284 /* WorldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldTests.swift; sourceTree = "<group>"; };
 		B380B755A5EEB2620D7E0F41 /* AudioTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTests.swift; sourceTree = "<group>"; };
@@ -203,6 +211,9 @@
 		3A3DD8FB4E45E62DB32F36D8 = {
 			isa = PBXGroup;
 			children = (
+				A93D913294B1EFE023016CDA /* CREDITS.md */,
+				45179A3352A7FB134A718ECA /* LICENSE */,
+				79953308A5CD0CF57268EAE7 /* Licenses */,
 				3846EBE951095717D0D39A4F /* SkiFlow */,
 				9A1FE93F46ED1BF73E95EB55 /* SkiFlowTests */,
 				F480239A9835E7AA2A9B16BC /* Products */,
@@ -326,6 +337,7 @@
 			isa = PBXGroup;
 			children = (
 				0E64D1BB015CE0529D0F8F6A /* Assets.xcassets */,
+				6900E16DF1590A265322619A /* Credits.html */,
 				D8939C0AA09FFF9EE529E33E /* Localizable.xcstrings */,
 				6D9CD1293E57641F83381C97 /* Fonts */,
 			);
@@ -439,6 +451,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				308FE9F16569F5DA9FAF414E /* Assets.xcassets in Resources */,
+				0523FD476561CF17FAEB2621 /* CREDITS.md in Resources */,
+				F54331043B942598381A3110 /* Credits.html in Resources */,
+				E8D37D6ABBAB7FF34C6CA7B1 /* LICENSE in Resources */,
+				F7205DB64065164554085B5F /* Licenses in Resources */,
 				04D14BEA0D8A3CB74D3ABD97 /* Localizable.xcstrings in Resources */,
 				670A38B557E75D96C9567DDE /* PublicPixel.ttf in Resources */,
 			);

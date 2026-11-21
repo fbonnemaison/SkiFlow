@@ -25,6 +25,14 @@ targets:
     platform: macOS
     sources:
       - path: SkiFlow
+      # La licencia MIT y los créditos viajan dentro de la app.
+      - path: LICENSE
+        buildPhase: resources
+      - path: CREDITS.md
+        buildPhase: resources
+      - path: Licenses
+        type: folder
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.appzilla.SkiFlow

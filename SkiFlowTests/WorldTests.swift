@@ -124,7 +124,7 @@ struct ObstacleMotionTests {
     }
 
     @Test func otherSkiersGoDownhill() {
-        let skier = Obstacle(kind: .skier, origin: .zero, motion: .downhill(speed: 200, sway: 50, period: 3, phase: 0))
+        let skier = Obstacle(kind: .dog, origin: .zero, motion: .downhill(speed: 200, sway: 50, period: 3, phase: 0))
         #expect(skier.position(at: 2).y == -400)
         #expect(abs(skier.position(at: 0.75).x - 50) < 1e-9)
     }

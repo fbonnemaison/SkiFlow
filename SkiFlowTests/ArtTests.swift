@@ -56,10 +56,13 @@ struct BundledAssetTests {
         #expect(node.texture?.filteringMode == .nearest)
     }
 
-    @Test func skierOutfitsVary() {
-        let a = SpriteFactory.shared.sprite(for: .skier, variant: 0).texture
-        let b = SpriteFactory.shared.sprite(for: .skier, variant: 1).texture
-        #expect(a !== b)
+    @Test func rivalsWearTheirColours() {
+        let argentine = Set(RivalArt.argentine.pixels().flatMap { $0 }.compactMap { $0 })
+        #expect(argentine.contains(0x74ACDF)) // celeste
+        #expect(argentine.contains(0xFFFFFF)) // blanco
+        let brazilian = Set(RivalArt.brazilian.pixels().flatMap { $0 }.compactMap { $0 })
+        #expect(brazilian.contains(0x009C3B)) // verde
+        #expect(brazilian.contains(0xFFDF00)) // amarillo
     }
 
     @Test func pixelFontIsRegistered() {

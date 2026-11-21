@@ -58,7 +58,7 @@ struct MountainGenerator: Sendable {
             densityMultiplier: 0.6,
             weights: [
                 (.ramp, 4), (.rock, 1.5), (.smallRock, 1), (.apacheta, 0.5),
-                (.quenua, 1), (.deepSnowZone, 0.5), (.iceZone, 0.5), (.snowman, 0.3),
+                (.quenua, 1), (.deepSnowZone, 0.5), (.iceZone, 0.5), (.snowman, 0.3), (.fox, 0.3),
             ],
             condorChance: 0.15,
             hasLift: false
@@ -257,11 +257,18 @@ struct MountainGenerator: Sendable {
                 speed: Double.random(in: 90...150, using: &rng),
                 phase: Double.random(in: 0..<(2 * .pi), using: &rng)
             )
-        case .skier:
-            motion = .downhill(
-                speed: Double.random(in: 140...230, using: &rng),
-                sway: Double.random(in: 30...80, using: &rng),
-                period: Double.random(in: 2...4, using: &rng),
+        case .fox:
+            // Zorro: rápido, cruza la pista de lado a lado.
+            motion = .wander(
+                range: Double.random(in: 80...200, using: &rng),
+                speed: Double.random(in: 90...140, using: &rng),
+                phase: Double.random(in: 0..<(2 * .pi), using: &rng)
+            )
+        case .puma:
+            // Puma: lento y sigiloso, pero ocupa mucho.
+            motion = .wander(
+                range: Double.random(in: 60...160, using: &rng),
+                speed: Double.random(in: 25...45, using: &rng),
                 phase: Double.random(in: 0..<(2 * .pi), using: &rng)
             )
         default:

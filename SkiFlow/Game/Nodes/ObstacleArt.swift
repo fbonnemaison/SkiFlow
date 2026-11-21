@@ -16,9 +16,13 @@ enum ObstacleArt {
         case .guanaco: PixelArt(rows: llama.rows, overrides: ["T": 0xC68B59, "t": 0xF2EBDD])
         case .vicuna: PixelArt(rows: llama.rows, scale: 2.5, overrides: ["T": 0xE0B07A, "t": 0xFFFFFF])
         case .dog: dog
+        case .fox: fox
+        case .puma: puma
+        case .argentine: RivalArt.argentine
+        case .brazilian: RivalArt.brazilian
         case .condor: condor
         // Estos usan tiles de Kenney (ver `SpriteFactory.sprite(for:variant:)`).
-        case .rock, .skier, .snowman, .iceZone, .deepSnowZone, .windZone: PixelArt(rows: [])
+        case .rock, .snowman, .iceZone, .deepSnowZone, .windZone: PixelArt(rows: [])
         }
     }
 
@@ -178,6 +182,31 @@ enum ObstacleArt {
         ".D.D..D.D..",
     ])
 
+
+    /// Zorro culpeo: pelaje rojizo, hocico blanco y cola espesa de punta oscura.
+    static let fox = PixelArt(rows: [
+        "...........O.O",
+        "..........OOOO",
+        "DO........OOKO",
+        "DOO.OOOOOOOOOW",
+        ".OOOOOOOOOOOWW",
+        "..OOOOOOOOO...",
+        "..O.O...O.O...",
+        "..K.K...K.K...",
+    ], overrides: ["O": 0xC4622D])
+
+    /// Puma: pardo claro, cuerpo largo y cola larga.
+    static let puma = PixelArt(rows: [
+        "..............tt..",
+        ".............tttt.",
+        "t...........ttKtt.",
+        "tt.tttttttttttttW.",
+        ".ttttttttttttttt..",
+        "..ttttttttttttt...",
+        "...tt.tt..tt.tt...",
+        "...tt.tt..tt.tt...",
+        "...DD.DD..DD.DD...",
+    ], overrides: ["t": 0xC9A36B])
 
     static let condor = PixelArt(rows: [
         "KK..................KK",

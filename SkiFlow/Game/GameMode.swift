@@ -35,6 +35,10 @@ enum GameMode: String, CaseIterable, Sendable {
     /// contrarrelojes sean justas.
     var hasCreatures: Bool { self == .freeDescent }
 
+    /// El Argentino y el Brasileño bajan por el cerro en los modos sin cronómetro
+    /// estricto (en slalom no estorban para que las marcas sean justas).
+    var hasRivals: Bool { self == .freeDescent || self == .freestyle }
+
     /// La avalancha mete presión en los modos con meta.
     var hasAvalanche: Bool { hasFinish }
 

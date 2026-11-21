@@ -6,6 +6,19 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [1.0.0-rc.2] - 2026-11-21
+
+Segunda versión previa, con las mejoras pedidas tras probar la rc.1.
+
+### Añadido
+- El Cuico puede **caminar de lado**, paso a paso, cuando está parado con los esquís atravesados.
+- **El Argentino** (albiceleste) y **el Brasileño** (verde y amarillo): esquiadores rivales que bajan por el cerro, comentan al pasar y son obstáculos.
+- **Zorros culpeos** (frecuentes) y **pumas** (raros).
+
+### Cambiado
+- Los esquiadores de Kenney desaparecen; los rivales ya no aparecen ni desaparecen a la vista.
+- Llamas, guanacos y vicuñas aparecen diez veces menos.
+
 ## [1.0.0-rc.1] - 2026-11-21
 
 Primera versión previa, para probar antes de publicar la 1.0.0.

@@ -25,8 +25,13 @@ enum ObstacleKind: String, CaseIterable, Sendable {
     case guanaco
     case vicuna
     case dog
-    case skier
+    case fox
+    case puma
     case condor
+
+    // Rivales: no los genera la montaña, los maneja la escena (`RivalSkiers`).
+    case argentine
+    case brazilian
 
     /// Nombre en pantalla (y para depuración).
     var displayName: String {
@@ -49,7 +54,10 @@ enum ObstacleKind: String, CaseIterable, Sendable {
         case .guanaco: "Guanaco"
         case .vicuna: "Vicuña"
         case .dog: "Perro de refugio"
-        case .skier: "Esquiador"
+        case .fox: "Zorro culpeo"
+        case .puma: "Puma"
+        case .argentine: "El Argentino"
+        case .brazilian: "El Brasileño"
         case .condor: "Cóndor"
         }
     }
@@ -88,7 +96,9 @@ enum ObstacleKind: String, CaseIterable, Sendable {
         case .llama, .guanaco: CGSize(width: 33, height: 10)
         case .vicuna: CGSize(width: 27, height: 10)
         case .dog: CGSize(width: 27, height: 10)
-        case .skier: CGSize(width: 24, height: 10)
+        case .fox: CGSize(width: 30, height: 8)
+        case .puma: CGSize(width: 44, height: 10)
+        case .argentine, .brazilian: CGSize(width: 24, height: 10)
         case .condor: CGSize(width: 50, height: 14)
         case .iceZone, .deepSnowZone, .windZone: .zero
         }

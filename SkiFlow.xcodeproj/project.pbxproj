@@ -12,6 +12,7 @@
 		0A0549AC52E03F4B246BFCF9 /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C25BAAA3E8F7DEE51DDE7C /* GameScene.swift */; };
 		0AE9A5EB57E625C28C71E1D6 /* SkiTrailNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40B1CEC5A78F04C8F984322 /* SkiTrailNode.swift */; };
 		12AC169FA3CE7F2DA3E60737 /* SeededRandom.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA0C599688E4C43C3B2678C /* SeededRandom.swift */; };
+		24F89D8CA2AD674C376EE0DF /* RivalSkierNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12D9869E498044B09CEFFD49 /* RivalSkierNode.swift */; };
 		28E76C1C8810FD430B36280C /* Music.swift in Sources */ = {isa = PBXBuildFile; fileRef = A56478404936CE0E30EA39A4 /* Music.swift */; };
 		308FE9F16569F5DA9FAF414E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0E64D1BB015CE0529D0F8F6A /* Assets.xcassets */; };
 		35EFC709EA28C18A72528DEA /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56AFC87DF1F4D6B486DA593D /* GameModel.swift */; };
@@ -56,19 +57,23 @@
 		9E6A5CBF4F26846B00AC62DC /* PixelArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01B8A22F73BBBB788044D156 /* PixelArt.swift */; };
 		AB78AE7C4915C6EF08532B83 /* BalanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F28FD2B7C9A515B1CF83ACD /* BalanceTests.swift */; };
 		B871F84972742F6FAA52F5AD /* FreestyleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31CB04E5E61EA8641BD7F67D /* FreestyleTests.swift */; };
+		B8CE34EF8B0D3A867F95742C /* RivalArt.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE4CD915333C808097767E78 /* RivalArt.swift */; };
 		BC4A9B01A24ED34D24132B60 /* SystemsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3052EAA18CBA5D85339EEBB0 /* SystemsTests.swift */; };
 		BEEEA3E89DF5A635FA9ADAC2 /* GameConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00137A47CAC829D1DAB37978 /* GameConfig.swift */; };
 		C39EF9F22FB88C0556A5B2FD /* Obstacle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 865860F4D094D823E2132830 /* Obstacle.swift */; };
 		C7D00FC4A96590D2EEF48E59 /* ObstacleKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3A4F0DFF561B2E64CD5F5C /* ObstacleKind.swift */; };
 		C8EB4BB54C479C761AE22B9A /* SlalomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DA6067B5ABB4BD60BEC8E68 /* SlalomTests.swift */; };
 		C91E9BB9082663B3F16EAC12 /* SkierPhysics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BD39186C3A987BD9B07257 /* SkierPhysics.swift */; };
+		CE41CAC2DDDE82409BD8BF96 /* ImprovementsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 716AE68CD7B63242F5557209 /* ImprovementsTests.swift */; };
 		D4341F901CA1BA687BEEFFCC /* GameOverlays.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F57335C647239F73D64EA4 /* GameOverlays.swift */; };
 		D75E6E2DC9B05D2386B4101D /* InterfaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAABB467915CD777A09474E /* InterfaceTests.swift */; };
 		D7BA8A2A89AB3377DE6B1783 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8635D83E0805836FF226935D /* SettingsStore.swift */; };
+		DB8D2DA399B562261003068D /* SpeechBubbleNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F5355DD9AF3237A0D402F5 /* SpeechBubbleNode.swift */; };
 		DBC73A4BF5F243CC85B73C49 /* GameSceneTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 184AB7508A8BF711A2C38D82 /* GameSceneTests.swift */; };
 		DE6DD7F1C923967F9BE578BD /* Freestyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072C546BA0E1DE89F4479932 /* Freestyle.swift */; };
 		E5FB70B44182522BFC34DEEC /* SkiFlowApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4451058B94CF03BCE44FE4DC /* SkiFlowApp.swift */; };
 		E60CADBDD550A77043CB36FD /* InputMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C379C9AE6B962E5C0EE4B5D /* InputMonitor.swift */; };
+		E7703A31666C61CA31DFBF50 /* Rivals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A2C1937B60ADE7AD3548484 /* Rivals.swift */; };
 		EBAA5A0D2203862640207CC0 /* CollisionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ECBD856A59911C29A2C4B0D /* CollisionTests.swift */; };
 		F3A0BAF3D23C07E3F6F63EB9 /* HUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1BB62494DAE6A70A952369 /* HUD.swift */; };
 		F3CF58C86B15965437A48C05 /* TitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22E9E8091145ACEC336A1EFF /* TitleView.swift */; };
@@ -95,6 +100,7 @@
 		0A1680AB237B4DAD7D414A61 /* ArtTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArtTests.swift; sourceTree = "<group>"; };
 		0E64D1BB015CE0529D0F8F6A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0ECBD856A59911C29A2C4B0D /* CollisionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionTests.swift; sourceTree = "<group>"; };
+		12D9869E498044B09CEFFD49 /* RivalSkierNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RivalSkierNode.swift; sourceTree = "<group>"; };
 		1751E53FB1B3C35876D3CCE3 /* SkiDirectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkiDirectionTests.swift; sourceTree = "<group>"; };
 		17FE744F703B08CD94BC94D6 /* Chasers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chasers.swift; sourceTree = "<group>"; };
 		184AB7508A8BF711A2C38D82 /* GameSceneTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSceneTests.swift; sourceTree = "<group>"; };
@@ -112,9 +118,12 @@
 		42D6833781EF3B344B3617C7 /* Input.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Input.swift; sourceTree = "<group>"; };
 		4451058B94CF03BCE44FE4DC /* SkiFlowApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkiFlowApp.swift; sourceTree = "<group>"; };
 		44B31A333D84F51FFC76932F /* RecordsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordsTests.swift; sourceTree = "<group>"; };
+		53F5355DD9AF3237A0D402F5 /* SpeechBubbleNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechBubbleNode.swift; sourceTree = "<group>"; };
 		56AFC87DF1F4D6B486DA593D /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
 		640477D12402077114F1187E /* CuicoNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CuicoNode.swift; sourceTree = "<group>"; };
 		6E3046B12A05566F8F085D0C /* ChaserNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaserNode.swift; sourceTree = "<group>"; };
+		716AE68CD7B63242F5557209 /* ImprovementsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImprovementsTests.swift; sourceTree = "<group>"; };
+		7A2C1937B60ADE7AD3548484 /* Rivals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rivals.swift; sourceTree = "<group>"; };
 		7DA6067B5ABB4BD60BEC8E68 /* SlalomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlalomTests.swift; sourceTree = "<group>"; };
 		80535A69B738192016F116CB /* AltitudeBand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AltitudeBand.swift; sourceTree = "<group>"; };
 		8635D83E0805836FF226935D /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
@@ -151,6 +160,7 @@
 		F70CE395C78A1094125C3329 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		F7F57335C647239F73D64EA4 /* GameOverlays.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameOverlays.swift; sourceTree = "<group>"; };
 		F87A0F8EAEB150EDF589676A /* Synth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Synth.swift; sourceTree = "<group>"; };
+		FE4CD915333C808097767E78 /* RivalArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RivalArt.swift; sourceTree = "<group>"; };
 		FF8224A9DC45EDC55047BFD0 /* PublicPixel.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = PublicPixel.ttf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -222,9 +232,12 @@
 				F55E05C2A0E3F64142254B25 /* MountainNode.swift */,
 				1E3892CA6B98A10957606494 /* ObstacleArt.swift */,
 				01B8A22F73BBBB788044D156 /* PixelArt.swift */,
+				FE4CD915333C808097767E78 /* RivalArt.swift */,
+				12D9869E498044B09CEFFD49 /* RivalSkierNode.swift */,
 				D40B1CEC5A78F04C8F984322 /* SkiTrailNode.swift */,
 				F5A52D27B9B17995553FF065 /* SlalomNodes.swift */,
 				C4077FFD265F52BA89DEE66B /* SnowSpeckleNode.swift */,
+				53F5355DD9AF3237A0D402F5 /* SpeechBubbleNode.swift */,
 			);
 			path = Nodes;
 			sourceTree = "<group>";
@@ -281,6 +294,7 @@
 				0ECBD856A59911C29A2C4B0D /* CollisionTests.swift */,
 				31CB04E5E61EA8641BD7F67D /* FreestyleTests.swift */,
 				184AB7508A8BF711A2C38D82 /* GameSceneTests.swift */,
+				716AE68CD7B63242F5557209 /* ImprovementsTests.swift */,
 				D7150921054719B5882D5CA4 /* InputTests.swift */,
 				EEAABB467915CD777A09474E /* InterfaceTests.swift */,
 				CA0C7583ADB6C0821066E95A /* PolishTests.swift */,
@@ -300,6 +314,7 @@
 				17FE744F703B08CD94BC94D6 /* Chasers.swift */,
 				D7F2ACD9B736C85062928043 /* CuicoLines.swift */,
 				072C546BA0E1DE89F4479932 /* Freestyle.swift */,
+				7A2C1937B60ADE7AD3548484 /* Rivals.swift */,
 				F08738D69D0C687D488D5E1B /* SkiDirection.swift */,
 				DD46BFF257FCCE78EF211B0E /* SkierState.swift */,
 				D29BBA24BB09BE8C117C93E2 /* Slalom.swift */,
@@ -467,6 +482,9 @@
 				9E6A5CBF4F26846B00AC62DC /* PixelArt.swift in Sources */,
 				61E3A58E16D2E00F7954302F /* Records.swift in Sources */,
 				783CADA6A372C51497CD3222 /* RecordsView.swift in Sources */,
+				B8CE34EF8B0D3A867F95742C /* RivalArt.swift in Sources */,
+				24F89D8CA2AD674C376EE0DF /* RivalSkierNode.swift in Sources */,
+				E7703A31666C61CA31DFBF50 /* Rivals.swift in Sources */,
 				12AC169FA3CE7F2DA3E60737 /* SeededRandom.swift in Sources */,
 				D7BA8A2A89AB3377DE6B1783 /* SettingsStore.swift in Sources */,
 				4F7BE281E208BBD315909704 /* SettingsView.swift in Sources */,
@@ -479,6 +497,7 @@
 				4CFD08F27E979EE9916D6926 /* SlalomNodes.swift in Sources */,
 				79D73789F9F58409229988A5 /* SnowSpeckleNode.swift in Sources */,
 				5570DDB72EE1B43037CCCC51 /* SoundEffects.swift in Sources */,
+				DB8D2DA399B562261003068D /* SpeechBubbleNode.swift in Sources */,
 				5D0FA0CFFBB48ECBB398D716 /* Synth.swift in Sources */,
 				97656FD59706A5CB1158FA0B /* Theme.swift in Sources */,
 				F3CF58C86B15965437A48C05 /* TitleView.swift in Sources */,
@@ -496,6 +515,7 @@
 				EBAA5A0D2203862640207CC0 /* CollisionTests.swift in Sources */,
 				B871F84972742F6FAA52F5AD /* FreestyleTests.swift in Sources */,
 				DBC73A4BF5F243CC85B73C49 /* GameSceneTests.swift in Sources */,
+				CE41CAC2DDDE82409BD8BF96 /* ImprovementsTests.swift in Sources */,
 				640333A4E36C4A40F6487FBC /* InputTests.swift in Sources */,
 				D75E6E2DC9B05D2386B4101D /* InterfaceTests.swift in Sources */,
 				3D3BCBC1E57809351D45B0FF /* PolishTests.swift in Sources */,

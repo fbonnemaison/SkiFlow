@@ -177,6 +177,15 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [ ] Partidas de prueba reales y lista de errores (el piloto simulado no sustituye a jugar): sensación del control, dificultad del Kunk y de la avalancha, mezcla de audio
 - [ ] Decidir si se cambian los signos ¡ y ! de la fuente pixel (Public Pixel los dibuja como rombos)
 
+## Mejoras tras probar la `1.0.0-rc.1`
+- [x] Paso lateral del Cuico: con los esquís atravesados y casi parado, ← o → hacia ese lado lo mueven 12 pt; manteniendo la tecla sigue caminando
+- [x] Rivales **el Argentino** (albiceleste, sol de mayo) y **el Brasileño** (verde, amarillo y azul): bajan en eses, comentan con frases propias al pasar cerca y se quejan si los atropellas; son obstáculos (se pueden saltar). Solo en Descenso libre y Freestyle
+- [x] Los rivales los gestiona la escena (`RivalSkiers`), no los trozos: aparecen y se van fuera de la pantalla
+- [x] Eliminados los esquiadores de Kenney (eran los "gorditos" que aparecían y desaparecían al cargar y descargar trozos)
+- [x] Llamas, guanacos y vicuñas al 10 % de su frecuencia anterior
+- [x] Nuevos animales: **zorro culpeo** (frecuente, rápido) y **puma** (raro, lento y grande)
+- [ ] Probar estas mejoras en la app (`1.0.0-rc.2`)
+
 ## Fase 12 — CI y distribución
 > **Decisión de publicación (en dos pasos):**
 > 1. **Repositorio privado** mientras App-Zilla prueba una versión previa (`v1.0.0-rc.N`). El DMG de prueba se genera **en local** con un script, para no gastar minutos de Actions (en repos privados son limitados y los de macOS cuentan unas 10 veces).

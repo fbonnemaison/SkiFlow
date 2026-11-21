@@ -25,6 +25,7 @@ Requiere **macOS 26 o superior**. Es gratis y no necesita cuenta.
 | ← / A, → / D | Mover el cursor | Stick izquierdo o cruceta | Girar (mantén la tecla para seguir girando) |
 | ↓ / S | Cursor bajo el Cuico | Cruceta ↓ | Apuntar recto hacia abajo |
 | ↑ / W | Cursor por encima | Cruceta ↑ o B (○) | Frenar (esquís atravesados) |
+| ← / → con los esquís atravesados y parado | | Cruceta ← / → | Caminar de lado, paso a paso, para colocarte |
 | Espacio | Clic | A (✕) | Brincar |
 | F (mantener) | | X (□) o gatillo derecho | Turbo |
 | Esc / P | | Menú (Options) | Pausa |
@@ -41,7 +42,8 @@ En el menú principal puedes escribir una **semilla** (un número) para repetir 
 
 ## En la montaña
 
-- **Alta montaña**: rocas, penitentes de hielo, apachetas y vicuñas. Más abajo aparecen cactus, llamas y guanacos, y al final el bosque de araucarias y queñuas.
+- **Alta montaña**: rocas, penitentes de hielo y apachetas. Más abajo aparecen cactus, y al final el bosque de araucarias y queñuas.
+- **Fauna**: zorros culpeos (frecuentes y rápidos) y pumas (raros, lentos y grandes). Las llamas, guanacos y vicuñas casi nunca se ven en la nieve.
 - **Rampas**: saltas sobre lo que sea bajo (rocas, animales…), pero no sobre árboles, refugios ni torres. ¡Ojo con los cóndores en pleno vuelo!
 - **Hielo**: cuesta frenar. **Nieve profunda**: frena. **Viento blanco**: te empuja de lado y tapa la vista.
 - Las piedras pequeñas te hacen tropezar; todo lo demás te tira al suelo.
@@ -70,6 +72,13 @@ Varios trucos en el mismo salto multiplican los puntos, y cada aterrizaje limpio
 Un típico chileno que sube a la nieve más a posar que a esquiar: casco negro, antiparras espejadas, parka roja de marca y esquís con cantos verde lima. Comenta lo que le pasa («¡Pucha, mi parka nueva!») y, si se queda quieto, saca el teléfono para una foto con la cordillera.
 
 > Descripción y frases provisionales: la personalidad definitiva la afina App-Zilla.
+
+## Los rivales
+
+En Descenso libre y Freestyle se cruzan esquiadores de los países vecinos. Bajan haciendo eses, comentan al pasar cerca y, si te los llevas por delante, te caes (pero puedes saltarlos):
+
+- **El Argentino**, de albiceleste: «En Bariloche la nieve es mejor, ¿viste?».
+- **El Brasileño**, de verde y amarillo: «Nossa, que frio!».
 
 ## Las criaturas
 

@@ -86,6 +86,78 @@ final class GameScene: SKScene {
     var onRunStarted: ((GameMode) -> Void)?
     private(set) var hud = HUDSnapshot()
 
+    // MARK: Rivales
+
+    private(set) var rivals = RivalSkiers(seed: 0)
+    private var rivalNodes: [Int: RivalSkierNode] = [:]
+
+    /// Última frase de un rival (para los tests).
+    var lastRivalLine: String? {
+        rivalNodes.values.compactMap(\.lastLine).last
+    }
+
+    private func updateRivals(dt: Double) {
+        guard mode.hasRivals else { return }
+        let visible = CGSize(width: size.width / pixelZoom, height: size.height / pixelZoom)
+        for event in rivals.update(dt: dt, time: elapsed, skier: skier, camera: cameraCenter, viewSize: visible) {
+            switch event {
+            case let .appeared(id):
+                guard let rival = rivals.skiers.first(where: { $0.id == id }) else { continue }
+                let node = RivalSkierNode(rival: rival)
+                node.apply(rival, time: elapsed)
+                world.addChild(node)
+                rivalNodes[id] = node
+            case let .left(id):
+                rivalNodes.removeValue(forKey: id)?.removeFromParent()
+            case let .says(id, line):
+                rivalNodes[id]?.say(line)
+            }
+        }
+    }
+
+    /// Cajas de choque de los rivales cercanos.
+    private func rivalSnapshots(near point: CGPoint) -> [ObstacleSnapshot] {
+        rivals.skiers
+            .filter { hypot($0.position.x - point.x, $0.position.y - point.y) < Self.collisionRadius + 60 }
+            .map { ObstacleSnapshot(obstacle: $0.obstacle, time: 0) }
+    }
+
+    /// El rival atropellado se queja.
+    private func rivalComplains(about obstacle: Obstacle) {
+        guard let rival = rivals.skiers.first(where: { $0.obstacle == obstacle }),
+              let line = rivals.crashLine(for: rival.id, time: elapsed) else { return }
+        rivalNodes[rival.id]?.say(line)
+    }
+
+    // MARK: Paso lateral
+
+    /// Puntos que avanza el Cuico de lado en cada paso.
+    static let sideStepSize: CGFloat = 12
+    /// Rapidez máxima a la que puede dar pasos (si no, está frenando).
+    static let sideStepMaxSpeed: Double = 60
+    static let sideStepRepeatDelay: Double = 0.22
+    static let sideStepInterval: Double = 0.14
+    private var sideStepTimer = 0.0
+
+    /// Dirección del paso lateral (-1 izquierda, 1 derecha) para una acción, si
+    /// el Cuico está atravesado hacia ese lado y casi parado.
+    private func sideStepDirection(for action: InputAction) -> CGFloat? {
+        guard !skier.isAirborne, !skier.isFallen, skier.speed < Self.sideStepMaxSpeed else { return nil }
+        switch (action, skier.direction) {
+        case (.left, .hardLeft): return -1
+        case (.right, .hardRight): return 1
+        default: return nil
+        }
+    }
+
+    /// Da un paso de lado (como en la nieve de verdad, con los esquís atravesados).
+    private func sideStep(_ direction: CGFloat) {
+        skier.position.x += direction * Self.sideStepSize
+        skier.speed = 0
+        cuico.playStep()
+        trail.record(position: skier.position, direction: skier.direction)
+    }
+
     // MARK: Personalidad del Cuico
 
     /// Metros del easter egg: la altura del Aconcagua.
@@ -289,7 +361,11 @@ final class GameScene: SKScene {
             if action.isSteering, source != .mouse {
                 input.mouseAim = nil
             }
-            if !skier.isFallen {
+            if let step = sideStepDirection(for: action) {
+                sideStep(step)
+                sideStepTimer = Self.sideStepRepeatDelay
+                audio?.play(.swish)
+            } else if !skier.isFallen {
                 let before = skier.direction
                 controller.press(action, direction: &skier.direction)
                 if skier.direction != before, !skier.isAirborne { audio?.play(.swish) }
@@ -400,6 +476,9 @@ final class GameScene: SKScene {
         chupacabras = ChupacabrasChaser(config: chupacabrasConfig, seed: currentSeed)
         avalanche = AvalancheChaser(config: avalancheConfig)
         chupacabrasEncounters = 0
+        rivals = RivalSkiers(seed: currentSeed)
+        rivalNodes.values.forEach { $0.removeFromParent() }
+        rivalNodes.removeAll()
         caughtBy = nil
         catchTimer = 0
         gameOver = nil
@@ -489,6 +568,7 @@ final class GameScene: SKScene {
             simulateSkier(dt: dt)
         }
 
+        updateRivals(dt: dt)
         updateSlalom(from: previousPosition)
         updateFreestyle(dt: dt)
         checkAconcagua()
@@ -501,6 +581,14 @@ final class GameScene: SKScene {
         wasAirborne = skier.isAirborne
         if freestyle != nil, skier.isAirborne {
             // En el aire, en freestyle, las teclas hacen trucos en vez de girar.
+        } else if let step = [InputAction.left, .right].lazy.filter({ self.input.held.contains($0) })
+            .compactMap({ self.sideStepDirection(for: $0) }).first {
+            // Manteniendo la tecla hacia el lado atravesado, sigue caminando.
+            sideStepTimer -= dt
+            if sideStepTimer <= 0 {
+                sideStep(step)
+                sideStepTimer += Self.sideStepInterval
+            }
         } else if let target = input.aimDirection(skier: skier.position, camera: cameraCenter) {
             controller.steer(toward: target, dt: dt, direction: &skier.direction)
         } else {
@@ -508,6 +596,7 @@ final class GameScene: SKScene {
         }
 
         let nearby = mountain.snapshots(near: skier.position, radius: Self.collisionRadius, time: elapsed)
+            + rivalSnapshots(near: skier.position)
         environment = skier.isAirborne
             ? Terrain()
             : CollisionResolver.environment(at: skier.position, among: nearby)
@@ -517,6 +606,7 @@ final class GameScene: SKScene {
             skier.graceTime = max(0, skier.graceTime - dt)
         } else if let hit = CollisionResolver.firstHit(skier: skier, among: nearby) {
             apply(hit.effect, obstacleHitbox: hit.snapshot.hitbox)
+            if hit.effect == .crash { rivalComplains(about: hit.snapshot.obstacle) }
         }
 
         updateIdlePose(dt: dt)
@@ -836,6 +926,9 @@ final class GameScene: SKScene {
         cameraNode.position = CGPoint(x: cameraCenter.x + offset.x, y: cameraCenter.y + offset.y)
         speckles.wrap(around: cameraNode.position)
         mountain.render(time: elapsed)
+        for rival in rivals.skiers {
+            rivalNodes[rival.id]?.apply(rival, time: elapsed)
+        }
         finishNode?.position.x = cameraCenter.x
         renderChasers()
 

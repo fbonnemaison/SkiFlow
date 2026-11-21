@@ -47,7 +47,7 @@ final class CuicoNode: SKNode {
     private let skis = SKNode()
     private let body = SKNode()
     private var bodySprite: SKSpriteNode?
-    private let bubble = SKNode()
+    private let bubble = SpeechBubbleNode()
     private(set) var isGolden = false
     /// Última frase dicha (para los tests).
     private(set) var lastLine: String?
@@ -169,44 +169,16 @@ final class CuicoNode: SKNode {
         bodySprite?.texture = SpriteFactory.shared.texture(named: golden ? "cuico-body-gold" : "cuico-body", art: art)
     }
 
+    /// Pequeño salto de la figura al dar un paso de lado.
+    func playStep() {
+        guard body.action(forKey: "step") == nil else { return }
+        body.run(.sequence([.moveBy(x: 0, y: 3, duration: 0.05), .moveBy(x: 0, y: -3, duration: 0.05)]), withKey: "step")
+    }
+
     /// Muestra una frase en un bocadillo sobre la cabeza durante unos segundos.
     func say(_ text: String) {
         lastLine = text
-        bubble.removeAllActions()
-        bubble.removeAllChildren()
-        if bubble.parent == nil {
-            bubble.zPosition = 50
-            addChild(bubble)
-        }
-
-        let label = SKLabelNode(fontNamed: PixelFont.name)
-        label.text = text
-        label.fontSize = 16
-        label.fontColor = SKColor(red: 0.1, green: 0.12, blue: 0.2, alpha: 1)
-        label.verticalAlignmentMode = .center
-        label.horizontalAlignmentMode = .center
-
-        let width = label.frame.width + 20
-        let box = SKShapeNode(rectOf: CGSize(width: width, height: 30), cornerRadius: 6)
-        box.fillColor = .white
-        box.strokeColor = SKColor(
-            red: CGFloat((PixelArt.outlineColor >> 16) & 0xFF) / 255,
-            green: CGFloat((PixelArt.outlineColor >> 8) & 0xFF) / 255,
-            blue: CGFloat(PixelArt.outlineColor & 0xFF) / 255,
-            alpha: 1
-        )
-        box.lineWidth = 3
-        let tail = SKShapeNode(rectOf: CGSize(width: 8, height: 8))
-        tail.fillColor = .white
-        tail.strokeColor = .clear
-        tail.position = CGPoint(x: -width / 2 + 18, y: -16)
-        tail.zRotation = .pi / 4
-
-        bubble.addChild(tail)
-        bubble.addChild(box)
-        bubble.addChild(label)
-        bubble.position = CGPoint(x: width / 2 - 14, y: 78)
-        bubble.alpha = 1
-        bubble.run(.sequence([.wait(forDuration: 2.2), .fadeOut(withDuration: 0.3), .removeFromParent()]))
+        if bubble.parent == nil { addChild(bubble) }
+        bubble.show(text, height: 78)
     }
 }

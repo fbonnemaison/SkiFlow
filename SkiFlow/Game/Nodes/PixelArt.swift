@@ -93,10 +93,6 @@ enum KenneySprite: String, CaseIterable, Sendable {
     case flagRed = "flag_red"
     case flagBlue = "flag_blue"
     case snowman
-    case skierGreen = "skier_green"
-    case skierGreenPoles = "skier_green_poles"
-    case skierBlue = "skier_blue"
-    case skierBluePoles = "skier_blue_poles"
     case rock = "rock_kenney"
     case liftChair = "lift_chair"
 
@@ -132,9 +128,6 @@ final class SpriteFactory {
             return sprite(.rock)
         case .snowman:
             return sprite(.snowman)
-        case .skier:
-            let outfits: [KenneySprite] = [.skierGreenPoles, .skierBluePoles, .skierGreen, .skierBlue]
-            return sprite(outfits[abs(variant) % outfits.count])
         default:
             break
         }

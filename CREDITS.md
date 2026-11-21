@@ -6,7 +6,7 @@ SkiFlow es un juego de **App-Zilla**, publicado con licencia [MIT](LICENSE).
 
 | Recurso | Autor | Licencia | Uso en SkiFlow |
 |---|---|---|---|
-| [Tiny Ski](https://kenney.nl/assets/tiny-ski) (v1.0) | Kenney ([kenney.nl](https://www.kenney.nl)) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | Banderas de slalom, otros esquiadores, mono de nieve, roca y silla del telesilla (`SkiFlow/Resources/Assets.xcassets/Kenney.spriteatlas`) |
+| [Tiny Ski](https://kenney.nl/assets/tiny-ski) (v1.0) | Kenney ([kenney.nl](https://www.kenney.nl)) | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | Banderas de slalom, mono de nieve, roca y silla del telesilla (`SkiFlow/Resources/Assets.xcassets/Kenney.spriteatlas`) |
 | [Public Pixel Font](https://opengameart.org/content/public-pixel-font) (v1.24) | GGBotNet | [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) | Títulos, HUD, botones y avisos (`SkiFlow/Resources/Fonts/PublicPixel.ttf`) |
 
 Las licencias originales están en [Licenses/](Licenses). CC0 no obliga a dar crédito, pero lo damos con gusto.
@@ -19,7 +19,8 @@ Dibujado por App-Zilla como pixel art descrito en código (`SkiFlow/Game/Nodes/*
 
 - El Cuico (a partir del icono de la app).
 - El Kunk y el Chupacabras.
-- La flora y fauna andinas: araucarias, queñuas, cactus de altura, llamas, guanacos, vicuñas, perros de refugio y cóndores.
+- La flora y fauna andinas: araucarias, queñuas, cactus de altura, llamas, guanacos, vicuñas, zorros culpeos, pumas, perros de refugio y cóndores.
+- Los esquiadores rivales: el Argentino y el Brasileño.
 - Rocas pequeñas, apachetas, penitentes, refugios, torres del telesilla y rampas.
 - Las partículas de nieve, la avalancha y la línea de meta.
 

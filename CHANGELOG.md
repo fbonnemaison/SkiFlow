@@ -7,6 +7,7 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 ## [Sin publicar]
 
 ### Añadido
+- Prototipo jugable (Fase 1): el Cuico baja la montaña con 9 posiciones de esquí, física de paso fijo, frenada derrapando, cámara que lo sigue, huellas en la nieve y controles por teclado (flechas/WASD, R para reiniciar).
 - Proyecto Xcode generado con XcodeGen (`project.yml`): app macOS 26+ en Swift 6 con SwiftUI y SpriteKit.
 - Escena de SpriteKit vacía como punto de partida.
 - Target de tests con Swift Testing.

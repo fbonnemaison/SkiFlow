@@ -2,7 +2,17 @@
 
 Juego de esquí 2D para macOS inspirado en el clásico *SkiFree* (1991), ambientado en la **cordillera de los Andes**. Eres **el Cuico**, un típico chileno que sube a la nieve más a posar que a esquiar. Baja la montaña esquivando queñuas, rocas, llamas y otros esquiadores, compite contra el reloj en slalom, haz acrobacias en freestyle… y huye del **Kunk**. Y si tienes muy mala suerte, también del **Chupacabras**.
 
-> Estado: en desarrollo (Fase 0). Consulta el plan en [TODO.md](TODO.md).
+> Estado: en desarrollo (prototipo jugable, Fase 1). Consulta el plan en [TODO.md](TODO.md).
+
+## Controles
+
+| Tecla | Acción |
+|---|---|
+| ← / A | Girar a la izquierda (mantén pulsado para seguir girando) |
+| → / D | Girar a la derecha |
+| ↓ / S | Apuntar recto hacia abajo |
+| ↑ / W | Frenar (esquís atravesados) |
+| R | Reiniciar la bajada |
 
 ## Requisitos
 

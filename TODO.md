@@ -39,18 +39,19 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [x] `README.md` inicial: descripción, requisitos y cómo abrir la app sin notarizar (Ajustes del Sistema › Privacidad y seguridad › «Abrir igualmente»)
 - [x] `CHANGELOG.md`
 
-## Fase 1 — Prototipo jugable (núcleo del esquí)
-- [ ] `SpriteView` dentro de una ventana SwiftUI con una `GameScene` de SpriteKit
-- [ ] Bucle de juego con `update(_:)` y delta time fijo para la física de juego
-- [ ] El Cuico (esquiador protagonista) con **8 direcciones** (izquierda total → abajo → derecha total) y velocidad según el ángulo
-- [ ] Física propia sencilla: aceleración en pendiente, frenada en perpendicular, parada
-- [ ] Cámara que sigue al esquiador con el mundo desplazándose hacia arriba
-- [ ] Controles por teclado (flechas/WASD)
-- [ ] Sprites provisionales (formas de colores) para avanzar sin depender del arte
-- [ ] Tests: cálculo de velocidad y dirección
+## Fase 1 — Prototipo jugable (núcleo del esquí) ✅
+- [x] `SpriteView` dentro de una ventana SwiftUI con una `GameScene` de SpriteKit
+- [x] Bucle de juego con `update(_:)` y paso de tiempo fijo (1/120 s) para la física (`FixedTimestep`)
+- [x] El Cuico (esquiador protagonista) con **9 posiciones** (atravesado a la izquierda, 3 inclinaciones por lado, recto abajo, atravesado a la derecha) y velocidad según el ángulo
+- [x] Física propia sencilla: aceleración en pendiente, rozamiento con velocidad terminal y frenada derrapando con los esquís atravesados (`SkierPhysics`)
+- [x] Cámara que sigue al Cuico, adelantada para ver más montaña por delante
+- [x] Controles por teclado (flechas/WASD, R para reiniciar) con giro repetido al mantener la tecla
+- [x] Sprites provisionales (formas de colores): el Cuico con parka fucsia y lentes de sol, huellas de esquí y motas de nieve
+- [x] Indicador de depuración de velocidad (km/h) y distancia (m)
+- [x] Tests: direcciones, física, paso fijo, control de giro, teclas y escena
 
 ## Fase 2 — Mundo procedural y obstáculos
-- [ ] Generador por **trozos** (chunks) con RNG con semilla (determinista y testeable)
+- [ ] Generador por **trozos** (chunks) con RNG con semilla (determinista y testeable); el RNG `SeededRandom` ya existe
 - [ ] Obstáculos estáticos andinos: queñuas, araucarias, rocas, cactus de altura, apachetas (montículos de piedras), penitentes de hielo, refugios de montaña
 - [ ] Obstáculos móviles: llamas, guanacos y vicuñas, perros de refugio, otros esquiadores y telesilla
 - [ ] Cóndores en vuelo como elemento decorativo (sombra en la nieve) u obstáculo en los saltos
@@ -124,7 +125,7 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [ ] Diseño del Cuico: equipo de marca reluciente, lentes de sol y pose de foto; animaciones propias (posar, *selfie* al detenerse, caída indignada)
 - [ ] Atlas de texturas (`.spriteatlas`) para el Cuico, los obstáculos andinos, el Kunk, el Chupacabras, las banderas y la avalancha
 - [ ] Adaptar o dibujar los sprites que no existan en packs CC0 (Kunk, Chupacabras, llamas, cóndores, apachetas, penitentes)
-- [ ] Animaciones: 8 direcciones, caída, salto, trucos, Kunk, Chupacabras y avalancha
+- [ ] Animaciones: 9 posiciones, caída, salto, trucos, Kunk, Chupacabras y avalancha
 - [ ] Partículas de nieve (estela de esquís, choques, avalancha, viento blanco)
 - [ ] Icono de la app (`AppIcon`) y fuente pixel con licencia libre
 

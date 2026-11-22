@@ -26,9 +26,8 @@ final class MountainNode: SKNode {
         let node = SKNode()
         /// Nodos de obstáculos móviles por índice de obstáculo.
         var movingNodes: [(index: Int, node: SKNode)] = []
-        /// Sillas del telesilla: (nodo, desfase).
-        var chairs: [(node: SKNode, offset: Double)] = []
-        var liftRange: ClosedRange<Double>?
+        /// Tramos del cable del telesilla con sus sillas: (nodo, desfase en puntos).
+        var liftPieces: [(bottom: CGPoint, top: CGPoint, chairs: [(node: SKNode, offset: Double)])] = []
 
         init(obstacles: [Obstacle], loadTime: Double) {
             self.obstacles = obstacles
@@ -111,11 +110,16 @@ final class MountainNode: SKNode {
                     node.zPosition = Depth.object(atY: position.y)
                 }
             }
-            if let range = chunk.liftRange {
-                let length = range.upperBound - range.lowerBound
-                for (chair, offset) in chunk.chairs {
-                    let y = range.lowerBound + (offset + localTime * 45).truncatingRemainder(dividingBy: length)
-                    chair.position.y = y
+            for piece in chunk.liftPieces {
+                // Las sillas suben por el cable (avanzan 45 pt/s en vertical).
+                let height = Double(piece.top.y - piece.bottom.y)
+                guard height > 0 else { continue }
+                for (chair, offset) in piece.chairs {
+                    let f = CGFloat((offset + localTime * 45).truncatingRemainder(dividingBy: height) / height)
+                    chair.position = CGPoint(
+                        x: piece.bottom.x + (piece.top.x - piece.bottom.x) * f,
+                        y: piece.bottom.y + (piece.top.y - piece.bottom.y) * f
+                    )
                 }
             }
         }
@@ -217,33 +221,32 @@ final class MountainNode: SKNode {
 
     private func addLift(to chunk: LoadedChunk, coord: ChunkCoord) {
         guard generator.profile.hasLift else { return }
-        let rect = MountainGenerator.rect(for: coord)
-        let x = generator.liftX
-        guard Double(rect.minX) <= x, x < Double(rect.maxX) else { return }
-
-        // El telesilla empieza un poco por debajo de la salida.
-        let top = min(Double(rect.maxY), -300)
-        let bottom = Double(rect.minY)
-        guard top > bottom else { return }
-
         let cableTop: CGFloat = 60
-        let path = CGMutablePath()
-        path.move(to: CGPoint(x: x, y: bottom + cableTop))
-        path.addLine(to: CGPoint(x: x, y: top + cableTop))
-        let cable = SKShapeNode(path: path)
-        cable.strokeColor = SKColor(white: 0.25, alpha: 0.9)
-        cable.lineWidth = 1.5
-        cable.zPosition = Depth.overhead - 1
-        chunk.node.addChild(cable)
+        for segment in generator.liftSegments(in: MountainGenerator.rect(for: coord)) {
+            let bottom = CGPoint(x: segment.bottom.x, y: segment.bottom.y + cableTop)
+            let top = CGPoint(x: segment.top.x, y: segment.top.y + cableTop)
+            let path = CGMutablePath()
+            path.move(to: bottom)
+            path.addLine(to: top)
+            let cable = SKShapeNode(path: path)
+            cable.strokeColor = SKColor(white: 0.25, alpha: 0.9)
+            cable.lineWidth = 1.5
+            cable.zPosition = Depth.overhead - 1
+            chunk.node.addChild(cable)
 
-        chunk.liftRange = (bottom + cableTop)...(top + cableTop)
-        for i in 0..<4 {
-            let chair = SpriteFactory.shared.sprite(.liftChair)
-            chair.anchorPoint = CGPoint(x: 0.5, y: 0.85)
-            chair.position = CGPoint(x: x, y: bottom)
-            chair.zPosition = Depth.overhead
-            chunk.node.addChild(chair)
-            chunk.chairs.append((chair, Double(i) * (top - bottom) / 4))
+            // Una silla cada ~190 pt de subida.
+            let height = Double(top.y - bottom.y)
+            let count = max(1, Int((height / 190).rounded()))
+            var chairs: [(node: SKNode, offset: Double)] = []
+            for i in 0..<count {
+                let chair = SpriteFactory.shared.sprite(.liftChair)
+                chair.anchorPoint = CGPoint(x: 0.5, y: 0.85)
+                chair.position = bottom
+                chair.zPosition = Depth.overhead
+                chunk.node.addChild(chair)
+                chairs.append((chair, Double(i) * height / Double(count)))
+            }
+            chunk.liftPieces.append((bottom, top, chairs))
         }
     }
 }

@@ -36,7 +36,7 @@ struct MountainGenerator: Sendable {
             densityMultiplier: 0.35,
             weights: [
                 (.rock, 2), (.smallRock, 2), (.penitente, 1), (.apacheta, 1),
-                (.iceZone, 1), (.vicuna, 0.5),
+                (.iceZone, 0.2), (.vicuna, 0.5),
             ],
             condorChance: 0.05,
             hasLift: false
@@ -58,7 +58,7 @@ struct MountainGenerator: Sendable {
             densityMultiplier: 0.6,
             weights: [
                 (.ramp, 4), (.rock, 1.5), (.smallRock, 1), (.apacheta, 0.5),
-                (.quenua, 1), (.deepSnowZone, 0.5), (.iceZone, 0.5), (.snowman, 0.3), (.fox, 0.3),
+                (.quenua, 1), (.deepSnowZone, 0.5), (.iceZone, 0.1), (.snowman, 0.3), (.fox, 0.3),
             ],
             condorChance: 0.15,
             hasLift: false
@@ -76,10 +76,60 @@ struct MountainGenerator: Sendable {
         self.exclusions = exclusions
     }
 
-    /// Columna en la que corre el telesilla (a un lado de la salida).
-    var liftX: Double {
-        let offset = 520 + Double(seed % 480)
-        return seed & 1 == 0 ? offset : -offset
+    /// Largo (en vertical) de cada tramo recto del telesilla.
+    static let liftLegLength: Double = 4000
+    /// Altura a la que empieza el telesilla, un poco por debajo de la salida.
+    static let liftTopY: Double = -300
+
+    /// Distancia máxima del telesilla al centro de la pista.
+    var liftAmplitude: Double { 520 + Double(seed % 480) }
+
+    /// Posición horizontal del telesilla a una altura dada. Baja en zigzag: tramos
+    /// rectos en diagonal que cruzan la pista de un lado a otro, así que se ve a menudo.
+    func liftX(atY y: Double) -> Double {
+        let t = max(0, -y) / Self.liftLegLength
+        let leg = t.rounded(.down)
+        let side: Double = seed & 1 == 0 ? 1 : -1
+        let sign = Int(leg) % 2 == 0 ? side : -side
+        return sign * liftAmplitude * (1 - 2 * (t - leg))
+    }
+
+    /// Tramos rectos del cable del telesilla dentro de un rectángulo.
+    func liftSegments(in rect: CGRect) -> [(top: CGPoint, bottom: CGPoint)] {
+        let top = min(Double(rect.maxY), Self.liftTopY)
+        let bottom = Double(rect.minY)
+        guard top > bottom else { return [] }
+        // Cortes en los vértices del zigzag.
+        var ys = [top]
+        var vertex = ((-top / Self.liftLegLength).rounded(.down) + 1) * Self.liftLegLength
+        while -vertex > bottom {
+            ys.append(-vertex)
+            vertex += Self.liftLegLength
+        }
+        ys.append(bottom)
+
+        var result: [(top: CGPoint, bottom: CGPoint)] = []
+        for (y0, y1) in zip(ys, ys.dropFirst()) {
+            let x0 = liftX(atY: y0)
+            let x1 = liftX(atY: y1)
+            // Parte del tramo que cae dentro del rectángulo en horizontal.
+            var lo = 0.0
+            var hi = 1.0
+            if x1 == x0 {
+                guard Double(rect.minX) <= x0, x0 < Double(rect.maxX) else { continue }
+            } else {
+                let a = (Double(rect.minX) - x0) / (x1 - x0)
+                let b = (Double(rect.maxX) - x0) / (x1 - x0)
+                lo = max(0, min(a, b))
+                hi = min(1, max(a, b))
+            }
+            guard hi > lo else { continue }
+            func point(_ f: Double) -> CGPoint {
+                CGPoint(x: x0 + (x1 - x0) * f, y: y0 + (y1 - y0) * f)
+            }
+            result.append((point(lo), point(hi)))
+        }
+        return result
     }
 
     /// Rectángulo de mundo que cubre un trozo.
@@ -187,12 +237,11 @@ struct MountainGenerator: Sendable {
     }
 
     private func addPylons(in rect: CGRect, to result: inout [Obstacle]) {
-        let x = liftX
-        guard Double(rect.minX) <= x, x < Double(rect.maxX) else { return }
         var y = (Double(rect.maxY) / Self.pylonSpacing).rounded(.down) * Self.pylonSpacing
         while y > Double(rect.minY) {
-            let point = CGPoint(x: x, y: y)
-            if !Self.startClearing.contains(point), !isExcluded(point) {
+            let point = CGPoint(x: liftX(atY: y), y: y)
+            if Double(rect.minX) <= point.x, point.x < Double(rect.maxX),
+               y < Self.liftTopY, !isExcluded(point) {
                 result.append(Obstacle(kind: .liftPylon, origin: point))
             }
             y -= Self.pylonSpacing

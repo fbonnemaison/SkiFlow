@@ -39,6 +39,9 @@ enum GameMode: String, CaseIterable, Sendable {
     /// estricto (en slalom no estorban para que las marcas sean justas).
     var hasRivals: Bool { self == .freeDescent || self == .freestyle }
 
+    /// Rachas de viento del clima (no en los slalom, que son de precisión).
+    var hasGusts: Bool { self == .freeDescent || self == .freestyle }
+
     /// La avalancha mete presión en los modos con meta.
     var hasAvalanche: Bool { hasFinish }
 

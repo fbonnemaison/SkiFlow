@@ -60,7 +60,7 @@ struct TitleView: View {
                         .background(Color(red: 0.95, green: 0.76, blue: 0.19), in: Capsule())
                 }
 
-                Text("Haz clic en un modo o pulsa ↩︎ · ⌘1–⌘4 desde el menú Juego")
+                Text("Haz clic en un modo o pulsa ↩︎ · ⌘1–⌘4 desde el menú Juego · ⌘? ayuda")
                     .font(.callout)
                     .foregroundStyle(Theme.ink.opacity(0.7))
             }

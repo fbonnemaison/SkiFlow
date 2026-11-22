@@ -88,12 +88,39 @@ struct MountainGeneratorTests {
         #expect(!low.contains(.penitente))
     }
 
-    @Test func liftPylonsLineUpInOneColumn() {
-        let x = generator.liftX
-        let coord = MountainGenerator.coord(containing: CGPoint(x: x, y: -3000))
-        let pylons = generator.obstacles(in: coord).filter { $0.kind == .liftPylon }
-        #expect(!pylons.isEmpty)
-        #expect(pylons.allSatisfy { $0.origin.x == x })
+    @Test func liftRunsDiagonallyAcrossTheSlope() {
+        // Las torres siguen la línea del telesilla y cruzan la pista de lado a lado.
+        let pylons = (0...12).flatMap { y in
+            (-3...3).flatMap { generator.obstacles(in: ChunkCoord(x: $0, y: y)) }
+        }.filter { $0.kind == .liftPylon }
+        #expect(pylons.count > 10)
+        for pylon in pylons {
+            #expect(abs(Double(pylon.origin.x) - generator.liftX(atY: Double(pylon.origin.y))) < 0.001)
+        }
+        let xs = pylons.map { Double($0.origin.x) }
+        #expect(xs.contains { $0 > 300 } && xs.contains { $0 < -300 })
+        // Un poco en diagonal: avanza menos de medio punto en horizontal por cada punto que baja.
+        let a = generator.liftX(atY: -1000)
+        let b = generator.liftX(atY: -2000)
+        #expect(abs(a - b) > 200)
+        #expect(abs(a - b) < 500)
+        // Cruza el centro de la pista en cada tramo.
+        #expect(abs(generator.liftX(atY: -MountainGenerator.liftLegLength / 2)) < 0.001)
+    }
+
+    @Test func liftCableIsContinuousAcrossChunks() {
+        var pieces = 0
+        for y in 0...10 {
+            for x in -3...3 {
+                for segment in generator.liftSegments(in: MountainGenerator.rect(for: ChunkCoord(x: x, y: y))) {
+                    pieces += 1
+                    for end in [segment.top, segment.bottom] {
+                        #expect(abs(Double(end.x) - generator.liftX(atY: Double(end.y))) < 0.01)
+                    }
+                }
+            }
+        }
+        #expect(pieces > 11)
     }
 
     @Test func chunkCoordinatesRoundTrip() {

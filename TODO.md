@@ -202,6 +202,19 @@ Autor: **App-Zilla** · Licencia: **MIT**
 - [x] `CHANGELOG.md` con las secciones `1.0.0-rc.1`, `rc.2` y `1.0.0`
 - [x] `v1.0.0` publicada en GitHub Releases con el DMG y su SHA-256 (comprobado tras descargarlo)
 
+## Mejoras para la 1.1 ✅
+- [x] Tercer rival: **el Gringo**, turista perdido que habla en inglés y viste de azul (gorro, parka y jeans, con un mapa abierto). Cruza la pista a pie en horizontal (35–60 pt/s), aparece justo por debajo del borde de la pantalla cerca de la línea del Cuico y se le mete en el camino. Frases en inglés al pasar y al ser atropellado; es un obstáculo (se puede saltar). Solo en Descenso libre y Freestyle
+- [x] Cactus al **10 %** de su frecuencia (banda media 2 → 0,2; baja 0,5 → 0,05)
+- [x] Charcos (zonas de hielo) al **20 %** (banda alta 1,2 → 0,24; media 0,5 → 0,1; Slalom 1 → 0,2; Freestyle 0,5 → 0,1)
+- [x] Refugios al **50 %** (alta 0,3 → 0,15; media 0,4 → 0,2; baja 0,5 → 0,25)
+- [x] Telesilla **en diagonal**: baja en zigzag con tramos rectos de 4.000 pt que cruzan la pista de lado a lado (`MountainGenerator.liftX(atY:)` y `liftSegments(in:)`); torres, cable y sillas siguen la misma línea
+- [x] Clima variable (`Weather`): a ratos se nubla un poco (velo gris con fundido suave; 25–60 s despejado y 15–35 s nublado)
+- [x] **Rachas de viento** de 3–6 s cada 18–40 s, con empuje lateral de 45–85 pt/s, aviso en pantalla y en el HUD, nieve arrastrada y sonido de viento. No traen viento blanco. Con **Reducir movimiento** hay menos partículas. No hay rachas en los modos de slalom
+- [x] Tests: frecuencias, el Gringo, telesilla en diagonal y clima determinista con la semilla
+- [x] Probar estas mejoras en la app (App-Zilla)
+- [x] **Wiki de ayuda** en GitHub (instalación, controles, modos, montaña, rivales y criaturas, clima, trucos, récords, ajustes, preguntas frecuentes y compilación), enlazada desde el menú **Ayuda** del juego (⌘?, `HelpLinks`)
+- [x] Versión **`v1.1.0`** publicada en GitHub Releases e instalada en el Mac de desarrollo
+
 ---
 
 ## Ideas para después de la 1.0

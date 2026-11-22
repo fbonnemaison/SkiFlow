@@ -31,6 +31,9 @@ struct Terrain: Equatable, Sendable {
     var surface: Surface = .snow
     /// Empuje lateral del viento en puntos/s (positivo = derecha).
     var wind: Double = 0
+    /// Empuje de una racha de viento del clima (puntos/s, positivo = derecha).
+    /// No trae viento blanco: solo empuja.
+    var gust: Double = 0
 
     var isWhiteout: Bool { wind != 0 }
 }
@@ -91,7 +94,7 @@ struct SkierPhysics: Sendable {
 
         // El viento solo arrastra si el Cuico se está deslizando.
         if state.speed > 0 {
-            state.position.x += environment.wind * min(1, state.speed / 100) * dt
+            state.position.x += (environment.wind + environment.gust) * min(1, state.speed / 100) * dt
         }
     }
 

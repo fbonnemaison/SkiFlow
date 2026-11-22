@@ -129,6 +129,25 @@ final class GameScene: SKScene {
         rivalNodes[rival.id]?.say(line)
     }
 
+    // MARK: Clima
+
+    private(set) var weather = Weather(seed: 0)
+    /// Velo gris de los días nublados (va en la cámara).
+    private let overcast = SKSpriteNode(color: SKColor(red: 0.30, green: 0.34, blue: 0.44, alpha: 1), size: .zero)
+    /// Opacidad del velo con el cielo totalmente nublado.
+    static let overcastMaxAlpha: CGFloat = 0.24
+
+    private func updateWeather(dt: Double) {
+        for event in weather.update(dt: dt) {
+            switch event {
+            case let .gustStarted(direction):
+                showMessage(direction > 0 ? "¡Racha de viento hacia la derecha!" : "¡Racha de viento hacia la izquierda!")
+            case .gustEnded, .cloudsRolledIn, .cloudsCleared:
+                break
+            }
+        }
+    }
+
     // MARK: Paso lateral
 
     /// Puntos que avanza el Cuico de lado en cada paso.
@@ -292,6 +311,11 @@ final class GameScene: SKScene {
 
         addChild(cameraNode)
         camera = cameraNode
+
+        overcast.size = CGSize(width: size.width * 2, height: size.height * 2)
+        overcast.alpha = 0
+        overcast.zPosition = Depth.overhead + 9
+        cameraNode.addChild(overcast)
 
         whiteout.size = CGSize(width: size.width * 2, height: size.height * 2)
         whiteout.alpha = 0
@@ -477,6 +501,7 @@ final class GameScene: SKScene {
         avalanche = AvalancheChaser(config: avalancheConfig)
         chupacabrasEncounters = 0
         rivals = RivalSkiers(seed: currentSeed)
+        weather = Weather(config: .init(hasGusts: mode.hasGusts), seed: currentSeed)
         rivalNodes.values.forEach { $0.removeFromParent() }
         rivalNodes.removeAll()
         caughtBy = nil
@@ -556,6 +581,7 @@ final class GameScene: SKScene {
         elapsed += dt
         mountain.updateLoadedChunks(center: cameraCenter, viewSize: size, time: elapsed)
 
+        updateWeather(dt: dt)
         let previousPosition = skier.position
         if skier.isFallen {
             skier.fallTime = max(0, skier.fallTime - dt)
@@ -600,6 +626,7 @@ final class GameScene: SKScene {
         environment = skier.isAirborne
             ? Terrain()
             : CollisionResolver.environment(at: skier.position, among: nearby)
+        environment.gust = weather.gust
         physics.step(&skier, dt: dt, environment: environment, turbo: isTurboActive)
 
         if skier.graceTime > 0 {
@@ -932,13 +959,19 @@ final class GameScene: SKScene {
         finishNode?.position.x = cameraCenter.x
         renderChasers()
 
-        // El viento blanco tapa la vista poco a poco y trae ventisca.
+        // Días nublados: la luz baja y la nieve se ve más gris.
+        overcast.alpha = CGFloat(weather.cloudCover) * Self.overcastMaxAlpha
+
+        // El viento blanco tapa la vista poco a poco y trae ventisca; las rachas
+        // del clima solo arrastran algo de nieve.
         let targetAlpha: CGFloat = environment.isWhiteout ? 0.55 : 0
         whiteout.alpha += (targetAlpha - whiteout.alpha) * min(1, CGFloat(frameDelta) * 3)
+        let gustLevel = CGFloat(weather.gustIntensity)
         if let blizzard {
-            blizzard.particleBirthRate = whiteout.alpha * (reduceMotion ? 80 : 400)
+            let rate = max(whiteout.alpha * 400, gustLevel * 140)
+            blizzard.particleBirthRate = reduceMotion ? rate / 5 : rate
             // Los copos cruzan en el sentido del viento.
-            let towardsRight = environment.wind > 0
+            let towardsRight = environment.isWhiteout ? environment.wind > 0 : weather.gust > 0
             blizzard.emissionAngle = towardsRight ? 0 : .pi
             blizzard.position.x = (towardsRight ? -1 : 1) * size.width * 0.6
         }
@@ -947,7 +980,7 @@ final class GameScene: SKScene {
         let running = caughtBy == nil && !isRunOver && !isGamePaused
         let gliding = running && !skier.isAirborne && !skier.isFallen
         audio?.setSlide(gliding ? skier.speed / physics.turboMaxSpeed : 0)
-        audio?.setWind(running ? Double(whiteout.alpha / 0.55) : 0)
+        audio?.setWind(running ? max(Double(whiteout.alpha / 0.55), weather.gustIntensity * 0.6) : 0)
 
         // Derrape: más nieve cuanto más fuerte se frena o se gira.
         let skidding = !skier.isAirborne && !skier.isFallen && skier.speed > 80
@@ -1041,6 +1074,8 @@ final class GameScene: SKScene {
             } else if avalanche.phase == .chasing {
                 let meters = avalanche.gap(to: skier) / GameConfig.pointsPerMeter
                 alert = String(format: "Avalancha a %.0f m", max(0, meters))
+            } else if weather.isGusting {
+                alert = weather.gust > 0 ? "Viento hacia la derecha" : "Viento hacia la izquierda"
             }
         }
         return HUDSnapshot(mode: mode, items: items, alert: alert, isTurbo: isTurboActive)

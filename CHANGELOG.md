@@ -6,6 +6,17 @@ El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y e
 
 ## [Sin publicar]
 
+## [1.1.0] - 2026-11-21
+
+### Añadido
+- **Ayuda del juego** en la [wiki de GitHub](https://github.com/fbonnemaison/SkiFlow/wiki): instalación, controles, modos, la montaña, rivales y criaturas, clima, récords y preguntas frecuentes. Se abre desde el menú **Ayuda** (⌘?), que también enlaza las descargas y el sitio para informar de problemas.
+- **El Gringo**, tercer rival: un turista perdido vestido de azul que habla en inglés. No esquía: cruza la pista a pie, despacio, y se mete en el camino del Cuico.
+- **Clima variable**: a ratos el cielo se nubla un poco y, en Descenso libre y Freestyle, soplan rachas de viento que empujan al Cuico hacia un lado durante unos segundos.
+
+### Cambiado
+- El telesilla baja en **diagonal** y en zigzag, cruzando la pista de lado a lado, así que se ve más a menudo.
+- Menos cactus (10 % de su frecuencia anterior), menos hielo (20 %, también en Slalom y Freestyle) y menos refugios (50 %).
+
 ## [1.0.0] - 2026-11-21
 
 Primera versión pública de SkiFlow.

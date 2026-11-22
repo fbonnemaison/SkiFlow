@@ -1,17 +1,24 @@
 import CoreGraphics
 import Foundation
 
-/// Esquiadores rivales que bajan por el cerro y se cruzan con el Cuico.
+/// Rivales que se cruzan con el Cuico: dos esquiadores que bajan por el cerro
+/// y un turista perdido que cruza la pista a pie.
 enum RivalKind: String, CaseIterable, Sendable {
     case argentine
     case brazilian
+    /// El Gringo: no esquía, cruza la pista despacio de lado a lado.
+    case gringo
 
     var obstacleKind: ObstacleKind {
         switch self {
         case .argentine: .argentine
         case .brazilian: .brazilian
+        case .gringo: .gringo
         }
     }
+
+    /// Cruza la pista a pie en horizontal en vez de bajar haciendo eses.
+    var walksAcross: Bool { self == .gringo }
 
     /// Lo que dicen al pasar cerca del Cuico.
     var lines: [String] {
@@ -23,6 +30,9 @@ enum RivalKind: String, CaseIterable, Sendable {
         case .brazilian:
             ["Opa! Tudo bem?", "Nossa, que frio!", "Cadê a praia?",
              "Bora, bora!", "Isso é neve? Que legal!", "Ai, saudade do calor…"]
+        case .gringo:
+            ["Excuse me… where is the hotel?", "Sorry, I'm lost!", "Do you speak English?",
+             "Wow, awesome mountains!", "Is this the way to the ski lift?", "Where's my tour group?"]
         }
     }
 
@@ -31,6 +41,7 @@ enum RivalKind: String, CaseIterable, Sendable {
         switch self {
         case .argentine: ["¡Uy, perdón, che!", "¡Mirá por dónde vas, loco!"]
         case .brazilian: ["Opa, desculpa!", "Calma, amigo!"]
+        case .gringo: ["Oops! Sorry, dude!", "Hey, watch out, man!"]
         }
     }
 }
@@ -46,13 +57,16 @@ struct RivalSkier: Equatable, Sendable {
     let swayPeriod: Double
     let phase: Double
     let spawnTime: Double
+    /// Velocidad horizontal al cruzar la pista a pie (positivo = derecha).
+    var walkSpeed: Double = 0
     var position: CGPoint
     /// Última vez que habló (para no repetirse sin parar).
     var lastSpoke: Double = -.infinity
 
     /// Hacia dónde va (para voltear el sprite).
     func facesLeft(at time: Double) -> Bool {
-        cos(phase + 2 * .pi * (time - spawnTime) / swayPeriod) < 0
+        if kind.walksAcross { return walkSpeed < 0 }
+        return cos(phase + 2 * .pi * (time - spawnTime) / swayPeriod) < 0
     }
 
     /// Caja de choque (como cualquier obstáculo).
@@ -75,6 +89,8 @@ struct RivalSkiers: Sendable {
         /// Segundos entre apariciones (al azar en este rango).
         var spawnInterval: ClosedRange<Double> = 4...9
         var speed: ClosedRange<Double> = 160...260
+        /// Paso del Gringo al cruzar la pista.
+        var walkSpeed: ClosedRange<Double> = 35...60
         /// Distancia vertical a la cámara a la que se retiran.
         var despawnDistance: Double = 1100
         /// Distancia a la que hablan al Cuico.
@@ -106,15 +122,23 @@ struct RivalSkiers: Sendable {
         // Mover.
         for index in skiers.indices {
             var rival = skiers[index]
-            let t = time - rival.spawnTime
-            rival.position.y -= rival.speed * dt
-            rival.position.x = rival.baseX + rival.sway * sin(rival.phase + 2 * .pi * t / rival.swayPeriod)
+            if rival.kind.walksAcross {
+                rival.position.x += rival.walkSpeed * dt
+            } else {
+                let t = time - rival.spawnTime
+                rival.position.y -= rival.speed * dt
+                rival.position.x = rival.baseX + rival.sway * sin(rival.phase + 2 * .pi * t / rival.swayPeriod)
+            }
             skiers[index] = rival
         }
 
         // Retirar los que quedan lejos.
-        let gone = skiers.filter { abs(Double($0.position.y - camera.y)) > config.despawnDistance }
-        skiers.removeAll { abs(Double($0.position.y - camera.y)) > config.despawnDistance }
+        let isFar: (RivalSkier) -> Bool = { rival in
+            abs(Double(rival.position.y - camera.y)) > config.despawnDistance
+                || abs(Double(rival.position.x - camera.x)) > config.despawnDistance * 1.5
+        }
+        let gone = skiers.filter(isFar)
+        skiers.removeAll(where: isFar)
         events += gone.map { .left(id: $0.id) }
 
         // Aparecer fuera de la pantalla.
@@ -150,6 +174,9 @@ struct RivalSkiers: Sendable {
 
     private mutating func spawn(time: Double, skier: SkierState, camera: CGPoint, viewSize: CGSize) -> RivalSkier {
         let kind = RivalKind.allCases[Int.random(in: 0..<RivalKind.allCases.count, using: &rng)]
+        if kind.walksAcross {
+            return spawnWalker(kind: kind, time: time, skier: skier, camera: camera, viewSize: viewSize)
+        }
         let speed = Double.random(in: config.speed, using: &rng)
         // Si el Cuico va rápido, el rival aparece por delante (abajo) y lo adelanta;
         // si va lento, aparece por detrás (arriba) y lo pasa.
@@ -166,6 +193,29 @@ struct RivalSkiers: Sendable {
             swayPeriod: Double.random(in: 2...4, using: &rng),
             phase: Double.random(in: 0..<(2 * .pi), using: &rng),
             spawnTime: time,
+            position: CGPoint(x: x, y: y)
+        )
+        nextID += 1
+        return rival
+    }
+
+    /// El Gringo aparece justo por debajo del borde de la pantalla, un poco a un
+    /// lado del Cuico, y camina hacia su línea: se le cruza en el camino.
+    private mutating func spawnWalker(kind: RivalKind, time: Double, skier: SkierState, camera: CGPoint, viewSize: CGSize) -> RivalSkier {
+        let direction: Double = Bool.random(using: &rng) ? 1 : -1
+        let walkSpeed = direction * Double.random(in: config.walkSpeed, using: &rng)
+        let y = Double(camera.y) - Double(viewSize.height) / 2 - 80
+        let x = Double(skier.position.x) - direction * Double.random(in: 40...200, using: &rng)
+        let rival = RivalSkier(
+            id: nextID,
+            kind: kind,
+            baseX: x,
+            speed: 0,
+            sway: 0,
+            swayPeriod: 1,
+            phase: 0,
+            spawnTime: time,
+            walkSpeed: walkSpeed,
             position: CGPoint(x: x, y: y)
         )
         nextID += 1

@@ -37,7 +37,7 @@ struct SkiFlowApp: App {
     }
 }
 
-/// Menús de la barra: Archivo › Nueva bajada, menú Juego y pantalla completa.
+/// Menús de la barra: Archivo › Nueva bajada, menú Juego, pantalla completa y Ayuda.
 private struct GameCommands: Commands {
     let model: GameModel
 
@@ -71,6 +71,21 @@ private struct GameCommands: Commands {
             Button("Menú principal") { model.backToMenu() }
                 .keyboardShortcut("m", modifiers: [.command, .shift])
                 .disabled(model.screen == .title)
+        }
+
+        // Menú Ayuda: abre la wiki de GitHub en el navegador.
+        CommandGroup(replacing: .help) {
+            Button("Ayuda de SkiFlow") { NSWorkspace.shared.open(HelpLinks.wiki) }
+                .keyboardShortcut("?")
+            Divider()
+            Button("Controles") { NSWorkspace.shared.open(HelpLinks.controls) }
+            Button("Modos de juego") { NSWorkspace.shared.open(HelpLinks.modes) }
+            Button("La montaña") { NSWorkspace.shared.open(HelpLinks.mountain) }
+            Button("Rivales y criaturas") { NSWorkspace.shared.open(HelpLinks.creatures) }
+            Button("Preguntas frecuentes") { NSWorkspace.shared.open(HelpLinks.faq) }
+            Divider()
+            Button("Novedades y descargas") { NSWorkspace.shared.open(HelpLinks.releases) }
+            Button("Informar de un problema") { NSWorkspace.shared.open(HelpLinks.issues) }
         }
 
         CommandGroup(after: .toolbar) {

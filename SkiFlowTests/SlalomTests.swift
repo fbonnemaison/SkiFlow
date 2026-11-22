@@ -239,7 +239,7 @@ struct SlalomLiftTests {
         let generator = MountainGenerator(seed: 2, profile: .slalom)
         let mountain = MountainNode(seed: 2)
         mountain.reset(generator: generator)
-        mountain.updateLoadedChunks(center: CGPoint(x: generator.liftX, y: -3000), viewSize: GameConfig.sceneSize, time: 0)
+        mountain.updateLoadedChunks(center: CGPoint(x: generator.liftX(atY: -3000), y: -3000), viewSize: GameConfig.sceneSize, time: 0)
         let chairs = mountain.children.flatMap(\.children).filter { ($0 as? SKSpriteNode)?.anchorPoint == CGPoint(x: 0.5, y: 0.85) }
         #expect(chairs.isEmpty)
     }

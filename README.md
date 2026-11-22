@@ -8,7 +8,7 @@ Juego de esquí 2D para macOS inspirado en el clásico *SkiFree* (1991), ambient
   <img src="Design/Screenshots/screenshot-freestyle.png" width="32%" alt="Freestyle: rampas y trucos">
 </p>
 
-> Versión **1.0.0**. Historial en [CHANGELOG.md](CHANGELOG.md) y plan de desarrollo en [TODO.md](TODO.md).
+> Versión **1.1.0**. Ayuda completa en la [wiki](https://github.com/fbonnemaison/SkiFlow/wiki) (también desde el menú **Ayuda** del juego, ⌘?). Historial en [CHANGELOG.md](CHANGELOG.md) y plan de desarrollo en [TODO.md](TODO.md).
 
 ## Descargar e instalar
 
@@ -34,7 +34,7 @@ Requiere **macOS 26 o superior**. Es gratis y no necesita cuenta.
 
 Al tocar las teclas de giro se desactiva el apuntado con ratón; vuelve a activarse en cuanto mueves el ratón. La partida se pausa sola si cambias de app.
 
-Las teclas se pueden reasignar en **Ajustes › Controles** (⌘,). En **Ajustes › General** hay opciones de accesibilidad: reducir movimiento y HUD de alto contraste. Con mando también se manejan los menús (cruceta para elegir, A para empezar, B para volver). Atajos del menú **Juego**: ⌘N nueva bajada, ⌘P pausa, ⌘R reiniciar, ⌘1–⌘4 elegir modo, ⇧⌘M menú principal y ⌘F pantalla completa.
+Las teclas se pueden reasignar en **Ajustes › Controles** (⌘,). En **Ajustes › General** hay opciones de accesibilidad: reducir movimiento y HUD de alto contraste. Con mando también se manejan los menús (cruceta para elegir, A para empezar, B para volver). Atajos del menú **Juego**: ⌘N nueva bajada, ⌘P pausa, ⌘R reiniciar, ⌘1–⌘4 elegir modo, ⇧⌘M menú principal y ⌘F pantalla completa. ⌘? abre la ayuda (la wiki del proyecto).
 
 En **Récords** (menú principal) ves tu top 10 de cada modo y tus estadísticas; el botón **Repetir** vuelve a bajar la misma montaña de una marca. Los récords se guardan en el Mac con SwiftData.
 
@@ -43,6 +43,7 @@ En el menú principal puedes escribir una **semilla** (un número) para repetir 
 ## En la montaña
 
 - **Alta montaña**: rocas, penitentes de hielo y apachetas. Más abajo aparecen cactus, y al final el bosque de araucarias y queñuas.
+- **Telesilla**: baja en zigzag, cruzando la pista en diagonal; sus torres son obstáculos altos.
 - **Fauna**: zorros culpeos (frecuentes y rápidos) y pumas (raros, lentos y grandes). Las llamas, guanacos y vicuñas casi nunca se ven en la nieve.
 - **Rampas**: saltas sobre lo que sea bajo (rocas, animales…), pero no sobre árboles, refugios ni torres. ¡Ojo con los cóndores en pleno vuelo!
 - **Hielo**: cuesta frenar. **Nieve profunda**: frena. **Viento blanco**: te empuja de lado y tapa la vista.
@@ -75,10 +76,13 @@ Un típico chileno que sube a la nieve más a posar que a esquiar: casco negro, 
 
 ## Los rivales
 
-En Descenso libre y Freestyle se cruzan esquiadores de los países vecinos. Bajan haciendo eses, comentan al pasar cerca y, si te los llevas por delante, te caes (pero puedes saltarlos):
+En Descenso libre y Freestyle se cruzan esquiadores de los países vecinos y algún turista despistado. Comentan al pasar cerca y, si te los llevas por delante, te caes (pero puedes saltarlos):
 
 - **El Argentino**, de albiceleste: «En Bariloche la nieve es mejor, ¿viste?».
 - **El Brasileño**, de verde y amarillo: «Nossa, que frio!».
+- **El Gringo**, de azul y con un mapa en la mano: no esquía, cruza la pista a pie y se te mete en el camino. «Sorry, I'm lost!».
+
+El clima también cambia: a ratos se nubla y, de vez en cuando, una racha de viento te empuja hacia un lado durante unos segundos.
 
 ## Las criaturas
 

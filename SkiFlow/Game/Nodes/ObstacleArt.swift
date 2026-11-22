@@ -20,6 +20,7 @@ enum ObstacleArt {
         case .puma: puma
         case .argentine: RivalArt.argentine
         case .brazilian: RivalArt.brazilian
+        case .gringo: RivalArt.gringo
         case .condor: condor
         // Estos usan tiles de Kenney (ver `SpriteFactory.sprite(for:variant:)`).
         case .rock, .snowman, .iceZone, .deepSnowZone, .windZone: PixelArt(rows: [])
